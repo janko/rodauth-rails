@@ -1,0 +1,6 @@
+<%= form_tag rodauth.unlock_account_path, method: :post do %>
+  <%= rodauth.unlock_account_additional_form_tags %>
+  <%= rodauth.unlock_account_explanatory_text %>
+  <%= render "password_field" if rodauth.unlock_account_requires_password? %>
+  <%= render "submit", value: rodauth.unlock_account_button %>
+<% end %>

@@ -1,0 +1,6 @@
+<div class="form-group row">
+  <%= label_tag "login-confirm", rodauth.login_confirm_label + rodauth.input_field_label_suffix, class: "col-sm-2 col-form-label" %>
+  <div class="col-sm-10">
+    <%= render "field", name: rodauth.login_confirm_param, id: "login-confirm", type: rodauth.login_input_type, autocomplete: rodauth.login_uses_email? ? "email" : "on" %>
+  </div>
+</div>

@@ -1,0 +1,6 @@
+<div class="form-group row">
+  <%= label_tag "recovery_code", rodauth.recovery_codes_label + rodauth.input_field_label_suffix, class: "col-sm-2 col-form-label" %>
+  <div class="col-sm-10">
+    <%= render "field", name: rodauth.recovery_codes_param, id: "recovery_code", value: "", autocomplete: "off" %>
+  </div>
+</div>

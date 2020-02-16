@@ -1,0 +1,4 @@
+<%= form_tag rodauth.logout_path, method: :post do %>
+  <%= rodauth.logout_additional_form_tags %>
+  <%= render "submit", value: rodauth.logout_button, class: "btn btn-warning" %>
+<% end %>

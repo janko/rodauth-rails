@@ -1,0 +1,5 @@
+<%= form_tag rodauth.sms_confirm_path, method: :post do %>
+  <%= rodauth.sms_confirm_additional_form_tags %>
+  <%= render "sms_code_field" %>
+  <%= render "submit", value: rodauth.sms_confirm_button %>
+<% end %>

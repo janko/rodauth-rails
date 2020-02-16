@@ -1,0 +1,5 @@
+<%= form_tag rodauth.recovery_auth_path, method: :post do %>
+  <%= rodauth.recovery_auth_additional_form_tags %>
+  <%= render "recovery_code_field" %>
+  <%= render "submit", value: rodauth.recovery_auth_button %>
+<% end %>

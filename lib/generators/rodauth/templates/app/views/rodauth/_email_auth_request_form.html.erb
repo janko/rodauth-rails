@@ -1,0 +1,5 @@
+<%= form_tag rodauth.email_auth_request_path, method: :post do %>
+  <%= rodauth.email_auth_request_additional_form_tags %>
+  <%= render "login_hidden_field" %>
+  <%= render "submit", value: rodauth.email_auth_request_button %>
+<% end %>

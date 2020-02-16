@@ -1,0 +1,12 @@
+<%= text_field_tag name, locals[:value] || params[name],
+  type: locals[:type] || "text",
+  id: locals[:id],
+  autocomplete: locals[:autocomplete],
+  inputmode: locals[:inputmode],
+  required: locals[:required] != false,
+  class: "form-control #{"is-invalid" if rodauth.field_error(name)}",
+  aria: ({ invalid: "true", describedby: "#{name}_error_message" } if rodauth.field_error(name)) %>
+
+<% if rodauth.field_error(name) %>
+  <div class="invalid-feedback" id="<%= name %>_error_message"><%= rodauth.field_error(name) %></div>
+<% end %>
