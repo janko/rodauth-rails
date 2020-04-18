@@ -1,5 +1,4 @@
 <%= form_tag rodauth.close_account_path, method: :post do %>
-  <%= rodauth.close_account_additional_form_tags %>
   <%= render "password_field" if rodauth.close_account_requires_password? %>
-  <%= render "submit", value: rodauth.close_account_button, class: "btn btn-danger" %>
+  <%= render "submit", value: "Close Account", class: "btn btn-danger" %>
 <% end %>

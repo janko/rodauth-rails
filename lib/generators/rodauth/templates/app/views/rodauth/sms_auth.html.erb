@@ -1,5 +1,4 @@
 <%= form_tag rodauth.sms_auth_path, method: :post do %>
-  <%= rodauth.sms_auth_additional_form_tags %>
   <%= render "sms_code_field" %>
-  <%= render "submit", value: rodauth.sms_auth_button %>
+  <%= render "submit", value: "Authenticate via SMS Code" %>
 <% end %>

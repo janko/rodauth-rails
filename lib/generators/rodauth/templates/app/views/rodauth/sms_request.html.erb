@@ -1,4 +1,3 @@
 <%= form_tag rodauth.sms_request_path, method: :post do %>
-  <%= rodauth.sms_request_additional_form_tags %>
-  <%= render "submit", value: rodauth.sms_request_button %>
+  <%= render "submit", value: "Send SMS Code" %>
 <% end %>

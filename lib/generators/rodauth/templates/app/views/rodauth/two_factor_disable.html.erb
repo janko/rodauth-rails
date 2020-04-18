@@ -1,5 +1,4 @@
 <%= form_tag rodauth.two_factor_disable_path, method: :post do %>
-  <%= rodauth.two_factor_disable_additional_form_tags %>
   <%= render "password_field" if rodauth.two_factor_modifications_require_password? %>
-  <%= render "submit", value: rodauth.two_factor_disable_button %>
+  <%= render "submit", value: "Remove All Multifactor Authentication Methods" %>
 <% end %>

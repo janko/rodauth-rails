@@ -17,14 +17,14 @@ module Rodauth
           # load the Rails integration
           enable :rails
 
-          # use RodauthController for rendering views inside "app/views/rodauth"
-          rails_controller { RodauthController }
-
           # database functions add complexity, so disable them for simpler setup
           use_database_authentication_functions? false
 
           # avoid having to set deadline values in column default values
           set_deadline_values? true
+
+          # use HMACs for additional security
+          hmac_secret { ::Rails.application.secrets.secret_key_base }
 
           # evaluate user configuration
           instance_exec(&block)

@@ -1,8 +1,6 @@
-<div class="col-sm-10 offset-sm-2">
-  <h2>Other Options</h2>
-  <ul>
-    <% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
-      <li><%= link_to text, link %></li>
-    <% end %>
-  </ul>
-</div>
+<h2>Other Options</h2>
+<ul>
+  <% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
+    <li><%= link_to text, link %></li>
+  <% end %>
+</ul>

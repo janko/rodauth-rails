@@ -1,8 +1,7 @@
 <%= form_tag rodauth.create_account_path, method: :post %>
-  <%= rodauth.create_account_additional_form_tags %>
   <%= render "login_field" %>
   <%= render "login_confirm_field" if rodauth.require_login_confirmation? %>
   <%= render "password_field" if rodauth.create_account_set_password? %>
   <%= render "password_confirm_field" if rodauth.create_account_set_password? && rodauth.require_password_confirmation? %>
-  <%= render "submit", value: rodauth.create_account_button %>
+  <%= render "submit", value: "Create Account" %>
 <% end %>

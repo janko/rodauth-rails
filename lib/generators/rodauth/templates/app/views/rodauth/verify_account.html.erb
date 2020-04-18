@@ -1,6 +1,5 @@
 <%= form_tag rodauth.verify_account_path, method: :post do %>
-  <%= rodauth.verify_account_additional_form_tags %>
   <%= render "password_field" if rodauth.verify_account_set_password? %>
   <%= render "password_confirm_field" if rodauth.verify_account_set_password? && rodauth.require_password_confirmation? %>
-  <%= render "submit", value: rodauth.verify_account_button %>
+  <%= render "submit", value: "Verify Account" %>
 <% end %>

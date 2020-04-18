@@ -14,23 +14,19 @@ module Rodauth
     )
 
     def view(page, title)
-      rails_render page.tr("-", "_")
+      rails_render template: page.tr("-", "_")
     rescue ActionView::MissingTemplate
-      rails_render html: super.html_safe
+      rails_render html: super.html_safe, layout: true
     end
 
     def render(page)
-      rails_render partial: page.tr("-", "_")
+      rails_render template: page.tr("-", "_"), layout: false
     rescue ActionView::MissingTemplate
       super
     end
 
     def csrf_tag(*)
       rails_csrf_tag
-    end
-
-    def hmac_secret
-      ::Rails.application.secrets.secret_key_base
     end
 
     def flash_error_key
@@ -45,7 +41,7 @@ module Rodauth
     end
 
     def create_email_to(to, subject, body)
-      Mailer.create(to: to, from: email_from, subject: "#{email_subject_prefix}#{subject}", body: body)
+      Mailer.create_email(to: to, from: email_from, subject: "#{email_subject_prefix}#{subject}", body: body)
     end
 
     def send_email(email)
@@ -83,12 +79,12 @@ module Rodauth
     end
 
     def rails_controller
-      ApplicationController
+      ActionController::Base
     end
 
     # ActionMailer subclass to correctly wrap email delivering.
     class Mailer < ActionMailer::Base
-      def create(**options)
+      def create_email(**options)
         mail(**options)
       end
     end

@@ -4,7 +4,7 @@ require "rodauth/rails/active_record_extension"
 
 module Rodauth
   module Rails
-    class Engine < ::Rails::Engine
+    class Railtie < ::Rails::Railtie
       initializer "rodauth.sequel" do
         Rodauth::Rails.sequel_connect
       end

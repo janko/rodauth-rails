@@ -1,7 +1,7 @@
 require "rails"
 require "sequel/core"
 
-require "rodauth/rails/engine"
+require "rodauth/rails/railtie"
 require "rodauth/rails/configuration"
 
 module Rodauth
