@@ -2,5 +2,5 @@
 
 <% if rodauth.can_add_recovery_codes? %>
   <h2>Add Additional Recovery Codes</h2>
-  <%= render template: "recovery_codes", layout: false %>
+  <%= render "recovery_codes_form" %>
 <% end %>
