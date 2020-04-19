@@ -53,6 +53,12 @@ class RodauthApp < Rodauth::Rails::App
     # send_password_changed_email do
     #   RodauthMailer.password_changed(email_to).deliver_now
     # end
+    # # send_email_auth_email do
+    # #   RodauthMailer.email_auth(email_to, email_auth_email_link).deliver_now
+    # # end
+    # # send_unlock_account_email do
+    # #   RodauthMailer.unlock_account(email_to, unlock_account_email_link).deliver_now
+    # # end
 
     # In the meantime you can tweak settings for emails created by Rodauth
     # email_subject_prefix "[MyApp] "
