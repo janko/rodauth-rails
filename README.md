@@ -1,24 +1,13 @@
-# Rodauth::Rails
+# rodauth-rails
 
-Provides Rails integration for [Rodauth].
-
-NOTE: This is not yet 100% finished and thus it's not yet released on RubyGems.org. Your can expect it to be published soon.
-
-## Rails support
-
-Rails 5.0 or above is supported. This is mainly due to the fact that Rails 5.0
-added the API for [rendering views outside of controllers], which this gem
-uses.
-
-If you're on an older version of Rails and would like to use this gem, let me
-know and we can work together to add support.
+Provides Rails 5.0+ integration for the [Rodauth] authentication framework.
 
 ## Installation
 
 Add the gem to your Gemfile:
 
 ```rb
-gem "rodauth-rails"
+gem "rodauth-rails", "~> 0.1"
 ```
 
 Then run `bundle install`.
@@ -29,31 +18,39 @@ Next, run the install generator:
 $ rails generate rodauth:install
 ```
 
-This will create a migration file with tables required by Rodauth. Once you've
-reviewed it, you can run the migrations:
+The generator will create the following files:
 
-```
-$ rails db:migrate
-```
+* migration at `db/migrate/*_create_rodauth.rb`
+* initializer at `config/initializers/rodauth.rb`
+* app at `lib/rodauth_app.rb`
 
-The generator also creates your Rodauth app in the `lib/` directory:
+The migration file creates tables required by Rodauth. You're encouraged to
+review the migration, and modify it so that you only create tables for features
+you intend to use.
 
 ```rb
-# lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  rodauth do
-    # ... configuration ...
-  end
-
-  route do |r|
-    r.rodauth # routes Rodauth endpoints
-
+# db/migrate/*_create_rodauth.rb
+class CreateRodauth < ActiveRecord::Migration
+  def change
+    create_table(:accounts) { ... }
+    create_table(:account_password_hashes) { ... }
+    create_table(:account_password_reset_keys) { ... }
+    create_table(:account_verification_keys) { ... }
+    create_table(:account_login_change_keys) { ... }
+    create_table(:account_remember_keys) { ... }
     # ...
   end
 end
 ```
 
-And configures your app to be used in the Rodauth middleware:
+Once you're done, you can run the migration:
+
+```
+$ rails db:migrate
+```
+
+The initializer sets the constant for your Rodauth app, which will be inserted
+into your middleware stack.
 
 ```rb
 # config/initializers/rodauth.rb
@@ -62,115 +59,70 @@ Rodauth::Rails.configure do |config|
 end
 ```
 
-## Getting started
-
-The `#rodauth` method is available in your controllers and views, and it
-returns the Rodauth instance. It can be used for managing authentication,
-inquiring on current state, fetching routes, or retrieving other settings.
-
-```rb
-# app/controllers/my_controller.rb
-class MyController < ApplicationController
-  def my_action
-    rodauth #=> #<Rodauth::Auth>
-    # or
-    rodauth(:name) #=> #<Rodauth::Auth> (if using multiple configurations)
-  end
-end
-```
-```erb
-<!-- app/views/directory/my_template.html.erb -->
-<% rodauth #=> #<Rodauth::Auth> %>
-<!-- or -->
-<% rodauth(:name) #=> #<Rodauth::Auth> (if using multiple configurations) %>
-```
-
-### Generating links
-
-In order to display links to Rodauth actions, you can use `*_path` or `*_url`
-counterparts to Rodauth `*_route` methods:
-
-```erb
-<!-- app/views/layouts/application.html.erb -->
-<html>
-  <head>...</head>
-  <body>
-    <nav>
-      <ul>
-        <% if rodauth.authenticated? %>
-          <li><%= link_to "Sign out", rodauth.logout_path, method: :post %></li>
-        <% else %>
-          <li><%= link_to "Sign in", rodauth.login_path %></li>
-          <li><%= link_to "Sign up", rodauth.create_account_path %></li>
-        <% end %>
-      </ul>
-    </nav>
-
-    <%= yield %>
-  </body>
-</html>
-```
-
-Consult the [Rodauth feature documentation] for the available routes.
-
-### Requiring authentication
-
-You'll likely want to require authentication for certain controllers/actions.
-You can do this in your Rodauth app using [Roda routing]:
+Your Rodauth app is created in the `lib/` directory, and it comes with a
+default set of authentication features enabled. This is where you configure
+your authentication behaviour, see the comments and Rodauth [feature
+documentation] for the list of things you can configure.
 
 ```rb
 # lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
-  # ...
+  rodauth do
+    # configuration
+  end
 
   route do |r|
+    # request handling
+  end
+end
+```
+
+Note that Rails doesn't autoload files in the `lib/` directory by default, so
+make sure to add `lib/` to your `config.autoload_paths`:
+
+```rb
+# config/application.rb
+module YourApp
+  class Application < Rails::Application
     # ...
-
-    r.rodauth
-
-    next unless r.path.start_with?("/dashboard") # authenticate /dashboard/* routes
-    next unless r.path.start_with?("/account")   # authenticate /account/* routes
-    next unless r.path =~ %r{posts/\w+/edit}     # authenticate /posts/:id/edit route
-
-    rodauth.require_authentication # # redirect to login if not authenticated
-
-    nil # forward the request to the Rails app
+    config.autoload_paths += %W[#{config.root}/lib]
+    # ...
   end
 end
 ```
 
-Alternatively, you can require authentication at the controller layer:
-
-```rb
-class ApplicationController < ActionController::Base
-  private
-
-  def authenticate
-    rodauth.require_authentication
-  end
-end
-```
-```rb
-class DashboardController < ApplicationController
-  before_action :authenticate
-end
-```
-```rb
-class PostsController < ApplicationController
-  before_action :authenticate, except: [:index, :show]
-end
-```
-
-### Current account
-
-To retrieve the current account, you can define an `Account` model and a
-`#current_account` controller/helper method:
+Lastly, the generator will create an `Account` model, which you can use to
+access the created user accounts.
 
 ```rb
 # app/models/account.rb
 class Account < ApplicationRecord
 end
 ```
+
+## Getting started
+
+Let's start by adding some basic authentication navigation links to our home
+page:
+
+```erb
+<ul>
+  <% if rodauth.authenticated? %>
+    <li><%= link_to "Sign out", rodauth.logout_path, method: :post %></li>
+  <% else %>
+    <li><%= link_to "Sign in", rodauth.login_path %></li>
+    <li><%= link_to "Sign up", rodauth.create_account_path %></li>
+  <% end %>
+</ul>
+```
+
+These links are fully functional, feel free to visit them and interact with the
+pages. The templates that ship with Rodauth aim to provide a complete
+authentication experience, and the forms use [Boostrap] markup.
+
+Let's also add the `#current_account` method for retrieving the account of the
+the currently authenticated user:
+
 ```rb
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
@@ -182,120 +134,233 @@ class ApplicationController < ActionController::Base
   helper_method :current_account
 end
 ```
+```erb
+<p>Authenticated as: <%= current_account.email %></p>
+```
+
+Next, we'll likely want to require authentication for certain sections/pages of
+our app. We can do this in our Rodauth app's routing block, which helps keep
+the authentication logic encapsulated:
+
+```rb
+# lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  # ...
+  route do |r|
+    # ...
+    r.rodauth # route rodauth requests
+
+    # require authentication for /dashboard/* and /account/* routes
+    if r.path.start_with?("/dashboard") || r.path.start_with?("/account")
+      rodauth.require_authentication # redirect to login page if not authenticated
+    end
+  end
+end
+```
+
+We can also require authentication at the controller layer:
+
+```rb
+# app/controllers/application_controller.rb
+class ApplicationController < ActionController::Base
+  private
+
+  def authenticate
+    rodauth.require_authentication # redirect to login page if not authenticated
+  end
+end
+```
+```rb
+# app/controllers/dashboard_controller.rb
+class DashboardController < ApplicationController
+  before_action :authenticate
+end
+```
+```rb
+# app/controllers/posts_controller.rb
+class PostsController < ApplicationController
+  before_action :authenticate, except: [:index, :show]
+end
+```
+
+Or at the Rails router level:
+
+```rb
+# config/routes.rb
+Rails.application.routes.draw do
+  constraints(-> (req) { req.env["rodauth"].require_authentication }) do
+    namespace :admin do
+      # ...
+    end
+  end
+end
+```
 
 ### Views
 
-Rodauth ships with built-in templates that are used by default, which use
-Bootstrap classes. When you're ready to start customizing the views, you can
-run the following command to create the views for your app:
+The templates built into Rodauth are useful when getting started, but at some
+point we'll probably want more control over the markup. For that we can run the
+following command:
 
 ```sh
 $ rails generate rodauth:views
 ```
 
-This will copy views into your `app/views/rodauth/` directory, and add a
-`RodauthController` for rendering those views.
+This will copy views for all Rodauth features into your `app/views/rodauth`
+directory. Feel free to remove the views related to features you don't need.
 
-Note that these are just copies of Rodauth's built-in templates written for
-Rails, so it's possible that a template is missing in a newer Rodauth version.
-In this case Rodauth will just fall back to rendering the built-in template.
+To have Rodauth render our views, we'll need to change the `rails_controller`
+setting in our Rodauth app to point to the new `RodauthController`.
+
+```rb
+# lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  # ...
+  rodauth do
+    # ...
+    rails_controller { RodauthController }
+    # ...
+  end
+end
+```
+
+Note that the "rodauth" naming here is not required; you can just as well have
+an `AuthenticationController` render views from `app/views/authentication`
+directory, for example.
 
 ### Mailer
 
-Emails are sent using ActionMailer, with message headers and body defined by
-Rodauth configuration.
+Rodauth may send emails as part of the authentication flow. Most email settings
+can be customized:
 
 ```rb
-rodauth do
+# lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
   # ...
-  # general settings
-  email_from "no-reply@myapp.com"
-  email_subject_prefix "[MyApp] "
-  # ...
-  # feature settings
-  verify_account_email_subject "Verify your account"
-  verify_account_email_body { "Verify your account by visting this link: #{verify_account_email_link}" }
-  # ...
+  rodauth do
+    # ...
+    # general settings
+    email_from "no-reply@myapp.com"
+    email_subject_prefix "[MyApp] "
+    send_email(&:deliver_later)
+    # ...
+    # feature settings
+    verify_account_email_subject "Verify your account"
+    verify_account_email_body { "Verify your account by visting this link: #{verify_account_email_link}" }
+    # ...
+  end
 end
 ```
 
-This is convenient when starting out, but eventually you might want more
-control by using your own mailer. You can do this by overriding `#send_*_email`
-auth methods for individual Rodauth actions:
+This is convenient when starting out, but eventually you might want to use your
+own mailer. You can start by running the following command:
+
+```sh
+$ rails generate rodauth:mailer
+```
+
+This will create a `RodauthMailer` with the associated mailer views in
+`app/views/rodauth_mailer` directory.
 
 ```rb
-rodauth do
-  # ...
-  send_verify_account_email { rails_mailer_deliver(:verify_account, verify_account_email_link) }
-  send_reset_password_email { rails_mailer_deliver(:reset_password, reset_password_email_link) }
+# app/mailers/rodauth_mailer.rb
+class RodauthMailer < ApplicationMailer
+  def verify_account(recipient, email_link) ... end
+  def reset_password(recipient, email_link) ... end
+  def verify_login_change(recipient, old_login, new_login, email_link) ... end
+  def password_changed(recipient) ... end
+end
+```
 
-  auth_class_eval do
-    def rails_mailer_deliver(name, *args, **options)
-      email = AuthenticationMailer.public_send(name, email_to, *args, **options)
-      email.deliver_now # or .deliver_later
+You can then uncomment the lines in your Rodauth configuration to have it call
+your mailer. If you've enabled additional authentication features, make sure to
+override their `send_*_email` methods as well.
+
+```rb
+# lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  # ...
+  rodauth do
+    # ...
+    send_reset_password_email do
+      RodauthMailer.reset_password(email_to, password_reset_email_link).deliver_now
     end
+    send_verify_account_email do
+      RodauthMailer.verify_account(email_to, verify_account_email_link).deliver_now
+    end
+    send_verify_login_change_email do |login|
+      RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_email_link).deliver_now
+    end
+    send_password_changed_email do
+      RodauthMailer.password_changed(email_to).deliver_now
+    end
+    # send_email_auth_email do
+    #   RodauthMailer.email_auth(email_to, email_auth_email_link).deliver_now
+    # end
+    # send_unlock_account_email do
+    #   RodauthMailer.unlock_account(email_to, unlock_account_email_link).deliver_now
+    # end
+    # ...
   end
-  # ...
 end
 ```
-```rb
-# app/mailers/authentication_mailer.rb
-class AuthenticationMailer < ApplicationMailer
-  def verify_account(recipient, email_link)
-    @email_link = email_link
-
-    mail to: recipient, subject: "Verify Account"
-  end
-
-  def reset_password(recipient, email_link)
-    @email_link = email_link
-
-    mail to: recipient, subject: "Reset Password"
-  end
-
-  # ...
-end
-```
-```erb
-<!-- app/views/authentication_mailer/verify_account.text.erb -->
-Someone has created an account with this email address. If you did not create
-this account, please ignore this message. If you created this account, please go to
-<%= @email_link %>
-to verify the account.
-```
-```erb
-<!-- app/views/authentication_mailer/reset_password.text.erb -->
-Someone has requested a password reset for the account with this email
-address.  If you did not request a password reset, please ignore this
-message.  If you requested a password reset, please go to
-<%= @email_link %>
-to reset the password for the account.
-```
-
-See Rodauth's default `*-email` templates in the [`templates/`][templates]
-directory for inspiration.
 
 ## How it works
 
-The `Rodauth::Rails::App` class is a [Roda] subclass with some basic plugins
-preloaded.
+### Middleware
 
-```rb
-Rodauth::Rails::App.superclass #=> Roda
+rodauth-rails inserts a `Rodauth::Rails::Middleware` into your middleware
+stack, which delegates to your Rodauth app. This trick allows your Rodauth app
+to remain reloadable in development.
+
+```sh
+$ rails middleware
+...
+use Rodauth::Rails::Middleware
+run MyApp::Application.routes
 ```
 
-The app stores the `Rodauth::Auth` instance in the Rack env hash under
-`env["rodauth"]`, which is then available in controllers and views via the
-`#rodauth` method.
+The Rodauth app stores the `Rodauth::Auth` instance in the Rack env hash, which
+is then available in your Rails app:
 
 ```rb
 request.env["rodauth"] #=> #<Rodauth::Auth>
 # or
-request.env["rodauth.<name>"] #=> #<Rodauth::Auth> (if using multiple configurations)
+request.env["rodauth.secondary"] #=> #<Rodauth::Auth> (if using multiple configurations)
 ```
 
-The `rodauth { ... }` call internally loads the Rodauth plugin together with
-the Rails integration, and applies some default configuration.
+In controllers and views the `#rodauth` method can be used for convenience:
+
+```rb
+class MyController < ApplicationController
+  def my_action
+    rodauth #=> #<Rodauth::Auth>
+    # or
+    rodauth(:secondary) #=> #<Rodauth::Auth> (if using multiple configurations)
+  end
+end
+```
+```erb
+<% rodauth #=> #<Rodauth::Auth> %>
+<!-- or -->
+<% rodauth(:secondary) #=> #<Rodauth::Auth> (if using multiple configurations) %>
+```
+
+### App
+
+The `Rodauth::Rails::App` class is a [Roda] subclass with added behaviour that
+smooths out integration with Rails:
+
+* loads Roda's middleware plugin
+* assigns Rodauth instance to Rack env hash
+* uses Rails' flash instead of Roda's
+* uses Rails' CSRF protection instead of Roda's
+* sets [HMAC] secret with Rails' secret key base
+* uses ActionController for rendering templates
+* uses ActionMailer for sending emails
+
+The `rodauth { ... }` method wraps configuring the Rodauth plugin, forwarding
+any additional [options].
 
 ```rb
 rodauth { ... }             # defining default Rodauth configuration
@@ -303,43 +368,158 @@ rodauth(json: true)         # passing options to the Rodauth plugin
 rodauth(:secondary) { ... } # defining multiple Rodauth configurations
 ```
 
-The Rails integration does the following:
+### Sequel
 
-* automatically connects Sequel to the database ActiveRecord is connected to
-* renders views with ActionController & ActionView when views are copied
-* creates and sends emails using ActionMailer (using Rodauth configuration)
-* uses ActionDispatch::Flash for flash messages
-* verifies Rails authenticity token before Rodauth actions
-* sets [HMAC secret][HMAC] for additional security (uses Rails' `secret_key_base`)
-* disables usage of [database authentication functions] for easier setup
+Rodauth uses [Sequel] for database interaction, which requires it's own
+database connection. The rodauth-rails gem automatically connects Sequel with
+ActiveRecord's database settings, and does it's best to be in lockstep with
+ActiveRecord (when ActiveRecord disconnects so does Sequel, when ActiveRecord
+reconnects so does Sequel).
 
-## Configuring
-
-The Rails integration can be configured for additional flexibility:
+This does introduce some [performance](#performance-considerations) and usage
+caveats. For example, if you wanted to follow up account creation with creating
+a record associated to the new account, you'd need to wait until after the
+Sequel transaction commits to do so. This is because, from the perspective of
+ActiveRecord's connection, nothing has been persisted yet until the Sequel
+transaction commits.
 
 ```rb
-class RodauthMiddleware < Rodauth::Rails::App
+# lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
   rodauth do
     # ...
-    # use a different controller for rendering templates
-    rails_controller { AuthenticationController }
-    rails_render do |template_name|
-      # customize how templates are rendered
+    after_account_create do
+      db.after_commit do # wait until Sequel transaction commits
+        Profile.create!(account_id: account[:id])
+      end
     end
-    # ...
   end
+  # ...
 end
 ```
 
-See the [feature](/lib/rodauth/rails/feature.rb) source code for list of
-overridable methods and values.
+## Configuring
+
+For the list of configuration methods provided by Rodauth, see the [feature
+documentation].
+
+The `rails` feature rodauth-rails uses is customizable as well, here is the
+list of its configuration methods:
+
+| Name                        | Description                                                        |
+| :----                       | :----------                                                        |
+| `rails_render(**options)`   | Calls `#render` on the controller renderer.                        |
+| `rails_layout(view)`        | Layout to use for the given view.                                  |
+| `rails_renderer`            | Instance of `ActionController::Renderer`.                          |
+| `rails_csrf_tag`            | Hidden field added to Rodauth templates containing the CSRF token. |
+| `rails_csrf_param`          | Value of the `name` attribute for the CSRF tag.                    |
+| `rails_csrf_token`          | Value of the `value` attribute for the CSRF tag.                   |
+| `rails_check_csrf!`         | Verifies the authenticity token for the current request.           |
+| `rails_controller_instance` | Instance of the controller with the request env context.           |
+| `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
+
+The `Rodauth::Rails` module has several config settings available as well:
+
+| Name                     | Description                                                                                                                             |
+| :-----                   | :----------                                                                                                                             |
+| `app`                    | Constant name of your Rodauth app, which is called by the middleware.                                                                   |
+| `sequel_config`          | Options passed to `Sequel.connect`. Takes precedence over `activerecord_config`.                                                        |
+| `activerecord_config`    | ActiveRecord database configuration used for `Sequel.connect`.                                                                          |
+| `activerecord_extension` | Whether to extend `ActiveRecord::Base` with behaviour that manages Sequel connection in lockstep with ActiveRecord. Defaults to `true`. |
+| `middleware`             | Whether to insert the middleware into the Rails application's middleware stack. Defaults to `true`.                                     |
+| `sequel_connect`         | Whether to connect Sequel to the ActiveRecord database on initialization. Deafults to `true`                                            |
+
+If you wish to set `sequel_config` value with options based on ActiveRecord
+configuration, you can use the `Rodauth::Rails.activerecord_sequel_config`
+method.
+
+```rb
+activerecord_config = ActiveRecord::Base.configurations[Rails.env]
+activerecord_config #=>
+# {
+#   "adapter"          => "postgresql",
+#   "database"         => "mydb",
+#   "username"         => "janko",
+#   "password"         => "secret",
+#   "pool"             => 5,
+#   "checkout_timeout" => 5,
+# }
+
+sequel_config = Rodauth::Rails.activerecord_sequel_config(activerecord_config)
+sequel_config #=>
+# {
+#   adapter:         "postgresql",
+#   database:        "mydb",
+#   user:            "janko",
+#   password:        "secret",
+#   max_connections: 5,
+#   pool_timeout:    5,
+# }
+```
 
 ## Performance considerations
 
-Rodauth uses Sequel for database interaction, which cannot share the same
-connection as ActiveRecord. This means that your database might have up to
-twice as many open connections than it would normally have, depending on which
-worker model your web server is using.
+Rodauth uses [Sequel] for database interaction. Unfortunately, Sequel cannot
+share ActiveRecord's database connection, instead it needs to create its own.
+This will increase the total number of concurrent connections to your database.
+
+The amount of additional connections depends on your web server's concurrency
+model. If each web worker runs in a separate process, that means that each
+worker will need a separate Sequel connection. However, if your web server uses
+a thread pool, not each web worker will necessarily need a separate Sequel
+connection. This is because Sequel's connection pool allows connections to be
+reused across threads.
+
+Additionally, Rodauth minimizes the number of database queries that are made.
+For example, after the user has been authenticated, by default Rodauth doesn't
+make any additional Sequel queries on subsequent requests.
+
+## Rodauth defaults
+
+rodauth-rails changes some of the default Rodauth settings for greater
+convenience:
+
+### Database functions
+
+By default on PostgreSQL, MySQL, and Microsoft SQL Server, Rodauth uses
+database functions to access password hashes, with the user running the
+application unable to get direct access to password hashes. This reduces the
+risk of an attacker being able to access password hashes and use them to attack
+other sites.
+
+While this is useful additional security, it is also more complex to set up and
+to reason about, as it requires having two different database users and making
+sure the correct migration is run for the correct user.
+
+To keep with Rails' "convention over configuration" doctrine, rodauth-rails
+disables the use of database functions. It can still be turned back on, it's
+just disabled by default.
+
+### Account statuses
+
+The recommended [Rodauth migration] stores possible account status values in a
+separate table, and creates a foreign key on the accounts table, which ensures
+only a valid status value will be persisted.
+
+This doesn't work well when the database is restored from the schema file, in
+which case the account statuses table will be empty. This happens in tests by
+default, but it's also common in development, since older migrations often stop
+working and restoring from the schema file is the only way to get the database
+set up.
+
+To avoid these problems, rodauth-rails modifies the setup to store account
+status text directly in the accounts table. If you're worried about invalid
+status values creeping in, you can use enums. Alternatively, you can still
+go back to the setup recommended by Rodauth.
+
+## Rails support
+
+Rails 5.0 or above is supported. This is mainly due to the fact that Rails 5.0
+added the API for [rendering views outside of controllers], which this library
+relies on.
+
+If you're on an older version of Rails and would like to use this gem, let me
+know and we could try adding support together.
 
 ## License
 
@@ -349,13 +529,15 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 Everyone interacting in the rodauth-rails project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 
-[Rodauth]: https://rodauth.jeremyevans.net
+[Rodauth]: https://github.com/jeremyevans/rodauth
+[Sequel]: https://github.com/jeremyevans/sequel
 [rendering views outside of controllers]: https://blog.bigbinary.com/2016/01/08/rendering-views-outside-of-controllers-in-rails-5.html
-[Rodauth feature documentation]: http://rodauth.jeremyevans.net/documentation.html
-[Roda routing]: http://roda.jeremyevans.net/rdoc/files/README_rdoc.html#label-Usage
+[feature documentation]: http://rodauth.jeremyevans.net/documentation.html
+[Rodauth plugin]: https://github.com/jeremyevans/rodauth/#label-Plugin+Options
+[Bootstrap]: https://getbootstrap.com/
 [Roda]: http://roda.jeremyevans.net/
 [HMAC]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-HMAC
 [database authentication functions]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Password+Hash+Access+Via+Database+Functions
-[templates]: https://github.com/jeremyevans/rodauth/tree/master/templates
 [multiple configurations]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-With+Multiple+Configurations
 [views]: /app/views/rodauth
+[Rodauth migration]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Creating+tables
