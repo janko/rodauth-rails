@@ -2,7 +2,10 @@ module Rodauth
   module Rails
     module ControllerMethods
       def self.included(controller)
-        controller.helper_method(:rodauth) if controller.respond_to?(:helper_method)
+        # ActionController::API doesn't have helper methods
+        if controller.respond_to?(:helper_method)
+          controller.helper_method :rodauth
+        end
       end
 
       def rodauth(name = nil)

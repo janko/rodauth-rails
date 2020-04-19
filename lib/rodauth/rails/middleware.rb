@@ -9,7 +9,7 @@ module Rodauth
       end
 
       def call(env)
-        middleware = Rodauth::Rails.config.app
+        middleware = Rodauth::Rails.app
         middleware.new(@app).call(env)
       end
     end

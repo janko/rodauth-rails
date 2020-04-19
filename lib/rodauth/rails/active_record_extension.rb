@@ -10,10 +10,11 @@ module Rodauth
 
       def retrieve_connection(*)
         super.tap do
-          # when purging, ActiveRecord connects to the master database
-          if connection_pool.spec.config[:database] == configurations[::Rails.env].fetch("database")
-            Rodauth::Rails.sequel_connect
-          end
+          # When purging, ActiveRecord connects to the master database, so we
+          # avoid connecting Sequel in this case.
+          next if connection_pool.spec.config[:database] != Rodauth::Rails.config.activerecord_config.fetch("database")
+
+          Rodauth::Rails.sequel_connect
         end
       end
 

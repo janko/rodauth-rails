@@ -17,7 +17,7 @@ module Rodauth
           # load the Rails integration
           enable :rails
 
-          # database functions add complexity, so disable them for simpler setup
+          # database functions are more complex to set up, so disable them by default
           use_database_authentication_functions? false
 
           # avoid having to set deadline values in column default values
