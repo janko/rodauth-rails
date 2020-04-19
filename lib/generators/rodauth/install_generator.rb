@@ -11,12 +11,8 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
 
-        def copy_initializer_file
+        def copy_initializer
           template "config/initializers/rodauth.rb"
-        end
-
-        def copy_app_file
-          template "lib/rodauth_app.rb"
         end
 
         def copy_migration
@@ -24,10 +20,12 @@ module Rodauth
             migration_version: migration_version, adapter: adapter
         end
 
-        def autoload_lib
-          return if ::Rails.application.config.autoload_paths.include?("#{::Rails.root}/lib")
+        def copy_app
+          template "lib/rodauth_app.rb"
+        end
 
-          application %(config.autoload_paths += %W[\#{config.root}/lib])
+        def copy_model
+          template "app/models/account.rb"
         end
 
         private
