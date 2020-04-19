@@ -1,5 +1,5 @@
 class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
-  def up
+  def change
 <% if adapter == "postgresql" -%>
     enable_extension "citext"
 <% end -%>
@@ -166,29 +166,5 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
     #   t.string :code
     #   t.datetime :code_issued_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
     # end
-  end
-
-  def down
-    # drop_table :account_sms_codes
-    # drop_table :account_recovery_codes
-    # drop_table :account_otp_keys
-    # drop_table :account_webauthn_keys
-    # drop_table :account_webauthn_user_ids
-    # drop_table :account_active_session_keys
-    # drop_table :account_session_keys
-    # drop_table :account_activity_times
-    # drop_table :account_password_change_times
-    # drop_table :account_email_auth_keys
-    # drop_table :account_lockouts
-    # drop_table :account_login_failures
-    # drop_table :account_previous_password_hashes
-    # drop_table :account_jwt_refresh_keys
-    # drop_table :account_authentication_audit_logs
-    drop_table :account_remember_keys
-    drop_table :account_login_change_keys
-    drop_table :account_verification_keys
-    drop_table :account_password_reset_keys
-    drop_table :account_password_hashes
-    drop_table :accounts
   end
 end
