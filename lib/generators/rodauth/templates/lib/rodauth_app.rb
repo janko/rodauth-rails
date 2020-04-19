@@ -1,6 +1,6 @@
 class RodauthApp < Rodauth::Rails::App
   rodauth do
-    # list of authentication features that are loaded
+    # List of authentication features that are loaded.
     enable :create_account, :verify_account, :verify_account_grace_period,
       :login, :remember, :logout,
       :reset_password, :change_password, :change_password_notify,
@@ -11,6 +11,9 @@ class RodauthApp < Rodauth::Rails::App
     # http://rodauth.jeremyevans.net/documentation.html
 
     # ==> General
+    # Specify the controller used for view rendering and CSRF verification.
+    rails_controller { ApplicationController }
+
     # Store account status in a text column.
     account_status_column :status
     account_unverified_status_value "unverified"
@@ -31,10 +34,10 @@ class RodauthApp < Rodauth::Rails::App
     # reset_password_autologin? true
 
     # Delete the account record when the user has closed their account.
-    # delete_account_on_close?
+    # delete_account_on_close? true
 
-    # Specify the controller used for view rendering and CSRF verification.
-    rails_controller { ApplicationController }
+    # Redirect to the app from login and registration pages if already logged in.
+    # already_logged_in { redirect login_redirect }
 
     # ==> Emails
     # Uncomment the lines below once you've imported mailer views.
@@ -108,10 +111,6 @@ class RodauthApp < Rodauth::Rails::App
     #   Profile.find_by!(account_id: account[:id]).destroy
     # end
 
-    # Redirect to the app from login/registration routes if already logged in
-    # before_login_route          { redirect login_redirect if logged_in? }
-    # before_create_account_route { redirect login_redirect if logged_in? }
-
     # ==> Redirects
     # Redirect to home page after logout.
     logout_redirect "/"
@@ -136,8 +135,9 @@ class RodauthApp < Rodauth::Rails::App
     #     AuthenticationMailer.public_send(name, *args).deliver_later
     #   end
     # end
+    #
+    # Then use the new custom method in configuration blocks.
     # send_password_reset_email do
-    #   # use the new custom method
     #   my_send_email(:password_reset, email_to, password_reset_email_link)
     # end
   end
@@ -147,18 +147,16 @@ class RodauthApp < Rodauth::Rails::App
 
     r.rodauth # route rodauth requests
 
-    # Exit the routing block for requests that don't require authentication.
-    # Some examples:
+    # ==> Authenticating Requests
+    # Call `rodauth.require_authentication` for requests that you want to
+    # require authentication for. Some examples:
     #
-    # next unless r.path.start_with?("/dashboard") # authenticate /dashboard/* routes
-    # next if r.path.start_with?("/webhooks") # skip authentication for webhooks
+    # next if r.path.start_with?("/docs") # skip authentication for documentation pages
     # next if session[:admin] # skip authentication for admins
     #
-    # The following skips authentication for all routes:
-    next if r.path.start_with?("/")
-
-    rodauth.require_authentication # redirect to login/MFA if not authenticated
-
-    nil # let the request go through to the Rails router
+    # # authenticate /dashboard/* and /account/* requests
+    # if r.path.start_with?("/dashboard") || r.path.start_with?("/account")
+    #   rodauth.require_authentication
+    # end
   end
 end
