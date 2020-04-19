@@ -4,6 +4,7 @@ module Rodauth
 
     auth_methods(
       :rails_render,
+      :rails_layout,
       :rails_renderer,
       :rails_csrf_tag,
       :rails_csrf_param,
@@ -13,16 +14,15 @@ module Rodauth
       :rails_controller,
     )
 
-    def view(page, title)
-      rails_render template: page.tr("-", "_")
-    rescue ActionView::MissingTemplate
-      rails_render html: super.html_safe, layout: true
+    def view(page, *)
+      rails_render(template: page.tr("-", "_"), layout: rails_layout(page.tr("-", "_"))) ||
+        rails_render(html: super.html_safe, layout: rails_layout(page.tr("-", "_")))
     end
 
     def render(page)
-      rails_render template: page.tr("-", "_"), layout: false
-    rescue ActionView::MissingTemplate
-      super
+      rails_render(partial: page.tr("-", "_"), layout: false) ||
+        rails_render(template: page.tr("-", "_"), layout: false) ||
+        super
     end
 
     def csrf_tag(*)
@@ -48,12 +48,18 @@ module Rodauth
       email.deliver_now
     end
 
-    def rails_render(*args)
-      rails_renderer.render(*args)
+    def rails_render(**options)
+      rails_renderer.render(**options)
+    rescue ActionView::MissingTemplate
+      nil
     end
 
     def rails_renderer
       ActionController::Renderer.new(rails_controller, scope.env, {})
+    end
+
+    def rails_layout(view)
+      true
     end
 
     def rails_csrf_tag
