@@ -1,6 +1,8 @@
-<h2>Other Options</h2>
-<ul>
-  <% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
-    <li><%= link_to text, link %></li>
-  <% end %>
-</ul>
+<% unless rodauth.login_form_footer_links.empty? %> 
+  <h2>Other Options</h2>
+  <ul>
+    <% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
+      <li><%= link_to text, link %></li>
+    <% end %>
+  </ul>
+<% end %>
