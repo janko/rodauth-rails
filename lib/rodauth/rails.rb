@@ -32,7 +32,7 @@ module Rodauth
       def sequel_connect
         return unless Sequel::DATABASES.empty?
 
-        db = Sequel.connect config.sequel_config || activerecord_sequel_config
+        db = Sequel.connect(sequel_config)
         db.extension :date_arithmetic # used by Rodauth
         db
       end
@@ -46,11 +46,12 @@ module Rodauth
         Sequel.synchronize { Sequel::DATABASES.delete(db) }
       end
 
-      # Converts ActiveRecord database options into Sequel database options.
-      def activerecord_sequel_config(config = nil)
-        config ||= self.config.activerecord_config
-        config ||= ActiveRecord::Base.configurations[::Rails.env]
+      def sequel_config
+        config.sequel_config || activerecord_sequel_config
+      end
 
+      # Converts ActiveRecord database options into Sequel database options.
+      def activerecord_sequel_config(config = activerecord_config)
         {
           adapter:         config.fetch("adapter").sub("sqlite3", "sqlite"),
           database:        config.fetch("database"),
@@ -61,6 +62,10 @@ module Rodauth
           max_connections: config["pool"],
           pool_timeout:    config["checkout_timeout"],
         }.compact
+      end
+
+      def activerecord_config
+        config.activerecord_config || ActiveRecord::Base.configurations[::Rails.env]
       end
     end
 
