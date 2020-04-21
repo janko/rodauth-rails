@@ -426,11 +426,23 @@ The `Rodauth::Rails` module has several config settings available as well:
 | `activerecord_config`    | ActiveRecord database configuration used for `Sequel.connect`.                                                                          |
 | `activerecord_extension` | Whether to extend `ActiveRecord::Base` with behaviour that manages Sequel connection in lockstep with ActiveRecord. Defaults to `true`. |
 | `middleware`             | Whether to insert the middleware into the Rails application's middleware stack. Defaults to `true`.                                     |
-| `sequel_connect`         | Whether to connect Sequel to the ActiveRecord database on initialization. Deafults to `true`                                            |
+| `sequel_autoconnect`     | Whether to connect Sequel to the ActiveRecord database on initialization. Deafults to `true`                                            |
+
+```rb
+# config/initializers/rodauth.rb
+Rodauth::Rails.configure do |config|
+  config.app = "RodauthApp"
+  config.sequel_config = nil
+  config.activerecord_config = ActiveRecord::Base.configurations[Rails.env]
+  config.activerecord_extension = true
+  config.middleware = true
+  config.sequel_autoconnect = true
+end
+```
 
 If you wish to set `sequel_config` value with options based on ActiveRecord
 configuration, you can use the `Rodauth::Rails.activerecord_sequel_config`
-method.
+helper method which converts given ActiveRecord config into Sequel config.
 
 ```rb
 activerecord_config = ActiveRecord::Base.configurations[Rails.env]
