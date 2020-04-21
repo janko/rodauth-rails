@@ -206,11 +206,18 @@ following command:
 $ rails generate rodauth:views
 ```
 
-This will copy views for all Rodauth features into your `app/views/rodauth`
-directory. Feel free to remove the views related to features you don't need.
+This will copy views for Rodauth features that are enabled by default into your
+`app/views/rodauth` directory. Feel free to remove the views related to
+features you're not using. You can also specify a list of features which you
+want to generate views for (this will not remove any existing views):
 
-To have Rodauth render our views, we'll need to change the `rails_controller`
-setting in our Rodauth app to point to the new `RodauthController`.
+```sh
+$ rails generate rodauth:views --features login create_account verify_account reset_password
+```
+
+To have Rodauth render the imported views, we'll need to change the
+`rails_controller` setting in our Rodauth app to point to the new
+`RodauthController`.
 
 ```rb
 # lib/rodauth_app.rb
