@@ -7,7 +7,7 @@ module Rodauth
     class Railtie < ::Rails::Railtie
       initializer "rodauth.sequel" do
         ActiveSupport.on_load(:active_record) do
-          Rodauth::Rails.activerecord_sequel_connect if Rodauth::Rails.config.sequel_autoconnect
+          Rodauth::Rails.sequel_connect if Rodauth::Rails.config.sequel_autoconnect
         end
       end
 
