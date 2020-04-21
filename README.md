@@ -409,7 +409,6 @@ list of its configuration methods:
 | Name                        | Description                                                        |
 | :----                       | :----------                                                        |
 | `rails_render(**options)`   | Calls `#render` on the controller renderer.                        |
-| `rails_layout(view)`        | Layout to use for the given view.                                  |
 | `rails_renderer`            | Instance of `ActionController::Renderer`.                          |
 | `rails_csrf_tag`            | Hidden field added to Rodauth templates containing the CSRF token. |
 | `rails_csrf_param`          | Value of the `name` attribute for the CSRF tag.                    |

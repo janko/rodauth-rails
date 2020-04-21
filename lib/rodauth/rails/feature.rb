@@ -5,7 +5,6 @@ module Rodauth
     # List of overridable methods.
     auth_methods(
       :rails_render,
-      :rails_layout,
       :rails_renderer,
       :rails_csrf_tag,
       :rails_csrf_param,
@@ -18,8 +17,8 @@ module Rodauth
     # Renders templates with layout. First tries to render a user-defined
     # template, otherwise falls back to Rodauth's template.
     def view(page, *)
-      rails_render(template: page.tr("-", "_"), layout: rails_layout(page.tr("-", "_"))) ||
-        rails_render(html: super.html_safe, layout: rails_layout(page.tr("-", "_")))
+      rails_render(template: page.tr("-", "_"), layout: true) ||
+        rails_render(html: super.html_safe, layout: true)
     end
 
     # Renders templates without layout. First tries to render a user-defined
@@ -68,11 +67,6 @@ module Rodauth
     # Instantiates a controller renderer with current request's env hash.
     def rails_renderer
       ActionController::Renderer.new(rails_controller, scope.env, {})
-    end
-
-    # Which layout to use for the given view. Defaults to controller's layout.
-    def rails_layout(view)
-      true
     end
 
     # Hidden tag with Rails CSRF token inserted into Rodauth templates.
