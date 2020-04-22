@@ -19,6 +19,13 @@ module Rodauth
         end
 
         module RequestMethods
+          # If the redirect would bubble up outside of the Roda app, the after
+          # hook would never get called, so we make sure to commit the flash.
+          def redirect(*)
+            commit_flash
+            super
+          end
+
           def flash
             rails_request.flash
           end
