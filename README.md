@@ -475,6 +475,50 @@ sequel_config #=>
 # }
 ```
 
+## Testing
+
+For system tests it's generally better to go through the actual authentication
+flow with tools like Capybara, and to not use any stubbing.
+
+In functional and integration tests you can just make requests to Rodauth
+routes:
+
+```rb
+# test/controllers/posts_controller_test.rb
+class PostsControllerTest < ActionDispatch::IntegrationTest
+  test "should require authentication" do
+    get posts_url
+    assert_redirected_to "/login"
+
+    login
+    get posts_url
+    assert_response :success
+
+    logout
+    assert_redirected_to "/login"
+  end
+
+  private
+
+  def login(login: "user@example.com", password: "secret")
+    post "/create-account", params: {
+      "login"            => login,
+      "password"         => password,
+      "password-confirm" => password,
+    }
+
+    post "/login", params: {
+      "login"    => login,
+      "password" => password,
+    }
+  end
+
+  def logout
+    post "/logout"
+  end
+end
+```
+
 ## Performance considerations
 
 Rodauth uses [Sequel] for database interaction. Unfortunately, Sequel cannot
