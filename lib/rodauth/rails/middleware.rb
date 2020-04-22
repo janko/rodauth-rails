@@ -9,8 +9,12 @@ module Rodauth
       end
 
       def call(env)
-        middleware = Rodauth::Rails.app
-        middleware.new(@app).call(env)
+        app = Rodauth::Rails.app.new(@app)
+
+        # allow the Rails app to call Rodauth methods that throw :halt
+        catch(:halt) do
+          app.call(env)
+        end
       end
     end
   end
