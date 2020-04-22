@@ -7,7 +7,7 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
     create_table :accounts, id: :bigint do |t|
 <% case adapter -%>
 <% when "postgresql" -%>
-      t.citext :email, null: false, index: { unique: true, where: "status_id IN (1, 2)" }
+      t.citext :email, null: false, index: { unique: true, where: "status IN ('verified', 'unverified')" }
 <% else -%>
       t.string :email, null: false, index: { unique: true }
 <% end -%>
