@@ -377,33 +377,13 @@ rodauth(:secondary) { ... } # defining multiple Rodauth configurations
 
 ### Sequel
 
-Rodauth uses [Sequel] for database interaction, which requires it's own
-database connection. The rodauth-rails gem automatically connects Sequel with
-ActiveRecord's database settings, and does it's best to be in lockstep with
-ActiveRecord (when ActiveRecord disconnects so does Sequel, when ActiveRecord
-reconnects so does Sequel).
+Rodauth uses the [Sequel] library for database queries, due to more advanced
+database usage (SQL expressions, database-agnostic date arithmetic, SQL
+function calls).
 
-This does introduce some [performance](#performance-considerations) and usage
-caveats. For example, if you wanted to follow up account creation with creating
-a record associated to the new account, you'd need to wait until after the
-Sequel transaction commits to do so. This is because, from the perspective of
-ActiveRecord's connection, nothing has been persisted yet until the Sequel
-transaction commits.
-
-```rb
-# lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  rodauth do
-    # ...
-    after_account_create do
-      db.after_commit do # wait until Sequel transaction commits
-        Profile.create!(account_id: account[:id])
-      end
-    end
-  end
-  # ...
-end
-```
+If ActiveRecord is used in the application, Sequel will automatically reuse
+ActiveRecord's database connection. This means that, from the usage
+perspective, Sequel can be considered just as an implementation detail.
 
 ## Configuring
 
@@ -426,53 +406,17 @@ list of its configuration methods:
 
 The `Rodauth::Rails` module has several config settings available as well:
 
-| Name                     | Description                                                                                                                             |
-| :-----                   | :----------                                                                                                                             |
-| `app`                    | Constant name of your Rodauth app, which is called by the middleware.                                                                   |
-| `sequel_config`          | Options passed to `Sequel.connect`. Takes precedence over `activerecord_config`.                                                        |
-| `activerecord_config`    | ActiveRecord database configuration used for `Sequel.connect`.                                                                          |
-| `activerecord_extension` | Whether to extend `ActiveRecord::Base` with behaviour that manages Sequel connection in lockstep with ActiveRecord. Defaults to `true`. |
-| `middleware`             | Whether to insert the middleware into the Rails application's middleware stack. Defaults to `true`.                                     |
-| `sequel_autoconnect`     | Whether to connect Sequel to the ActiveRecord database on initialization. Deafults to `true`                                            |
+| Name         | Description                                                                                         |
+| :-----       | :----------                                                                                         |
+| `app`        | Constant name of your Rodauth app, which is called by the middleware.                               |
+| `middleware` | Whether to insert the middleware into the Rails application's middleware stack. Defaults to `true`. |
 
 ```rb
 # config/initializers/rodauth.rb
 Rodauth::Rails.configure do |config|
   config.app = "RodauthApp"
-  config.sequel_config = nil
-  config.activerecord_config = ActiveRecord::Base.configurations[Rails.env]
-  config.activerecord_extension = true
   config.middleware = true
-  config.sequel_autoconnect = true
 end
-```
-
-If you wish to set `sequel_config` value with options based on ActiveRecord
-configuration, you can use the `Rodauth::Rails.activerecord_sequel_config`
-helper method which converts given ActiveRecord config into Sequel config.
-
-```rb
-activerecord_config = ActiveRecord::Base.configurations[Rails.env]
-activerecord_config #=>
-# {
-#   "adapter"          => "postgresql",
-#   "database"         => "mydb",
-#   "username"         => "janko",
-#   "password"         => "secret",
-#   "pool"             => 5,
-#   "checkout_timeout" => 5,
-# }
-
-sequel_config = Rodauth::Rails.activerecord_sequel_config(activerecord_config)
-sequel_config #=>
-# {
-#   adapter:         "postgresql",
-#   database:        "mydb",
-#   user:            "janko",
-#   password:        "secret",
-#   max_connections: 5,
-#   pool_timeout:    5,
-# }
 ```
 
 ## Testing
@@ -518,23 +462,6 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
   end
 end
 ```
-
-## Performance considerations
-
-Rodauth uses [Sequel] for database interaction. Unfortunately, Sequel cannot
-share ActiveRecord's database connection, instead it needs to create its own.
-This will increase the total number of concurrent connections to your database.
-
-The amount of additional connections depends on your web server's concurrency
-model. If each web worker runs in a separate process, that means that each
-worker will need a separate Sequel connection. However, if your web server uses
-a thread pool, not each web worker will necessarily need a separate Sequel
-connection. This is because Sequel's connection pool allows connections to be
-reused across threads.
-
-Additionally, Rodauth minimizes the number of database queries that are made.
-For example, after the user has been authenticated, by default Rodauth doesn't
-make any additional Sequel queries on subsequent requests.
 
 ## Rodauth defaults
 

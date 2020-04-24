@@ -1,19 +1,12 @@
 require "rodauth/rails/middleware"
 require "rodauth/rails/controller_methods"
-require "rodauth/rails/active_record_extension"
 
 module Rodauth
   module Rails
     class Railtie < ::Rails::Railtie
-      initializer "rodauth.sequel" do
+      initializer "rodauth.active_record" do
         ActiveSupport.on_load(:active_record) do
-          Rodauth::Rails.sequel_connect if Rodauth::Rails.config.sequel_autoconnect
-        end
-      end
-
-      initializer "rodauth.activerecord" do
-        ActiveSupport.on_load(:active_record) do
-          extend Rodauth::Rails::ActiveRecordExtension if Rodauth::Rails.config.activerecord_extension
+          Rodauth::Rails.activerecord_integrate
         end
       end
 
