@@ -362,7 +362,7 @@ smooths out integration with Rails:
 * assigns Rodauth instance to Rack env hash
 * uses Rails' flash instead of Roda's
 * uses Rails' CSRF protection instead of Roda's
-* sets [HMAC] secret with Rails' secret key base
+* sets [HMAC] secret to Rails' secret key base
 * uses ActionController for rendering templates
 * uses ActionMailer for sending emails
 
