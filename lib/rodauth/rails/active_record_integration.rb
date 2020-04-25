@@ -65,14 +65,15 @@ module Rodauth
       end
 
       module DatabaseMethods
-        def transaction(savepoint: nil, **)
+        def transaction(savepoint: nil, rollback: nil, **)
           requires_new = savepoint == :only && ActiveRecord::Base.connection.transaction_open?
 
           ActiveRecord::Base.connection.transaction(requires_new: requires_new) do
             begin
               yield ConnectionWrapper.new(ActiveRecord::Base.connection)
+              raise ActiveRecord::Rollback if rollback == :always
             rescue Sequel::Rollback
-              raise ActiveRecord::Rollback
+              raise ActiveRecord::Rollback unless rollback == :reraise
             end
           end
         end
