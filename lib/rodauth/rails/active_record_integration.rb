@@ -30,21 +30,28 @@ module Rodauth
           @connection = connection
         end
 
-        def execute(*args)
+        def execute(*args, &block)
+          case @connection.adapter_name.downcase
+          when "postgresql"
+            activerecord_postgres_execute(*args, &block)
+          else
+            @connection.raw_connection.execute(*args, &block)
+          end
+        end
+
+        private
+
+        def activerecord_postgres_execute(*args)
           begin
             result = @connection.execute(*args)
           rescue ActiveRecord::RecordNotUnique => exception
-            if @connection.adapter_name.downcase == "sqlite"
-              raise Sequel::ConstraintViolation, exception.message, exception.backtrace
-            else
-              raise Sequel::UniqueConstraintViolation, exception.message, exception.backtrace
-            end
+            raise Sequel::UniqueConstraintViolation, exception.message, exception.backtrace
           end
 
-          if block_given?
-            yield result
-          else
-            result
+          begin
+            block_given? ? yield(result) : result.cmd_tuples
+          ensure
+            result.clear if result && result.respond_to?(:clear)
           end
         end
 
