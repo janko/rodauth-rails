@@ -102,7 +102,8 @@ module Rodauth
           end
 
           views.each do |view|
-            template "app/views/rodauth/#{view}.html.erb"
+            create_file "app/views/rodauth/#{view}.html.erb",
+              File.read("#{__dir__}/templates/app/views/rodauth/#{view}.html.erb")
           end
         end
       end
