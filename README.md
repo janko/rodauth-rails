@@ -21,7 +21,8 @@ $ rails generate rodauth:install
 The generator will create the following files:
 
 * migration at `db/migrate/*_create_rodauth.rb`
-* initializer at `config/initializers/rodauth.rb` and `config/initializers/sequel.rb`
+* initializer at `config/initializers/rodauth.rb`
+* initializer at `config/initializers/sequel.rb` (ActiveRecord integration)
 * app at `lib/rodauth_app.rb`
 
 The migration file creates tables required by Rodauth. You're encouraged to
