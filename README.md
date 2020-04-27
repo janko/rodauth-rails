@@ -21,7 +21,7 @@ $ rails generate rodauth:install
 The generator will create the following files:
 
 * migration at `db/migrate/*_create_rodauth.rb`
-* initializer at `config/initializers/rodauth.rb`
+* initializer at `config/initializers/rodauth.rb` and `config/initializers/sequel.rb`
 * app at `lib/rodauth_app.rb`
 
 The migration file creates tables required by Rodauth. You're encouraged to
@@ -49,14 +49,25 @@ Once you're done, you can run the migration:
 $ rails db:migrate
 ```
 
-The initializer sets the constant for your Rodauth app, which will be inserted
-into your middleware stack.
+The `rodauth.rb` initializer sets the constant for your Rodauth app, which will
+be inserted into your middleware stack.
 
 ```rb
 # config/initializers/rodauth.rb
 Rodauth::Rails.configure do |config|
   config.app = "RodauthApp"
 end
+```
+
+If you're using ActiveRecord, a `sequel.rb` initializer will be added as well,
+which configures Sequel to use ActiveRecord's connection.
+
+```rb
+# config/initializers/sequel.rb
+require "sequel-activerecord-adapter"
+
+# creates a Sequel "connection" that reuses the existing ActiveRecord connection
+DB = Sequel.activerecord
 ```
 
 Your Rodauth app is created in the `lib/` directory, and it comes with a
@@ -381,9 +392,13 @@ Rodauth uses the [Sequel] library for database queries, due to more advanced
 database usage (SQL expressions, database-agnostic date arithmetic, SQL
 function calls).
 
-If ActiveRecord is used in the application, Sequel will automatically reuse
-ActiveRecord's database connection. This means that, from the usage
-perspective, Sequel can be considered just as an implementation detail.
+If ActiveRecord is used in the application, the `rodauth:install` generator
+will have automatically set up Sequel with the [sequel-activerecord-adapter]
+gem. This gem configures Sequel to reuse the existing ActiveRecord connection
+for its database interaction.
+
+This means that, from the usage perspective, Sequel can be considered just
+as an implementation detail of Rodauth.
 
 ## Configuring
 
@@ -530,3 +545,4 @@ Everyone interacting in the rodauth-rails project's codebases, issue trackers, c
 [multiple configurations]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-With+Multiple+Configurations
 [views]: /app/views/rodauth
 [Rodauth migration]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Creating+tables
+[sequel-activerecord-adapter]: https://github.com/janko/sequel-activerecord-adapter

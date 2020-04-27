@@ -15,7 +15,15 @@ module Rodauth
           template "config/initializers/rodauth.rb"
         end
 
+        def copy_initializer
+          return unless defined?(ActiveRecord::Base)
+
+          template "config/initializers/sequel.rb"
+        end
+
         def copy_migration
+          return unless defined?(ActiveRecord::Base)
+
           migration_template "db/migrate/create_rodauth.rb", "db/migrate/create_rodauth.rb",
             migration_version: migration_version, adapter: adapter
         end
