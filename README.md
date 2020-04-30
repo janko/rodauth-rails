@@ -20,10 +20,10 @@ $ rails generate rodauth:install
 
 The generator will create the following files:
 
-* migration at `db/migrate/*_create_rodauth.rb`
-* initializer at `config/initializers/rodauth.rb`
-* initializer at `config/initializers/sequel.rb` (ActiveRecord integration)
-* app at `lib/rodauth_app.rb`
+* Rodauth migration at `db/migrate/*_create_rodauth.rb`
+* Rodauth initializer at `config/initializers/rodauth.rb`
+* Sequel initializer at `config/initializers/sequel.rb` for ActiveRecord integration
+* Rodauth app at `lib/rodauth_app.rb`
 
 The migration file creates tables required by Rodauth. You're encouraged to
 review the migration, and modify it so that you only create tables for features
@@ -33,12 +33,12 @@ you intend to use.
 # db/migrate/*_create_rodauth.rb
 class CreateRodauth < ActiveRecord::Migration
   def change
-    create_table(:accounts) { ... }
-    create_table(:account_password_hashes) { ... }
-    create_table(:account_password_reset_keys) { ... }
-    create_table(:account_verification_keys) { ... }
-    create_table(:account_login_change_keys) { ... }
-    create_table(:account_remember_keys) { ... }
+    create_table :accounts do |t| ... end
+    create_table :account_password_hashes do |t| ... end
+    create_table :account_password_reset_keys do |t| ... end
+    create_table :account_verification_keys do |t| ... end
+    create_table :account_login_change_keys do |t| ... end
+    create_table :account_remember_keys do |t| ... end
     # ...
   end
 end
@@ -50,8 +50,8 @@ Once you're done, you can run the migration:
 $ rails db:migrate
 ```
 
-The `rodauth.rb` initializer sets the constant for your Rodauth app, which will
-be inserted into your middleware stack.
+The `rodauth.rb` initializer assigns the constant for your Rodauth app, which
+will be called by the middleware that's added in front of your Rails router.
 
 ```rb
 # config/initializers/rodauth.rb
@@ -65,15 +65,17 @@ which configures Sequel to use ActiveRecord's connection.
 
 ```rb
 # config/initializers/sequel.rb
-require "sequel-activerecord-adapter"
+require "sequel/core"
 
-# creates a Sequel "connection" that reuses the existing ActiveRecord connection
-DB = Sequel.activerecord
+# initialize the appropriate Sequel adapter without creating a connection
+DB = Sequel.postgres(test: false)
+# have Sequel use ActiveRecord's connection for database interaction
+DB.extension :activerecord_connection
 ```
 
 Your Rodauth app is created in the `lib/` directory, and it comes with a
 default set of authentication features enabled. This is where you configure
-your authentication behaviour, see the comments and Rodauth [feature
+your authentication behaviour, see the comments and Rodauth's [feature
 documentation] for the list of things you can configure.
 
 ```rb
@@ -104,7 +106,7 @@ end
 ```
 
 Lastly, the generator will create an `Account` model, which you can use to
-access the created user accounts.
+access the user accounts managed by Rodauth.
 
 ```rb
 # app/models/account.rb
@@ -200,7 +202,7 @@ Or at the Rails router level:
 ```rb
 # config/routes.rb
 Rails.application.routes.draw do
-  constraints(-> (req) { req.env["rodauth"].require_authentication }) do
+  constraints -> (r) { r.env["rodauth"].require_authentication } do
     namespace :admin do
       # ...
     end
@@ -288,6 +290,8 @@ class RodauthMailer < ApplicationMailer
   def reset_password(recipient, email_link) ... end
   def verify_login_change(recipient, old_login, new_login, email_link) ... end
   def password_changed(recipient) ... end
+  # def email_auth(recipient, email_link) ... end
+  # def unlock_account(recipient, email_link) ... end
 end
 ```
 
@@ -329,8 +333,8 @@ end
 ### Middleware
 
 rodauth-rails inserts a `Rodauth::Rails::Middleware` into your middleware
-stack, which delegates to your Rodauth app. This trick allows your Rodauth app
-to remain reloadable in development.
+stack, which calls your Rodauth app for each request, before the request
+reaches the Rails router.
 
 ```sh
 $ rails middleware
@@ -344,34 +348,30 @@ is then available in your Rails app:
 
 ```rb
 request.env["rodauth"] #=> #<Rodauth::Auth>
-# or
 request.env["rodauth.secondary"] #=> #<Rodauth::Auth> (if using multiple configurations)
 ```
 
-In controllers and views the `#rodauth` method can be used for convenience:
+For convenience, this object can be accessed via the `#rodauth` method in views
+and controllers:
 
 ```rb
 class MyController < ApplicationController
   def my_action
     rodauth #=> #<Rodauth::Auth>
-    # or
     rodauth(:secondary) #=> #<Rodauth::Auth> (if using multiple configurations)
   end
 end
 ```
 ```erb
 <% rodauth #=> #<Rodauth::Auth> %>
-<!-- or -->
 <% rodauth(:secondary) #=> #<Rodauth::Auth> (if using multiple configurations) %>
 ```
 
 ### App
 
-The `Rodauth::Rails::App` class is a [Roda] subclass with added behaviour that
-smooths out integration with Rails:
+The `Rodauth::Rails::App` class is a [Roda] subclass that provides Rails
+integration for Rodauth:
 
-* loads Roda's middleware plugin
-* assigns Rodauth instance to Rack env hash
 * uses Rails' flash instead of Roda's
 * uses Rails' CSRF protection instead of Roda's
 * sets [HMAC] secret to Rails' secret key base
@@ -394,9 +394,8 @@ database usage (SQL expressions, database-agnostic date arithmetic, SQL
 function calls).
 
 If ActiveRecord is used in the application, the `rodauth:install` generator
-will have automatically set up Sequel with the [sequel-activerecord-adapter]
-gem. This gem configures Sequel to reuse the existing ActiveRecord connection
-for its database interaction.
+will have automatically configured Sequel to reuse ActiveRecord's database
+connection (using the [sequel-activerecord_connection] gem).
 
 This means that, from the usage perspective, Sequel can be considered just
 as an implementation detail of Rodauth.
@@ -406,7 +405,7 @@ as an implementation detail of Rodauth.
 For the list of configuration methods provided by Rodauth, see the [feature
 documentation].
 
-The `rails` feature rodauth-rails uses is customizable as well, here is the
+The `rails` feature rodauth-rails loads is customizable as well, here is the
 list of its configuration methods:
 
 | Name                        | Description                                                        |
@@ -420,7 +419,7 @@ list of its configuration methods:
 | `rails_controller_instance` | Instance of the controller with the request env context.           |
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 
-The `Rodauth::Rails` module has several config settings available as well:
+The `Rodauth::Rails` module has a few config settings available as well:
 
 | Name         | Description                                                                                         |
 | :-----       | :----------                                                                                         |
@@ -437,8 +436,8 @@ end
 
 ## Testing
 
-For system tests it's generally better to go through the actual authentication
-flow with tools like Capybara, and to not use any stubbing.
+If you're writing system tests, it's generally better to go through the actual
+authentication flow with tools like Capybara, and to not use any stubbing.
 
 In functional and integration tests you can just make requests to Rodauth
 routes:
@@ -481,8 +480,7 @@ end
 
 ## Rodauth defaults
 
-rodauth-rails changes some of the default Rodauth settings for greater
-convenience:
+rodauth-rails changes some of the default Rodauth settings for easier setup:
 
 ### Database functions
 
@@ -497,8 +495,7 @@ to reason about, as it requires having two different database users and making
 sure the correct migration is run for the correct user.
 
 To keep with Rails' "convention over configuration" doctrine, rodauth-rails
-disables the use of database functions. It can still be turned back on, it's
-just disabled by default.
+disables the use of database functions, though it can still be turned back on.
 
 ### Account statuses
 
@@ -506,16 +503,14 @@ The recommended [Rodauth migration] stores possible account status values in a
 separate table, and creates a foreign key on the accounts table, which ensures
 only a valid status value will be persisted.
 
-This doesn't work well when the database is restored from the schema file, in
-which case the account statuses table will be empty. This happens in tests by
-default, but it's also common in development, since older migrations often stop
-working and restoring from the schema file is the only way to get the database
-set up.
+Unfortunately, this doesn't work when the database is restored from the schema
+file, in which case the account statuses table will be empty. This happens in
+tests by default, but it's also commonly done in development.
 
-To avoid these problems, rodauth-rails modifies the setup to store account
-status text directly in the accounts table. If you're worried about invalid
-status values creeping in, you can use enums. Alternatively, you can still
-go back to the setup recommended by Rodauth.
+To address this, rodauth-rails modifies the setup to store account status text
+directly in the accounts table. If you're worried about invalid status values
+creeping in, you may use enums instead. Alternatively, you can still go back to
+the setup recommended by Rodauth.
 
 ## Rails support
 
@@ -528,11 +523,14 @@ know and we could try adding support together.
 
 ## License
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+The gem is available as open source under the terms of the [MIT
+License](https://opensource.org/licenses/MIT).
 
 ## Code of Conduct
 
-Everyone interacting in the rodauth-rails project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the rodauth-rails project's codebases, issue trackers,
+chat rooms and mailing lists is expected to follow the [code of
+conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 
 [Rodauth]: https://github.com/jeremyevans/rodauth
 [Sequel]: https://github.com/jeremyevans/sequel
@@ -546,4 +544,4 @@ Everyone interacting in the rodauth-rails project's codebases, issue trackers, c
 [multiple configurations]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-With+Multiple+Configurations
 [views]: /app/views/rodauth
 [Rodauth migration]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Creating+tables
-[sequel-activerecord-adapter]: https://github.com/janko/sequel-activerecord-adapter
+[sequel-activerecord_connection]: https://github.com/janko/sequel-activerecord_connection

@@ -17,8 +17,10 @@ module Rodauth
 
         def copy_initializer
           return unless defined?(ActiveRecord::Base)
+          return if defined?(Sequel) # probably already configured
+          return unless %w[postgresql mysql2 sqlite3].include?(adapter)
 
-          template "config/initializers/sequel.rb"
+          template "config/initializers/sequel.rb", adapter: adapter
         end
 
         def copy_migration
@@ -48,8 +50,7 @@ module Rodauth
         end
 
         def adapter
-          config = ActiveRecord::Base.configurations[::Rails.env]
-          config.fetch("adapter")
+          ActiveRecord::Base.connection_config.fetch(:adapter)
         end
       end
     end
