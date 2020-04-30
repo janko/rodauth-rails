@@ -22,8 +22,17 @@ module Rodauth
 
         def copy_mailer_views
           VIEWS.each do |view|
-            create_file "app/views/rodauth_mailer/#{view}.text.erb",
-              File.read("#{__dir__}/templates/app/views/rodauth_mailer/#{view}.text.erb")
+            raw_template "app/views/rodauth_mailer/#{view}.text.erb"
+          end
+        end
+
+        private
+
+        # Copies the file without evaluating ERB, skipping if it already
+        # exists.
+        def raw_template(path)
+          unless Rails.root.join(path).exist?
+            create_file path, File.read("#{__dir__}/templates/#{path}")
           end
         end
       end

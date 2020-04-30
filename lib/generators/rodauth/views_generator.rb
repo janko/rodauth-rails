@@ -102,8 +102,17 @@ module Rodauth
           end
 
           views.each do |view|
-            create_file "app/views/rodauth/#{view}.html.erb",
-              File.read("#{__dir__}/templates/app/views/rodauth/#{view}.html.erb")
+            raw_template "app/views/rodauth/#{view}.html.erb"
+          end
+        end
+
+        private
+
+        # Copies the file without evaluating ERB, skipping if it already
+        # exists.
+        def raw_template(path)
+          unless Rails.root.join(path).exist?
+            create_file path, File.read("#{__dir__}/templates/#{path}")
           end
         end
       end
