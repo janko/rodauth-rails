@@ -24,13 +24,6 @@ matrix:
       gemfile: gemfiles/Gemfile.rails-6.0
     - rvm: 2.2
       gemfile: gemfiles/Gemfile.rails-5.2
-  allow_failures:
-    - rvm: 2.3
-      gemfile: gemfiles/Gemfile.rails-5.2
-    - rvm: 2.3
-      gemfile: gemfiles/Gemfile.rails-5.1
-    - rvm: 2.3
-      gemfile: gemfiles/Gemfile.rails-5.0
 
 before_script: "bundle update"
 
