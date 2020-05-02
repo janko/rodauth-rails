@@ -32,7 +32,7 @@ module Rodauth
       end
 
       before do
-        opts[:rodauths]&.each do |name, _|
+        (opts[:rodauths] || {}).each do |name, _|
           if name
             env["rodauth.#{name}"] = rodauth(name)
           else
