@@ -6,8 +6,4 @@ Rails.application.routes.draw do
     get :auth2
     get :secondary
   end
-
-  controller :test_api do
-    get :auth_api
-  end
 end

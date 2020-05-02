@@ -12,6 +12,8 @@ Rails.backtrace_cleaner.remove_silencers! # show full stack traces
 class IntegrationTest < ActiveSupport::TestCase
   include Capybara::DSL
 
+  self.test_order = :random
+
   def register(login: "user@example.com", password: "secret", verify: false)
     visit "/create-account"
     fill_in "Login", with: login

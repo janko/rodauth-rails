@@ -5,7 +5,6 @@ module Rodauth
     # List of overridable methods.
     auth_methods(
       :rails_render,
-      :rails_renderer,
       :rails_csrf_tag,
       :rails_csrf_param,
       :rails_csrf_token,
@@ -58,19 +57,10 @@ module Rodauth
     end
 
     # Calls the Rails renderer, returning nil if a template is missing.
-    def rails_render(**options)
-      rails_renderer.render(**options)
+    def rails_render(*args)
+      rails_controller_instance.render_to_string(*args)
     rescue ActionView::MissingTemplate
       nil
-    end
-
-    # Instantiates a controller renderer with current request's env hash.
-    def rails_renderer
-      renderer = ActionController::Renderer.new(rails_controller, scope.env, {})
-      if ActionPack.version < Gem::Version.new("5.1.0")
-        renderer.instance_variable_set("@env", scope.env)
-      end
-      renderer
     end
 
     # Hidden tag with Rails CSRF token inserted into Rodauth templates.
@@ -95,9 +85,18 @@ module Rodauth
 
     # Instances of the configured controller with current request's env hash.
     def rails_controller_instance
-      controller = rails_controller.new
-      controller.set_request! ActionDispatch::Request.new(scope.env)
-      controller
+      request  = ActionDispatch::Request.new(scope.env)
+      instance = rails_controller.new
+
+      if ActionPack.version >= Gem::Version.new("5.0.0")
+        instance.set_request! request
+        instance.set_response! rails_controller.make_response!(request)
+      else
+        instance.send(:set_response!, request)
+        instance.instance_variable_set(:@_request, request)
+      end
+
+      instance
     end
 
     # Controller class to use for rendering and CSRF protection.

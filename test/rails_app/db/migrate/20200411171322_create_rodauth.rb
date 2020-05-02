@@ -1,6 +1,12 @@
-version = eval("#{::Rails::VERSION::MAJOR}.#{::Rails::VERSION::MINOR}")
+version = eval("#{::ActiveRecord::VERSION::MAJOR}.#{::ActiveRecord::VERSION::MINOR}")
 
-class CreateRodauth < ActiveRecord::Migration[version]
+if ActiveRecord.version >= Gem::Version.new("5.0.0")
+  superclass = ActiveRecord::Migration[version]
+else
+  superclass = ActiveRecord::Migration
+end
+
+class CreateRodauth < superclass
   self.verbose = false
 
   def change

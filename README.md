@@ -1,6 +1,6 @@
 # rodauth-rails
 
-Provides Rails 5.0+ integration for the [Rodauth] authentication framework.
+Provides Rails integration for the [Rodauth] authentication framework.
 
 ## Installation
 
@@ -444,8 +444,7 @@ list of its configuration methods:
 
 | Name                        | Description                                                        |
 | :----                       | :----------                                                        |
-| `rails_render(**options)`   | Calls `#render` on the controller renderer.                        |
-| `rails_renderer`            | Instance of `ActionController::Renderer`.                          |
+| `rails_render(**options)`   | Renders the template with given render options.                    |
 | `rails_csrf_tag`            | Hidden field added to Rodauth templates containing the CSRF token. |
 | `rails_csrf_param`          | Value of the `name` attribute for the CSRF tag.                    |
 | `rails_csrf_token`          | Value of the `value` attribute for the CSRF tag.                   |
@@ -545,15 +544,6 @@ To address this, rodauth-rails modifies the setup to store account status text
 directly in the accounts table. If you're worried about invalid status values
 creeping in, you may use enums instead. Alternatively, you can still go back to
 the setup recommended by Rodauth.
-
-## Rails support
-
-Rails 5.0 or above is supported. This is mainly due to the fact that Rails 5.0
-added the API for [rendering views outside of controllers], which this library
-relies on.
-
-If you're on an older version of Rails and would like to use this gem, let me
-know and we could try adding support together.
 
 ## License
 

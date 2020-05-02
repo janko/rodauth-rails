@@ -22,10 +22,4 @@ class AuthenticationTest < IntegrationTest
     assert_equal current_path, "/auth2"
     assert_includes page.html, %(Authenticated as user@example.com)
   end
-
-  test "requiring authentication from API controller" do
-    visit "/auth_api"
-
-    assert_equal current_path, "/login"
-  end
 end

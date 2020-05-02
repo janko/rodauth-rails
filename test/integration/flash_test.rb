@@ -38,7 +38,7 @@ class FlashTest < IntegrationTest
   end
 
   test "halted now alert" do
-    register
+    register(verify: true)
     logout
 
     login(password: "invalid")

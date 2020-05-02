@@ -12,7 +12,7 @@ class RenderTest < IntegrationTest
   end
 
   test "built-in Rodauth templates with halting" do
-    register
+    register(verify: true)
     logout
 
     login(password: "invalid")
@@ -38,7 +38,7 @@ class RenderTest < IntegrationTest
   end
 
   test "custom views as partials" do
-    register(login: "user@example.com", password: "secret")
+    register(login: "user@example.com", password: "secret", verify: true)
     logout
 
     visit "/login"
