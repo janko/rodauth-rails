@@ -9,7 +9,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "rodauth initializer" do
     run_generator
 
-    assert_file "config/initializers/rodauth.rb", <<~RUBY
+    assert_file "config/initializers/rodauth.rb", <<-RUBY.strip_heredoc
       Rodauth::Rails.configure do |config|
         config.app = "RodauthApp"
       end

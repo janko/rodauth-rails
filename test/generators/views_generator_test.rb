@@ -92,7 +92,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     if Rodauth::MAJOR == 2
-      assert_file "app/views/rodauth/_login_form_footer.html.erb", <<~ERB
+      assert_file "app/views/rodauth/_login_form_footer.html.erb", <<-ERB.strip_heredoc
         <% unless rodauth.login_form_footer_links.empty? %>
           <h2>Other Options</h2>
           <ul>
@@ -103,7 +103,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
         <% end %>
       ERB
     else
-      assert_file "app/views/rodauth/_login_form_footer.html.erb", <<~ERB
+      assert_file "app/views/rodauth/_login_form_footer.html.erb", <<-ERB.strip_heredoc
         <% if rodauth.features.include?(:create_account) %>
           <p><%= link_to "Create a New Account", rodauth.create_account_path %></p>
         <% end %>
@@ -124,14 +124,14 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     if Rodauth::MAJOR == 2
-      assert_file "app/views/rodauth/logout.html.erb", <<~ERB
+      assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
         <%= form_tag rodauth.logout_path, method: :post do %>
           <%= render "global_logout_field" if rodauth.features.include?(:active_sessions) %>
           <%= render "submit", value: "Logout", class: "btn btn-warning" %>
         <% end %>
       ERB
     else
-      assert_file "app/views/rodauth/logout.html.erb", <<~ERB
+      assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
         <%= form_tag rodauth.logout_path, method: :post do %>
           <%= render "submit", value: "Logout", class: "btn btn-warning" %>
         <% end %>
@@ -143,14 +143,14 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator %w[--features otp]
 
     if Rodauth::MAJOR == 2
-      assert_file "app/views/rodauth/otp_auth.html.erb", <<~ERB
+      assert_file "app/views/rodauth/otp_auth.html.erb", <<-ERB.strip_heredoc
         <%= form_tag rodauth.otp_auth_path, method: :post do %>
           <%= render "otp_auth_code_field" %>
           <%= render "submit", value: "Authenticate Using TOTP" %>
         <% end %>
       ERB
     else
-      assert_file "app/views/rodauth/otp_auth.html.erb", <<~ERB
+      assert_file "app/views/rodauth/otp_auth.html.erb", <<-ERB.strip_heredoc
         <%= form_tag rodauth.otp_auth_path, method: :post do %>
           <%= render "otp_auth_code_field" %>
           <%= render "submit", value: "Authenticate Using TOTP" %>
