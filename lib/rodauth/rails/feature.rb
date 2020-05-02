@@ -66,7 +66,11 @@ module Rodauth
 
     # Instantiates a controller renderer with current request's env hash.
     def rails_renderer
-      ActionController::Renderer.new(rails_controller, scope.env, {})
+      renderer = ActionController::Renderer.new(rails_controller, scope.env, {})
+      if ActionPack.version < Gem::Version.new("5.1.0")
+        renderer.instance_variable_set("@env", scope.env)
+      end
+      renderer
     end
 
     # Hidden tag with Rails CSRF token inserted into Rodauth templates.

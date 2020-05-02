@@ -4,13 +4,13 @@ require "bundler/setup"
 require "rodauth/version"
 require_relative "rails_app/config/environment"
 require "rails/test_help"
+require "capybara/rails"
 
 ActiveRecord::Migrator.migrations_paths = [Rails.root.join("db/migrate")]
-
 Rails.backtrace_cleaner.remove_silencers! # show full stack traces
 
-class IntegrationTest < ActionDispatch::SystemTestCase
-  driven_by :rack_test
+class IntegrationTest < ActiveSupport::TestCase
+  include Capybara::DSL
 
   def register(login: "user@example.com", password: "secret", verify: false)
     visit "/create-account"
@@ -42,12 +42,21 @@ class IntegrationTest < ActionDispatch::SystemTestCase
 
   def setup
     super
-    ActiveRecord::Base.connection.migration_context.up
+    if ActiveRecord.version >= Gem::Version.new("5.2.0")
+      ActiveRecord::Base.connection.migration_context.up
+    else
+      ActiveRecord::Migrator.up(Rails.application.paths["db/migrate"].to_a)
+    end
   end
 
   def teardown
     super
-    ActiveRecord::Base.connection.migration_context.down
+    if ActiveRecord.version >= Gem::Version.new("5.2.0")
+      ActiveRecord::Base.connection.migration_context.down
+    else
+      ActiveRecord::Migrator.down(Rails.application.paths["db/migrate"].to_a)
+    end
     ActionMailer::Base.deliveries.clear
+    Capybara.reset_sessions!
   end
 end
