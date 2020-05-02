@@ -86,10 +86,6 @@ module Rodauth
     # Instances of the configured controller with current request's env hash.
     def rails_controller_instance
       request  = ActionDispatch::Request.new(scope.env)
-      if ActionPack.version >= Gem::Version.new("5.0.0")
-        request.routes = rails_controller._routes
-      end
-
       instance = rails_controller.new
 
       if ActionPack.version >= Gem::Version.new("5.0.0")
