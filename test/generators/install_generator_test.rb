@@ -26,10 +26,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     if ActiveRecord.version >= Gem::Version.new("5.0.0")
-      migration_version = "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
+      migration_version = Regexp.escape("[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]")
     end
 
-    assert_migration "db/migrate/create_rodauth.rb", /class CreateRodauth < ActiveRecord::Migration#{Regexp.escape(migration_version)}/
+    assert_migration "db/migrate/create_rodauth.rb", /class CreateRodauth < ActiveRecord::Migration#{migration_version}/
     assert_migration "db/migrate/create_rodauth.rb", /t\.string :email, null: false, index: { unique: true }/
   end
 
