@@ -44,7 +44,9 @@ module Rodauth
         end
 
         def migration_version
-          "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
+          if ActiveRecord.version >= Gem::Version.new("5.0.0")
+            "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
+          end
         end
 
         def adapter
