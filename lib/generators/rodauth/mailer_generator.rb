@@ -16,23 +16,19 @@ module Rodauth
           verify_login_change
         ]
 
+        class_option :name,
+          desc: "The name for the mailer and the views directory",
+          default: "rodauth"
+
         def copy_mailer
-          template "app/mailers/rodauth_mailer.rb"
+          template "app/mailers/rodauth_mailer.rb",
+            "app/mailers/#{options[:name].underscore}_mailer.rb"
         end
 
         def copy_mailer_views
           VIEWS.each do |view|
-            raw_template "app/views/rodauth_mailer/#{view}.text.erb"
-          end
-        end
-
-        private
-
-        # Copies the file without evaluating ERB, skipping if it already
-        # exists.
-        def raw_template(path)
-          unless Rails.root.join(path).exist?
-            create_file path, File.read("#{__dir__}/templates/#{path}")
+            template "app/views/rodauth_mailer/#{view}.text.erb",
+              "app/views/#{options[:name].underscore}_mailer/#{view}.text.erb"
           end
         end
       end

@@ -81,7 +81,7 @@ documentation] for the list of things you can configure.
 ```rb
 # lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
-  rodauth do
+  configure do
     # configuration
   end
 
@@ -220,24 +220,15 @@ following command:
 $ rails generate rodauth:views
 ```
 
-This will copy views for Rodauth features that are enabled by default into your
-`app/views/rodauth` directory. Feel free to remove the views related to
-features you're not using. You can also specify a list of features which you
-want to generate views for (this will not remove any existing views):
-
-```sh
-$ rails generate rodauth:views --features login create_account verify_account reset_password
-```
-
-To have Rodauth render the imported views, we'll need to change the
-`rails_controller` setting in our Rodauth app to point to the new
-`RodauthController`.
+This will copy views for the default set of Rodauth features into your
+`app/views/rodauth` directory, and create a `RodauthController`. Now we just
+need to tell our Rodauth app to use the new controller for rendering views:
 
 ```rb
 # lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   # ...
-  rodauth do
+  configure do
     # ...
     rails_controller { RodauthController }
     # ...
@@ -245,9 +236,52 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
-Note that the "rodauth" naming here is not required; you can just as well have
-an `AuthenticationController` render views from `app/views/authentication`
-directory, for example.
+Feel free to name the controller and views directory in any way you like. You
+can also pass the name to the generator:
+
+```sh
+# creates AuthenticationController and copies views into app/views/authentication
+$ rails generate rodauth:views --name authentication
+```
+
+You can pass a list of Rodauth features to the generator to create views for
+these features (this will not remove any existing views):
+
+```sh
+$ rails generate rodauth:views --features login create_account lockout otp
+```
+
+Or you can generate views for all features:
+
+```sh
+$ rails generate rodauth:views --all
+```
+
+#### Layout
+
+To use different layouts for different Rodauth views, you can compare the
+request path in the layout method:
+
+```rb
+class RodauthController < ApplicationController
+  layout :rodauth_layout
+
+  private
+
+  def rodauth_layout
+    case request.path
+    when rodauth.login_path,
+         rodauth.create_account_path,
+         rodauth.verify_account_path,
+         rodauth.reset_password_path,
+         rodauth.reset_password_request_path
+      "authentication"
+    else
+      "dashboard"
+    end
+  end
+end
+```
 
 ### Mailer
 
@@ -258,7 +292,7 @@ can be customized:
 # lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   # ...
-  rodauth do
+  configure do
     # ...
     # general settings
     email_from "no-reply@myapp.com"
@@ -303,7 +337,7 @@ override their `send_*_email` methods as well.
 # lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   # ...
-  rodauth do
+  configure do
     # ...
     send_reset_password_email do
       RodauthMailer.reset_password(email_to, password_reset_email_link).deliver_now
@@ -378,13 +412,13 @@ integration for Rodauth:
 * uses ActionController for rendering templates
 * uses ActionMailer for sending emails
 
-The `rodauth { ... }` method wraps configuring the Rodauth plugin, forwarding
+The `configure { ... }` method wraps configuring the Rodauth plugin, forwarding
 any additional [options].
 
 ```rb
-rodauth { ... }             # defining default Rodauth configuration
-rodauth(json: true)         # passing options to the Rodauth plugin
-rodauth(:secondary) { ... } # defining multiple Rodauth configurations
+configure { ... }             # defining default Rodauth configuration
+configure(json: true)         # passing options to the Rodauth plugin
+configure(:secondary) { ... } # defining multiple Rodauth configurations
 ```
 
 ### Sequel

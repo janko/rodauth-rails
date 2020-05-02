@@ -11,23 +11,21 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
 
-        def copy_initializer
+        def copy_rodauth_initializer
           template "config/initializers/rodauth.rb"
         end
 
-        def copy_initializer
+        def copy_sequel_initializer
           return unless defined?(ActiveRecord::Base)
-          return if defined?(Sequel) # probably already configured
           return unless %w[postgresql mysql2 sqlite3].include?(adapter)
 
-          template "config/initializers/sequel.rb", adapter: adapter
+          template "config/initializers/sequel.rb"
         end
 
         def copy_migration
           return unless defined?(ActiveRecord::Base)
 
-          migration_template "db/migrate/create_rodauth.rb", "db/migrate/create_rodauth.rb",
-            migration_version: migration_version, adapter: adapter
+          migration_template "db/migrate/create_rodauth.rb", "db/migrate/create_rodauth.rb"
         end
 
         def copy_app
@@ -46,7 +44,7 @@ module Rodauth
         end
 
         def migration_version
-          "[#{::Rails::VERSION::MAJOR}.#{::Rails::VERSION::MINOR}]"
+          "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
         end
 
         def adapter

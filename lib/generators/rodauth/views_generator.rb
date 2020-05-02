@@ -1,4 +1,5 @@
 require "rails/generators/base"
+require "rodauth/version"
 
 module Rodauth
   module Rails
@@ -53,7 +54,7 @@ module Rodauth
             _global_logout_field
           ],
           two_factor_base: %w[
-            _field _field_error password_field _submit
+            _field _field_error _password_field _submit
             two_factor_manage two_factor_auth two_factor_disable
           ],
           otp: %w[
@@ -71,7 +72,7 @@ module Rodauth
           ],
           webauthn: %w[
             _field _field_error _login_hidden_field _password_field _submit
-            webauthn_setup webauthn_auth_webauthn_remove
+            webauthn_setup webauthn_auth webauthn_remove
           ]
         }
 
@@ -85,34 +86,45 @@ module Rodauth
 
         class_option :features, aliases: "-f", type: :array,
           desc: "Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)",
-          default: %w[login create_account verify_account reset_password change_password change_login verify_login_change close_account]
+          default: %w[login logout create_account verify_account reset_password change_password change_login verify_login_change close_account]
+
+        class_option :all, aliases: "-a", type: :boolean,
+          desc: "Whether to generate views for all features",
+          default: false
+
+        class_option :name,
+          desc: "The name for the views directory, controller and helper",
+          default: "rodauth"
 
         def copy_controller
-          template "app/controllers/rodauth_controller.rb"
+          template "app/controllers/rodauth_controller.rb",
+            "app/controllers/#{options[:name].underscore}_controller.rb"
         end
 
         def copy_helper
-          template "app/helpers/rodauth_helper.rb"
+          template "app/helpers/rodauth_helper.rb",
+            "app/helpers/#{options[:name].underscore}_helper.rb"
         end
 
         def copy_views
-          views = options[:features].inject([]) do |list, feature|
+          features = options[:all] ? VIEWS.keys : options[:features]
+
+          views = features.inject([]) do |list, feature|
             list |= VIEWS[feature.to_sym] || []
             list |= VIEWS[DEPENDENCIES[feature.to_sym]] || []
           end
 
-          views.each do |view|
-            raw_template "app/views/rodauth/#{view}.html.erb"
+          if Rodauth::MAJOR == 1
+            views -= %w[
+              multi_phase_login _global_logout_field
+              two_factor_manage two_factor_auth two_factor_disable
+              webauthn_setup webauthn_auth webauthn_remove
+            ]
           end
-        end
 
-        private
-
-        # Copies the file without evaluating ERB, skipping if it already
-        # exists.
-        def raw_template(path)
-          unless Rails.root.join(path).exist?
-            create_file path, File.read("#{__dir__}/templates/#{path}")
+          views.each do |view|
+            template "app/views/rodauth/#{view}.html.erb",
+              "app/views/#{options[:name].underscore}/#{view}.html.erb"
           end
         end
       end

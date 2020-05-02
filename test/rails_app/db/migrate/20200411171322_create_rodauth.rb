@@ -1,26 +1,17 @@
-class CreateRodauth < ActiveRecord::Migration[6.0]
-  def up
+version = eval("#{::Rails::VERSION::MAJOR}.#{::Rails::VERSION::MINOR}")
 
-    # Used by the account verification and close account features
-    create_table :account_statuses do |t|
-      t.string :name, null: false, unique: true
-    end
-    execute "INSERT INTO account_statuses (id, name) VALUES (1, 'Unverified'), (2, 'Verified'), (3, 'Closed')"
+class CreateRodauth < ActiveRecord::Migration[version]
+  self.verbose = false
 
+  def change
     create_table :accounts, id: :bigint do |t|
-      t.references :status, foreign_key: { to_table: :account_statuses }, null: false, default: 1
-      t.string :email, null: false
-      t.index :email, unique: true
+      t.string :email, null: false, index: { unique: true }
+      t.string :status, null: false, default: "verified"
     end
 
+    # Used if storing password hashes in a separate table (default)
     create_table :account_password_hashes, id: :bigint do |t|
       t.foreign_key :accounts, column: :id
-      t.string :password_hash, null: false
-    end
-
-    # Used by the disallow_password_reuse feature
-    create_table :account_previous_password_hashes, id: :bigint do |t|
-      t.references :account
       t.string :password_hash, null: false
     end
 
@@ -53,6 +44,30 @@ class CreateRodauth < ActiveRecord::Migration[6.0]
       t.foreign_key :accounts, column: :id
       t.string :key, null: false
       t.datetime :deadline, null: false
+    end
+
+    # Used by the audit logging feature
+    create_table :account_authentication_audit_logs, id: :bigint do |t|
+      t.references :account, type: :bigint, null: false
+      t.datetime :at, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.text :message, null: false
+      t.json :metadata
+      t.index [:account_id, :at], name: "audit_account_at_idx"
+      t.index :at, name: "audit_at_idx"
+    end
+
+    # Used by the jwt refresh feature
+    create_table :account_jwt_refresh_keys, id: :bigint do |t|
+      t.references :account, null: false, type: :bigint
+      t.string :key, null: false
+      t.datetime :deadline, null: false
+      t.index :account_id, name: "account_jwt_rk_account_id_idx"
+    end
+
+    # Used by the disallow_password_reuse feature
+    create_table :account_previous_password_hashes, id: :bigint do |t|
+      t.references :account, type: :bigint
+      t.string :password_hash, null: false
     end
 
     # Used by the lockout feature
@@ -95,6 +110,27 @@ class CreateRodauth < ActiveRecord::Migration[6.0]
       t.string :key, null: false
     end
 
+    # Used by the active sessions feature
+    create_table :account_active_session_keys, primary_key: [:account_id, :session_id] do |t|
+      t.references :account, type: :bigint
+      t.string :session_id
+      t.datetime :created_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :last_use, null: false, default: -> { "CURRENT_TIMESTAMP" }
+    end
+
+    # Used by the webauthn feature
+    create_table :account_webauthn_user_ids, id: :bigint do |t|
+      t.foreign_key :accounts, column: :id
+      t.string :webauthn_id, null: false
+    end
+    create_table :account_webauthn_keys, primary_key: [:account_id, :webauthn_id] do |t|
+      t.references :account, type: :bigint
+      t.string :webauthn_id
+      t.string :public_key, null: false
+      t.integer :sign_count, null: false
+      t.datetime :last_use, null: false, default: -> { "CURRENT_TIMESTAMP" }
+    end
+
     # Used by the otp feature
     create_table :account_otp_keys, id: :bigint do |t|
       t.foreign_key :accounts, column: :id
@@ -118,28 +154,5 @@ class CreateRodauth < ActiveRecord::Migration[6.0]
       t.string :code
       t.datetime :code_issued_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
     end
-  end
-
-  def down
-    [
-      :account_sms_codes,
-      :account_recovery_codes,
-      :account_otp_keys,
-      :account_session_keys,
-      :account_activity_times,
-      :account_password_change_times,
-      :account_email_auth_keys,
-      :account_lockouts,
-      :account_login_failures,
-      :account_remember_keys,
-      :account_login_change_keys,
-      :account_verification_keys,
-      :account_jwt_refresh_keys,
-      :account_password_reset_keys,
-      :account_password_hashes,
-      :account_previous_password_hashes,
-      :accounts,
-      :account_statuses,
-    ].each { |table| drop_table(table) }
   end
 end

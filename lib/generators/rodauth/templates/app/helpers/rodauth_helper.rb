@@ -1,4 +1,4 @@
-module RodauthHelper
+module <%= options[:name].camelize %>Helper
   def locals
     local_assigns
   end

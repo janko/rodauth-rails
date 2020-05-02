@@ -1,4 +1,13 @@
-<%= form_tag rodauth.otp_auth_path, method: :post do %>
-  <%= render "otp_auth_code_field" %>
-  <%= render "submit", value: "Authenticate Using TOTP" %>
-<% end %>
+<%%= form_tag rodauth.otp_auth_path, method: :post do %>
+  <%%= render "otp_auth_code_field" %>
+  <%%= render "submit", value: "Authenticate Using TOTP" %>
+<%% end %>
+<% if Rodauth::MAJOR == 1 -%>
+
+<%% if rodauth.features.include?(:sms_codes) && rodauth.sms_available? %>
+  <p><%%= link_to "Authenticate using SMS code", rodauth.sms_request_path %></p>
+<%% end %>
+<%% if rodauth.features.include?(:recovery_codes) %>
+  <p><%%= link_to "Authenticate using recovery code", rodauth.recovery_auth_path %></p>
+<%% end %>
+<% end -%>

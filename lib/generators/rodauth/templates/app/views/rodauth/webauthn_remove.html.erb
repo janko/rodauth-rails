@@ -1,13 +1,13 @@
-<%= form_tag rodauth.webauthn_remove_path, method: :post, id: "webauthn-remove-form" do %>
-  <%= render "password_field" if rodauth.two_factor_modifications_require_password? %>
+<%%= form_tag rodauth.webauthn_remove_path, method: :post, id: "webauthn-remove-form" do %>
+  <%%= render "password_field" if rodauth.two_factor_modifications_require_password? %>
   <fieldset class="form-group">
-    <% (usage = rodauth.account_webauthn_usage).each do |id, last_use| %>
+    <%% (usage = rodauth.account_webauthn_usage).each do |id, last_use| %>
       <div class="form-check">
-        <%= render "field", name: rodauth.webauthn_remove_param, id: "webauthn-remove-#{id}", type: :radio, class: "form-check-input", skip_error_message: true, value: id, required: false %>
-        <%= label_tag "webauthn-remove-#{id}", "Last use: #{last_use}", class: "form-check-label" %>
-        <%= render "field_error", name: rodauth.webauthn_remove_param if id == usage.keys.last %>
+        <%%= render "field", name: rodauth.webauthn_remove_param, id: "webauthn-remove-#{id}", type: :radio, class: "form-check-input", skip_error_message: true, value: id, required: false %>
+        <%%= label_tag "webauthn-remove-#{id}", "Last use: #{last_use}", class: "form-check-label" %>
+        <%%= render "field_error", name: rodauth.webauthn_remove_param if id == usage.keys.last %>
       </div>
-    <% end %>
+    <%% end %>
   </fieldset>
-  <%= render "submit", value: "Remove WebAuthn Authenticator" %>
-<% end %>
+  <%%= render "submit", value: "Remove WebAuthn Authenticator" %>
+<%% end %>

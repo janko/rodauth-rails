@@ -1,0 +1,5 @@
+<% if rodauth.authenticated? %>
+  <p>Authenticated as <%= current_account.email %></p>
+<% else %>
+  <p>Not authenticated</p>
+<% end %>

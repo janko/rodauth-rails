@@ -1,4 +1,4 @@
-class RodauthMailer < ApplicationMailer
+class <%= options[:name].camelize %>Mailer < ApplicationMailer
   def verify_account(recipient, email_link)
     @email_link = email_link
 

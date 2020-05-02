@@ -1,0 +1,2 @@
+class RodauthController < ApplicationController
+end

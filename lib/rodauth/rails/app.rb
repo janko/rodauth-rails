@@ -12,7 +12,7 @@ module Rodauth
 
       plugin Flash
 
-      def self.rodauth(name = nil, **options, &block)
+      def self.configure(name = nil, **options, &block)
         plugin :rodauth, name: name, csrf: false, flash: false, **options do
           # load the Rails integration
           enable :rails

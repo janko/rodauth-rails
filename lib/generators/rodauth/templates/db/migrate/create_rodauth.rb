@@ -2,8 +2,8 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
   def change
 <% if adapter == "postgresql" -%>
     enable_extension "citext"
-<% end -%>
 
+<% end -%>
     create_table :accounts, id: :bigint do |t|
 <% case adapter -%>
 <% when "postgresql" -%>

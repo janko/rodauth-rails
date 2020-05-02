@@ -1,9 +1,9 @@
-<%= form_tag rodauth.login_path, method: :post do %>
-  <% if rodauth.skip_login_field_on_login? %>
-    <%= render "login_display" %>
-  <% else %>
-    <%= render "login_field" %>
-  <% end %>
-  <%= render "password_field" unless rodauth.skip_password_field_on_login? %>
-  <%= render "submit", value: "Login" %>
-<% end %>
+<%%= form_tag rodauth.login_path, method: :post do %>
+  <%% if rodauth.skip_login_field_on_login? %>
+    <%%= render "login_display" %>
+  <%% else %>
+    <%%= render "login_field" %>
+  <%% end %>
+  <%%= render "password_field" unless rodauth.skip_password_field_on_login? %>
+  <%%= render "submit", value: "Login" %>
+<%% end %>

@@ -1,4 +1,4 @@
-<%= form_tag rodauth.sms_disable_path, method: :post do %>
-  <%= render "password_field" if rodauth.two_factor_modifications_require_password? %>
-  <%= render "submit", value: "Disable Backup SMS Authentication" %>
-<% end %>
+<%%= form_tag rodauth.sms_disable_path, method: :post do %>
+  <%%= render "password_field" if rodauth.two_factor_modifications_require_password? %>
+  <%%= render "submit", value: "Disable Backup SMS Authentication" %>
+<%% end %>

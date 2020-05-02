@@ -15,9 +15,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "railties", ">= 5.0", "< 7"
-  spec.add_dependency "rodauth", "~> 2.0"
+  spec.add_dependency "rodauth", ">= 1.23", "< 3"
   spec.add_dependency "sequel-activerecord_connection", "~> 0.2"
   spec.add_dependency "tilt"
   spec.add_dependency "bcrypt"
-  spec.add_dependency "dry-configurable", "~> 0.11"
 end
