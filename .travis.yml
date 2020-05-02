@@ -15,14 +15,15 @@ gemfile:
   - gemfiles/Gemfile.rails-5.0
 
 matrix:
-  - rvm: 2.2
-    gemfile: gemfiles/Gemfile.rails-6.0
-  - rvm: 2.3
-    gemfile: gemfiles/Gemfile.rails-6.0
-  - rvm: 2.4
-    gemfile: gemfiles/Gemfile.rails-6.0
-  - rvm: 2.2
-    gemfile: gemfiles/Gemfile.rails-5.2
+  exclude:
+    - rvm: 2.2
+      gemfile: gemfiles/Gemfile.rails-6.0
+    - rvm: 2.3
+      gemfile: gemfiles/Gemfile.rails-6.0
+    - rvm: 2.4
+      gemfile: gemfiles/Gemfile.rails-6.0
+    - rvm: 2.2
+      gemfile: gemfiles/Gemfile.rails-5.2
 
 before_script: "bundle update"
 
