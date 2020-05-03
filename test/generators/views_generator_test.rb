@@ -6,18 +6,6 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   destination File.expand_path("#{__dir__}/../../tmp")
   setup :prepare_destination
 
-  test "controller" do
-    run_generator
-
-    assert_file "app/controllers/rodauth_controller.rb", /class RodauthController < ApplicationController/
-  end
-
-  test "helper" do
-    run_generator
-
-    assert_file "app/helpers/rodauth_helper.rb", /module RodauthHelper/
-  end
-
   test "default views" do
     run_generator
 
@@ -78,13 +66,10 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/rodauth/webauthn_setup.html.erb" if Rodauth::MAJOR == 2
   end
 
-  test "passing name" do
-    run_generator %w[--name authentication]
+  test "specifying directory" do
+    run_generator %w[--directory authentication]
 
-    assert_file "app/controllers/authentication_controller.rb", /class AuthenticationController < ApplicationController/
-    assert_file "app/helpers/authentication_helper.rb", /module AuthenticationHelper/
     assert_file "app/views/authentication/login.html.erb"
-
     assert_no_directory "app/views/rodauth"
   end
 

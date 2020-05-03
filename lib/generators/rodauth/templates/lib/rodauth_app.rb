@@ -12,7 +12,7 @@ class RodauthApp < Rodauth::Rails::App
 
     # ==> General
     # Specify the controller used for view rendering and CSRF verification.
-    rails_controller { ApplicationController }
+    rails_controller { RodauthController }
 
     # Store account status in a text column.
     account_status_column :status

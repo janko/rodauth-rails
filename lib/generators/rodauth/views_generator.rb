@@ -84,34 +84,24 @@ module Rodauth
           webauthn:        :two_factor_base,
         }
 
-        class_option :features, aliases: "-f", type: :array,
+        class_option :features, type: :array,
           desc: "Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)",
           default: %w[login logout create_account verify_account reset_password change_password change_login verify_login_change close_account]
 
         class_option :all, aliases: "-a", type: :boolean,
-          desc: "Whether to generate views for all features",
+          desc: "Generates views for all Rodauth features",
           default: false
 
-        class_option :name,
-          desc: "The name for the views directory, controller and helper",
+        class_option :directory, aliases: "-d", type: :string,
+          desc: "The directory under app/views/* into which to create views",
           default: "rodauth"
 
-        def copy_controller
-          template "app/controllers/rodauth_controller.rb",
-            "app/controllers/#{options[:name].underscore}_controller.rb"
-        end
-
-        def copy_helper
-          template "app/helpers/rodauth_helper.rb",
-            "app/helpers/#{options[:name].underscore}_helper.rb"
-        end
-
-        def copy_views
-          features = options[:all] ? VIEWS.keys : options[:features]
+        def create_views
+          features = options[:all] ? VIEWS.keys : options[:features].map(&:to_sym)
 
           views = features.inject([]) do |list, feature|
-            list |= VIEWS[feature.to_sym] || []
-            list |= VIEWS[DEPENDENCIES[feature.to_sym]] || []
+            list |= VIEWS[feature] || []
+            list |= VIEWS[DEPENDENCIES[feature]] || []
           end
 
           if Rodauth::MAJOR == 1
@@ -124,7 +114,7 @@ module Rodauth
 
           views.each do |view|
             template "app/views/rodauth/#{view}.html.erb",
-              "app/views/#{options[:name].underscore}/#{view}.html.erb"
+              "app/views/#{options[:directory].underscore}/#{view}.html.erb"
           end
         end
       end

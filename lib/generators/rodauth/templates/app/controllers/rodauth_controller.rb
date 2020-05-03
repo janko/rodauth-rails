@@ -1,3 +1,3 @@
-class <%= options[:name].camelize %>Controller < ApplicationController
-  # Used by Rodauth for rendering views
+class RodauthController < ApplicationController
+  # used by Rodauth for rendering views and CSRF protection
 end

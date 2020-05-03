@@ -1,10 +1,10 @@
-<%%= text_field_tag name, locals[:value] || params[name],
-  type: locals[:type] || "text",
-  id: locals[:id],
-  autocomplete: locals[:autocomplete],
-  inputmode: locals[:inputmode],
-  required: locals[:required] != false,
-  class: "#{locals[:class] || "form-control"} #{"is-invalid" if rodauth.field_error(name)}",
+<%%= text_field_tag name, local_assigns[:value] || params[name],
+  type: local_assigns[:type] || "text",
+  id: local_assigns[:id],
+  autocomplete: local_assigns[:autocomplete],
+  inputmode: local_assigns[:inputmode],
+  required: local_assigns[:required] != false,
+  class: "#{local_assigns[:class] || "form-control"} #{"is-invalid" if rodauth.field_error(name)}",
   aria: ({ invalid: "true", describedby: "#{name}_error_message" } if rodauth.field_error(name)) %>
 
-<%%= render "field_error", name: name, unless locals[:skip_error_message] %>
+<%%= render "field_error", name: name, unless local_assigns[:skip_error_message] %>

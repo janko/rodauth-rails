@@ -2,6 +2,11 @@
 
 Provides Rails integration for the [Rodauth] authentication framework.
 
+## Resources
+
+* [Rodauth documentation](http://rodauth.jeremyevans.net/documentation.html)
+* [rodauth-rails wiki](https://github.com/janko/rodauth-rails/wiki)
+
 ## Installation
 
 Add the gem to your Gemfile:
@@ -24,10 +29,14 @@ The generator will create the following files:
 * Rodauth initializer at `config/initializers/rodauth.rb`
 * Sequel initializer at `config/initializers/sequel.rb` for ActiveRecord integration
 * Rodauth app at `lib/rodauth_app.rb`
+* Rodauth controller at `app/controllers/rodauth_controller.rb`
+* Account model at `app/models/account.rb`
+
+### Migration
 
 The migration file creates tables required by Rodauth. You're encouraged to
-review the migration, and modify it so that you only create tables for features
-you intend to use.
+review the migration, and modify it to only create tables for features you
+intend to use.
 
 ```rb
 # db/migrate/*_create_rodauth.rb
@@ -50,8 +59,10 @@ Once you're done, you can run the migration:
 $ rails db:migrate
 ```
 
-The `rodauth.rb` initializer assigns the constant for your Rodauth app, which
-will be called by the middleware that's added in front of your Rails router.
+### Rodauth initializer
+
+The Rodauth initializer assigns the constant for your Rodauth app, which will
+be called by the Rack middleware that's added in front of your Rails router.
 
 ```rb
 # config/initializers/rodauth.rb
@@ -60,8 +71,11 @@ Rodauth::Rails.configure do |config|
 end
 ```
 
-If you're using ActiveRecord, a `sequel.rb` initializer will be added as well,
-which configures Sequel to use ActiveRecord's connection.
+### Sequel initializer
+
+Rodauth uses [Sequel] for database interaction. If you're using ActiveRecord,
+an additional initializer will be created which configures Sequel to use the
+ActiveRecord connection.
 
 ```rb
 # config/initializers/sequel.rb
@@ -73,16 +87,17 @@ DB = Sequel.postgres(test: false)
 DB.extension :activerecord_connection
 ```
 
-Your Rodauth app is created in the `lib/` directory, and it comes with a
-default set of authentication features enabled. This is where you configure
-your authentication behaviour, see the comments and Rodauth's [feature
-documentation] for the list of things you can configure.
+### Rodauth app
+
+Your Rodauth app is created in the `lib/` directory, which comes with a default
+set of authentication features enabled, as well as extensive examples on ways
+you can configure authentication behaviour.
 
 ```rb
 # lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure do
-    # configuration
+    # authentication configuration
   end
 
   route do |r|
@@ -100,13 +115,25 @@ module YourApp
   class Application < Rails::Application
     # ...
     config.autoload_paths += %W[#{config.root}/lib]
-    # ...
   end
 end
 ```
 
-Lastly, the generator will create an `Account` model, which you can use to
-access the user accounts managed by Rodauth.
+### Controller
+
+Your Rodauth app will by default use `RodauthController` for view rendering
+and CSRF protection.
+
+```rb
+# app/controllers/rodauth_controller.rb
+class RodauthController < ApplicationController
+end
+```
+
+### Account Model
+
+Rodauth stores user accounts in the `accounts` table, so the generator will
+also create an `Account` model for custom use.
 
 ```rb
 # app/models/account.rb
@@ -135,13 +162,11 @@ pages. The templates that ship with Rodauth aim to provide a complete
 authentication experience, and the forms use [Boostrap] markup.
 
 Let's also add the `#current_account` method for retrieving the account of the
-the currently authenticated user:
+the authenticated session:
 
 ```rb
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
-  private
-
   def current_account
     @current_account ||= Account.find(rodauth.session_value)
   end
@@ -151,6 +176,8 @@ end
 ```erb
 <p>Authenticated as: <%= current_account.email %></p>
 ```
+
+### Requiring authentication
 
 Next, we'll likely want to require authentication for certain sections/pages of
 our app. We can do this in our Rodauth app's routing block, which helps keep
@@ -220,29 +247,9 @@ following command:
 $ rails generate rodauth:views
 ```
 
-This will copy views for the default set of Rodauth features into your
-`app/views/rodauth` directory, and create a `RodauthController`. Now we just
-need to tell our Rodauth app to use the new controller for rendering views:
-
-```rb
-# lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  # ...
-  configure do
-    # ...
-    rails_controller { RodauthController }
-    # ...
-  end
-end
-```
-
-Feel free to name the controller and views directory in any way you like. You
-can also pass the name to the generator:
-
-```sh
-# creates AuthenticationController and copies views into app/views/authentication
-$ rails generate rodauth:views --name authentication
-```
+This will generate views for the default set of Rodauth features into the
+`app/views/rodauth` directory, which will be automatically picked up by the
+`RodauthController`.
 
 You can pass a list of Rodauth features to the generator to create views for
 these features (this will not remove any existing views):
@@ -255,6 +262,14 @@ Or you can generate views for all features:
 
 ```sh
 $ rails generate rodauth:views --all
+```
+
+You can also tell the generator to create views into another directory (in this
+case don't forget to rename the Rodauth controller accordingly).
+
+```sh
+# generates views into app/views/authentication
+$ rails generate rodauth:views --name authentication
 ```
 
 #### Layout
