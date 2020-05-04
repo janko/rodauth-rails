@@ -57,6 +57,9 @@ class RodauthApp < Rodauth::Rails::App
     # #   RodauthMailer.email_auth(email_to, email_auth_email_link).deliver_now
     # # end
     # # send_unlock_account_email do
+<% if Rodauth::MAJOR == 1 -%>
+    # #   @unlock_account_key_value = get_unlock_account_key
+<% end -%>
     # #   RodauthMailer.unlock_account(email_to, unlock_account_email_link).deliver_now
     # # end
 
@@ -107,9 +110,7 @@ class RodauthApp < Rodauth::Rails::App
 
     # Perform additional actions after the account is created.
     # after_create_account do
-    #   db.after_commit do # wait until account record creation is committed
-    #     Profile.create!(account_id: account[:id], name: param("name"))
-    #   end
+    #   Profile.create!(account_id: account[:id], name: param("name"))
     # end
 
     # Do additional cleanup after the account is closed.

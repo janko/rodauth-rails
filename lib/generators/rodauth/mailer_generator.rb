@@ -1,4 +1,5 @@
 require "rails/generators/base"
+require "rodauth/version"
 
 module Rodauth
   module Rails

@@ -1,6 +1,6 @@
 <%% cred = rodauth.new_webauthn_credential %>
 
-<%%= form_tag rodauth.webauthn_setup_path, method: :post, id: "webauthn-setup-form", data: { credential_options: cred.as_json.to_json } %>
+<%%= form_tag rodauth.webauthn_setup_path, method: :post, id: "webauthn-setup-form", data: { credential_options: cred.as_json.to_json } do %>
   <%%= hidden_field_tag rodauth.webauthn_setup_challenge_param, cred.challenge %>
   <%%= hidden_field_tag rodauth.webauthn_setup_challenge_hmac_param, rodauth.compute_hmac(cred.challenge) %>
   <%%= text_field_tag rodauth.webauthn_setup_param, "", id: "webauthn-setup", aria: { hidden: "true" } %>
