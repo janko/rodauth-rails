@@ -6,6 +6,7 @@ Provides Rails integration for the [Rodauth] authentication framework.
 
 * [Rodauth documentation](http://rodauth.jeremyevans.net/documentation.html)
 * [rodauth-rails wiki](https://github.com/janko/rodauth-rails/wiki)
+* [Rails demo](https://github.com/janko/rodauth-demo-rails)
 
 ## Installation
 
