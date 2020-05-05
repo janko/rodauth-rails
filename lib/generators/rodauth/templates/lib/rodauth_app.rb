@@ -149,6 +149,14 @@ class RodauthApp < Rodauth::Rails::App
     # end
   end
 
+  # ==> Multiple configurations
+  # configure(:admin) do
+  #   enable :http_basic_auth
+  #
+  #   prefix "/admin"
+  #   session_key :admin_id
+  # end
+
   route do |r|
     rodauth.load_memory # autologin remembered users
 
@@ -164,6 +172,15 @@ class RodauthApp < Rodauth::Rails::App
     # # authenticate /dashboard/* and /account/* requests
     # if r.path.start_with?("/dashboard") || r.path.start_with?("/account")
     #   rodauth.require_authentication
+    # end
+
+    # ==> Multiple configurations
+    # r.on "admin" do
+    #   r.rodauth(:admin)
+    #
+    #   unless rodauth(:admin).logged_in?
+    #     rodauth(:admin).require_http_basic_auth
+    #   end
     # end
   end
 end
