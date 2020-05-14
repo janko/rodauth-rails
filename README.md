@@ -358,7 +358,7 @@ class RodauthApp < Rodauth::Rails::App
   configure do
     # ...
     send_reset_password_email do
-      RodauthMailer.reset_password(email_to, password_reset_email_link).deliver_now
+      RodauthMailer.reset_password(email_to, reset_password_email_link).deliver_now
     end
     send_verify_account_email do
       RodauthMailer.verify_account(email_to, verify_account_email_link).deliver_now

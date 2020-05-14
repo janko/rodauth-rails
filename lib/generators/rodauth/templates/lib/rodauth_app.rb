@@ -144,8 +144,8 @@ class RodauthApp < Rodauth::Rails::App
     # end
     #
     # Then use the new custom method in configuration blocks.
-    # send_password_reset_email do
-    #   my_send_email(:password_reset, email_to, password_reset_email_link)
+    # send_reset_password_email do
+    #   my_send_email(:reset_password, email_to, reset_password_email_link)
     # end
   end
 
