@@ -42,7 +42,7 @@ class RodauthApp < Rodauth::Rails::App
     # ==> Emails
     # Uncomment the lines below once you've imported mailer views.
     # send_reset_password_email do
-    #   RodauthMailer.reset_password(email_to, password_reset_email_link).deliver_now
+    #   RodauthMailer.reset_password(email_to, reset_password_email_link).deliver_now
     # end
     # send_verify_account_email do
     #   RodauthMailer.verify_account(email_to, verify_account_email_link).deliver_now
@@ -76,7 +76,7 @@ class RodauthApp < Rodauth::Rails::App
 
     # Override default flash messages.
     # create_account_notice_flash "Your account has been created. Please verify your account by visiting the confirmation link sent to your email address."
-    # login_error_flash "Login is required for accessing this page"
+    # require_login_error_flash "Login is required for accessing this page"
     # login_notice_flash nil
 
     # ==> Validation
