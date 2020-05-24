@@ -535,7 +535,7 @@ rodauth-rails changes some of the default Rodauth settings for easier setup:
 
 ### Database functions
 
-By default on PostgreSQL, MySQL, and Microsoft SQL Server, Rodauth uses
+By default, on PostgreSQL, MySQL, and Microsoft SQL Server Rodauth uses
 database functions to access password hashes, with the user running the
 application unable to get direct access to password hashes. This reduces the
 risk of an attacker being able to access password hashes and use them to attack
@@ -546,7 +546,11 @@ to reason about, as it requires having two different database users and making
 sure the correct migration is run for the correct user.
 
 To keep with Rails' "convention over configuration" doctrine, rodauth-rails
-disables the use of database functions, though it can still be turned back on.
+disables the use of database functions, though you can always turn it back on.
+
+```rb
+use_database_authentication_functions? true
+```
 
 ### Account statuses
 
@@ -560,8 +564,28 @@ tests by default, but it's also commonly done in development.
 
 To address this, rodauth-rails modifies the setup to store account status text
 directly in the accounts table. If you're worried about invalid status values
-creeping in, you may use enums instead. Alternatively, you can still go back to
-the setup recommended by Rodauth.
+creeping in, you may use enums instead. Alternatively, you can always go back
+to the setup recommended by Rodauth.
+
+```rb
+# in the migration:
+create_table :account_statuses do |t|
+  t.string :name, null: false, unique: true
+end
+execute "INSERT INTO account_statuses (id, name) VALUES (1, 'Unverified'), (2, 'Verified'), (3, 'Closed')"
+
+create_table :accounts do |t|
+  # ...
+  t.references :status, foreign_key: { to_table: :account_statuses }, null: false, default: 1
+  # ...
+end
+```
+```rb
+account_status_column :status_id
+account_unverified_status_value 1
+account_open_status_value 2
+account_closed_status_value 3
+```
 
 ## License
 
