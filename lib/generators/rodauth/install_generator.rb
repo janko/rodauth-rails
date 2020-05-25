@@ -25,6 +25,7 @@ module Rodauth
         def create_sequel_initializer
           return unless defined?(ActiveRecord::Base)
           return unless %w[postgresql mysql2 sqlite3].include?(adapter)
+          return if defined?(Sequel) && !Sequel::DATABASES.empty?
 
           template "config/initializers/sequel.rb"
         end

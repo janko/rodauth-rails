@@ -28,7 +28,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   test "sequel initializer" do
+    db = Sequel::DATABASES.pop
     run_generator
+    Sequel::DATABASES.push(db)
 
     assert_file "config/initializers/sequel.rb", /Sequel\.sqlite\(test: false\)/
   end
