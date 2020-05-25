@@ -1,7 +1,6 @@
 require "rails/generators/base"
 require "rails/generators/migration"
 require "rails/generators/active_record"
-require "rodauth/version"
 
 module Rodauth
   module Rails
