@@ -28,6 +28,24 @@ module Rodauth
         super
     end
 
+    if Rodauth::MAJOR >= 2 && Rodauth::MINOR >= 1
+      # Verify Rails' authenticity token.
+      def check_csrf
+        rails_check_csrf!
+      end
+
+      # Have Rodauth call #check_csrf automatically.
+      def check_csrf?
+        true
+      end
+    else
+      # Verify Rails' authenticity token before each Rodauth route.
+      def before_rodauth
+        rails_check_csrf!
+        super
+      end
+    end
+
     # Render Rails CSRF tags in Rodauth templates.
     def csrf_tag(*)
       rails_csrf_tag
@@ -39,12 +57,6 @@ module Rodauth
     end
 
     private
-
-    # Verify Rails' authenticity token before each Rodauth route.
-    def before_rodauth
-      rails_check_csrf!
-      super
-    end
 
     # Create emails with ActionMailer which uses configured delivery method.
     def create_email_to(to, subject, body)
