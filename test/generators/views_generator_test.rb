@@ -150,4 +150,24 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       ERB
     end
   end
+
+  test "password_field partial" do
+    run_generator %w[--features create_account]
+
+    if Rodauth::MAJOR >= 2 && Rodauth::MINOR >= 1
+      assert_file "app/views/rodauth/_password_field.html.erb", <<-ERB.strip_heredoc
+        <div class="form-group">
+          <%= label_tag "password", "Password" %>
+          <%= render "field", name: rodauth.password_param, id: "password", type: :password, value: "", autocomplete: rodauth.password_field_autocomplete_value %>
+        </div>
+      ERB
+    else
+      assert_file "app/views/rodauth/_password_field.html.erb", <<-ERB.strip_heredoc
+        <div class="form-group">
+          <%= label_tag "password", "Password" %>
+          <%= render "field", name: rodauth.password_param, id: "password", type: :password, value: "", autocomplete: "current-password" %>
+        </div>
+      ERB
+    end
+  end
 end
