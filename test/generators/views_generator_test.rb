@@ -108,7 +108,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   test "logout template" do
     run_generator
 
-    if Rodauth::MAJOR == 2
+    if Rodauth::MAJOR >= 2
       assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
         <%= form_tag rodauth.logout_path, method: :post do %>
           <%= render "global_logout_field" if rodauth.features.include?(:active_sessions) %>
@@ -127,7 +127,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   test "otp_auth template" do
     run_generator %w[--features otp]
 
-    if Rodauth::MAJOR == 2
+    if Rodauth::MAJOR >= 2
       assert_file "app/views/rodauth/otp_auth.html.erb", <<-ERB.strip_heredoc
         <%= form_tag rodauth.otp_auth_path, method: :post do %>
           <%= render "otp_auth_code_field" %>
