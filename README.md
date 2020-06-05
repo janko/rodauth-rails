@@ -160,7 +160,7 @@ page:
 
 These links are fully functional, feel free to visit them and interact with the
 pages. The templates that ship with Rodauth aim to provide a complete
-authentication experience, and the forms use [Boostrap] markup.
+authentication experience, and the forms use [Bootstrap] markup.
 
 Let's also add the `#current_account` method for retrieving the account of the
 the authenticated session:
