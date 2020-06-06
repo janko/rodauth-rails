@@ -509,7 +509,7 @@ class RodauthApp < Rodauth::Rails::App
         return false
       end
 
-      super
+      super()
     }
     # your configuration
   end
