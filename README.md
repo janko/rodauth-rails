@@ -485,6 +485,37 @@ Rodauth::Rails.configure do |config|
 end
 ```
 
+## Working with JWT
+
+To work with JWT, you'll need to enable json in `Roda`
+
+```rb
+# lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure(json: true) do
+    # your configuration
+  end
+end
+```
+
+You then need to disable CSRF checking for json calls
+
+```rb
+# lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure(json: true) do
+    rails_check_csrf! {
+      if json_request? && use_jwt?
+        return false
+      end
+
+      super
+    }
+    # your configuration
+  end
+end
+```
+
 ## Testing
 
 If you're writing system tests, it's generally better to go through the actual
