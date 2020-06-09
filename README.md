@@ -487,9 +487,8 @@ end
 
 ## Working with JWT
 
-To work with JWT, you'll need to enable json in `Roda`, and the [JWT plugin][rodauth_jwt_doc]
+To work with JWT, you'll need to enable json in `Roda`, and the [JWT plugin][Rodauth JWT documentation]
 
-[rodauth_jwt_doc]: https://github.com/jeremyevans/rodauth/blob/master/doc/jwt.rdoc
 
 ```rb
 # lib/rodauth_app.rb
@@ -618,6 +617,7 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [Sequel]: https://github.com/jeremyevans/sequel
 [rendering views outside of controllers]: https://blog.bigbinary.com/2016/01/08/rendering-views-outside-of-controllers-in-rails-5.html
 [feature documentation]: http://rodauth.jeremyevans.net/documentation.html
+[Rodauth JWT documentation]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
 [Rodauth plugin]: https://github.com/jeremyevans/rodauth/#label-Plugin+Options
 [Bootstrap]: https://getbootstrap.com/
 [Roda]: http://roda.jeremyevans.net/
