@@ -485,6 +485,21 @@ Rodauth::Rails.configure do |config|
 end
 ```
 
+## Working with JWT
+
+To work with JWT, you'll need to enable json in `Roda`, and the [JWT plugin][Rodauth JWT documentation]
+
+
+```rb
+# lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure(json: true) do
+    enable :jwt
+    # your configuration
+  end
+end
+```
+
 ## Testing
 
 If you're writing system tests, it's generally better to go through the actual
@@ -602,6 +617,7 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [Sequel]: https://github.com/jeremyevans/sequel
 [rendering views outside of controllers]: https://blog.bigbinary.com/2016/01/08/rendering-views-outside-of-controllers-in-rails-5.html
 [feature documentation]: http://rodauth.jeremyevans.net/documentation.html
+[Rodauth JWT documentation]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
 [Rodauth plugin]: https://github.com/jeremyevans/rodauth/#label-Plugin+Options
 [Bootstrap]: https://getbootstrap.com/
 [Roda]: http://roda.jeremyevans.net/
