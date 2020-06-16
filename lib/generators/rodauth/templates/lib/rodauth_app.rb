@@ -99,9 +99,6 @@ class RodauthApp < Rodauth::Rails::App
     # Extend user's remember period when remembered via a cookie
     extend_remember_deadline? true
 
-    # Consider remembered users to be multifactor-authenticated (if using MFA).
-    # after_load_memory { two_factor_update_session("totp") if two_factor_authentication_setup? }
-
     # ==> Hooks
     # Validate custom fields in the create account form.
     # before_create_account do
