@@ -399,7 +399,7 @@ The Rodauth app stores the `Rodauth::Auth` instance in the Rack env hash, which
 is then available in your Rails app:
 
 ```rb
-request.env["rodauth"] #=> #<Rodauth::Auth>
+request.env["rodauth"]           #=> #<Rodauth::Auth>
 request.env["rodauth.secondary"] #=> #<Rodauth::Auth> (if using multiple configurations)
 ```
 
@@ -409,13 +409,13 @@ and controllers:
 ```rb
 class MyController < ApplicationController
   def my_action
-    rodauth #=> #<Rodauth::Auth>
+    rodauth             #=> #<Rodauth::Auth>
     rodauth(:secondary) #=> #<Rodauth::Auth> (if using multiple configurations)
   end
 end
 ```
 ```erb
-<% rodauth #=> #<Rodauth::Auth> %>
+<% rodauth             #=> #<Rodauth::Auth> %>
 <% rodauth(:secondary) #=> #<Rodauth::Auth> (if using multiple configurations) %>
 ```
 
