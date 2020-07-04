@@ -431,11 +431,11 @@ integration for Rodauth:
 * uses ActionMailer for sending emails
 
 The `configure { ... }` method wraps configuring the Rodauth plugin, forwarding
-any additional [options].
+any additional [plugin options].
 
 ```rb
 configure { ... }             # defining default Rodauth configuration
-configure(json: true)         # passing options to the Rodauth plugin
+configure(json: true) { ... } # passing options to the Rodauth plugin
 configure(:secondary) { ... } # defining multiple Rodauth configurations
 ```
 
@@ -487,7 +487,7 @@ end
 
 ## Working with JWT
 
-To work with JWT, you'll need to enable json in `Roda`, and the [JWT plugin][Rodauth JWT documentation]
+To use Rodauth's [JWT feature], you'll need to load Roda's JSON support:
 
 ```rb
 # lib/rodauth_app.rb
@@ -595,10 +595,14 @@ create_table :accounts do |t|
 end
 ```
 ```diff
-- account_status_column :status
-- account_unverified_status_value "unverified"
-- account_open_status_value "verified"
-- account_closed_status_value "closed"
+configure do
+  # ...
+  - account_status_column :status
+  - account_unverified_status_value "unverified"
+  - account_open_status_value "verified"
+  - account_closed_status_value "closed"
+  # ...
+end
 ```
 
 ## License
@@ -616,13 +620,11 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [Sequel]: https://github.com/jeremyevans/sequel
 [rendering views outside of controllers]: https://blog.bigbinary.com/2016/01/08/rendering-views-outside-of-controllers-in-rails-5.html
 [feature documentation]: http://rodauth.jeremyevans.net/documentation.html
-[Rodauth JWT documentation]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
-[Rodauth plugin]: https://github.com/jeremyevans/rodauth/#label-Plugin+Options
+[JWT feature]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
 [Bootstrap]: https://getbootstrap.com/
 [Roda]: http://roda.jeremyevans.net/
 [HMAC]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-HMAC
 [database authentication functions]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Password+Hash+Access+Via+Database+Functions
-[multiple configurations]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-With+Multiple+Configurations
-[views]: /app/views/rodauth
 [Rodauth migration]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Creating+tables
 [sequel-activerecord_connection]: https://github.com/janko/sequel-activerecord_connection
+[plugin options]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Plugin+Options
