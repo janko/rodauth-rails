@@ -489,7 +489,6 @@ end
 
 To work with JWT, you'll need to enable json in `Roda`, and the [JWT plugin][Rodauth JWT documentation]
 
-
 ```rb
 # lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
