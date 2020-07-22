@@ -1,11 +1,11 @@
 class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
   def change
-<% if adapter == "postgresql" -%>
+<% if activerecord_adapter == "postgresql" -%>
     enable_extension "citext"
 
 <% end -%>
     create_table :accounts do |t|
-<% case adapter -%>
+<% case activerecord_adapter -%>
 <% when "postgresql" -%>
       t.citext :email, null: false, index: { unique: true, where: "status IN ('verified', 'unverified')" }
 <% else -%>
@@ -56,7 +56,7 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
     #   t.references :account, null: false
     #   t.datetime :at, null: false, default: -> { "CURRENT_TIMESTAMP" }
     #   t.text :message, null: false
-<% case adapter -%>
+<% case activerecord_adapter -%>
 <% when "postgresql" -%>
     #   t.jsonb :metadata
 <% when "sqlite3", "mysql2" -%>

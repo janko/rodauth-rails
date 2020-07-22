@@ -1,3 +1,7 @@
+## HEAD
+
+* Use the JDBC adapter in sequel.rb initializer when on JRuby (@janko)
+
 ## 0.1.3 (2020-07-04)
 
 * Remove insecure MFA integration with remember feature suggestion in `lib/rodauth_app.rb` (@janko, @nicolas-besnard)
