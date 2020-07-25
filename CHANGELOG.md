@@ -1,5 +1,7 @@
 ## HEAD
 
+* Change `rodauth_app.rb` template to send emails in the background after transaction commit (@janko)
+
 * Bump `sequel-activerecord_connection` dependency to `~> 0.3` (@janko)
 
 * Use the JDBC adapter in sequel.rb initializer when on JRuby (@janko)
