@@ -57,9 +57,6 @@ class RodauthApp < Rodauth::Rails::App
     # #   mailer_send(:email_auth, email_to, email_auth_email_link)
     # # end
     # # send_unlock_account_email do
-<% if Rodauth::MAJOR == 1 -%>
-    # #   @unlock_account_key_value = get_unlock_account_key
-<% end -%>
     # #   mailer_send(:unlock_account, email_to, unlock_account_email_link)
     # # end
     # auth_class_eval do

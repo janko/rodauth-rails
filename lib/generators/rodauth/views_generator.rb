@@ -103,14 +103,6 @@ module Rodauth
             list |= VIEWS[DEPENDENCIES[feature]] || []
           end
 
-          if Rodauth::MAJOR == 1
-            views -= %w[
-              multi_phase_login _global_logout_field
-              two_factor_manage two_factor_auth two_factor_disable
-              webauthn_setup webauthn_auth webauthn_remove
-            ]
-          end
-
           views.each do |view|
             template "app/views/rodauth/#{view}.html.erb",
               "app/views/#{options[:directory].underscore}/#{view}.html.erb"

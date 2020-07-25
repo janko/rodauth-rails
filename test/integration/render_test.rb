@@ -53,14 +53,12 @@ class RenderTest < IntegrationTest
     assert_equal 1, page.html.scan(%(<title>Rodauth::Rails Test</title>)).count
   end
 
-  if Rodauth::MAJOR == 2
-    test "custom partials" do
-      visit "/logout"
+  test "custom partials" do
+    visit "/logout"
 
-      assert_includes page.html, %(id="logout-form")
-      assert_includes page.html, %(id="custom-global-logout")
+    assert_includes page.html, %(id="logout-form")
+    assert_includes page.html, %(id="custom-global-logout")
 
-      assert_equal 1, page.html.scan(%(<title>Rodauth::Rails Test</title>)).count
-    end
+    assert_equal 1, page.html.scan(%(<title>Rodauth::Rails Test</title>)).count
   end
 end

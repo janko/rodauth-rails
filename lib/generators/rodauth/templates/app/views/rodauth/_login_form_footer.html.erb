@@ -1,4 +1,3 @@
-<% if Rodauth::MAJOR >= 2 -%>
 <%% unless rodauth.login_form_footer_links.empty? %>
   <h2>Other Options</h2>
   <ul>
@@ -7,17 +6,3 @@
     <%% end %>
   </ul>
 <%% end %>
-<% else -%>
-<%% if rodauth.features.include?(:create_account) %>
-  <p><%%= link_to "Create a New Account", rodauth.create_account_path %></p>
-<%% end %>
-<%% if rodauth.features.include?(:reset_password) %>
-  <p><%%= link_to "Forgot Password?", rodauth.reset_password_request_path %></p>
-<%% end %>
-<%% if rodauth.features.include?(:email_auth) && rodauth.valid_login_entered? %>
-  <%%= render "email_auth_request_form" %>
-<%% end %>
-<%% if rodauth.features.include?(:verify_account) %>
-  <p><%%= link_to "Resend Verify Account Information", rodauth.verify_account_resend_path %></p>
-<%% end %>
-<% end -%>

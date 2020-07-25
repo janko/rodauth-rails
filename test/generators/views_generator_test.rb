@@ -17,10 +17,6 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       change_password _new_password_field close_account
     ]
 
-    if Rodauth::MAJOR == 1
-      templates -= %w[multi_phase_login]
-    end
-
     templates.each do |template|
       assert_file "app/views/rodauth/#{template}.html.erb"
     end
@@ -49,10 +45,6 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       sms_setup sms_confirm sms_auth sms_request sms_disable
     ]
 
-    if Rodauth::MAJOR == 1
-      templates -= %w[two_factor_auth two_factor_disable two_factor_manage]
-    end
-
     templates.each do |template|
       assert_file "app/views/rodauth/#{template}.html.erb"
     end
@@ -63,7 +55,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/views/rodauth/login.html.erb"
     assert_file "app/views/rodauth/otp_auth.html.erb"
-    assert_file "app/views/rodauth/webauthn_setup.html.erb" if Rodauth::MAJOR == 2
+    assert_file "app/views/rodauth/webauthn_setup.html.erb"
   end
 
   test "specifying directory" do
@@ -76,98 +68,48 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   test "login_form_footer template" do
     run_generator
 
-    if Rodauth::MAJOR == 2
-      assert_file "app/views/rodauth/_login_form_footer.html.erb", <<-ERB.strip_heredoc
-        <% unless rodauth.login_form_footer_links.empty? %>
-          <h2>Other Options</h2>
-          <ul>
-            <% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
-              <li><%= link_to text, link %></li>
-            <% end %>
-          </ul>
-        <% end %>
-      ERB
-    else
-      assert_file "app/views/rodauth/_login_form_footer.html.erb", <<-ERB.strip_heredoc
-        <% if rodauth.features.include?(:create_account) %>
-          <p><%= link_to "Create a New Account", rodauth.create_account_path %></p>
-        <% end %>
-        <% if rodauth.features.include?(:reset_password) %>
-          <p><%= link_to "Forgot Password?", rodauth.reset_password_request_path %></p>
-        <% end %>
-        <% if rodauth.features.include?(:email_auth) && rodauth.valid_login_entered? %>
-          <%= render "email_auth_request_form" %>
-        <% end %>
-        <% if rodauth.features.include?(:verify_account) %>
-          <p><%= link_to "Resend Verify Account Information", rodauth.verify_account_resend_path %></p>
-        <% end %>
-      ERB
-    end
+    assert_file "app/views/rodauth/_login_form_footer.html.erb", <<-ERB.strip_heredoc
+      <% unless rodauth.login_form_footer_links.empty? %>
+        <h2>Other Options</h2>
+        <ul>
+          <% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
+            <li><%= link_to text, link %></li>
+          <% end %>
+        </ul>
+      <% end %>
+    ERB
   end
 
   test "logout template" do
     run_generator
 
-    if Rodauth::MAJOR >= 2
-      assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
-        <%= form_tag rodauth.logout_path, method: :post do %>
-          <%= render "global_logout_field" if rodauth.features.include?(:active_sessions) %>
-          <%= render "submit", value: "Logout", class: "btn btn-warning" %>
-        <% end %>
-      ERB
-    else
-      assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
-        <%= form_tag rodauth.logout_path, method: :post do %>
-          <%= render "submit", value: "Logout", class: "btn btn-warning" %>
-        <% end %>
-      ERB
-    end
+    assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
+      <%= form_tag rodauth.logout_path, method: :post do %>
+        <%= render "global_logout_field" if rodauth.features.include?(:active_sessions) %>
+        <%= render "submit", value: "Logout", class: "btn btn-warning" %>
+      <% end %>
+    ERB
   end
 
   test "otp_auth template" do
     run_generator %w[--features otp]
 
-    if Rodauth::MAJOR >= 2
-      assert_file "app/views/rodauth/otp_auth.html.erb", <<-ERB.strip_heredoc
-        <%= form_tag rodauth.otp_auth_path, method: :post do %>
-          <%= render "otp_auth_code_field" %>
-          <%= render "submit", value: "Authenticate Using TOTP" %>
-        <% end %>
-      ERB
-    else
-      assert_file "app/views/rodauth/otp_auth.html.erb", <<-ERB.strip_heredoc
-        <%= form_tag rodauth.otp_auth_path, method: :post do %>
-          <%= render "otp_auth_code_field" %>
-          <%= render "submit", value: "Authenticate Using TOTP" %>
-        <% end %>
-
-        <% if rodauth.features.include?(:sms_codes) && rodauth.sms_available? %>
-          <p><%= link_to "Authenticate using SMS code", rodauth.sms_request_path %></p>
-        <% end %>
-        <% if rodauth.features.include?(:recovery_codes) %>
-          <p><%= link_to "Authenticate using recovery code", rodauth.recovery_auth_path %></p>
-        <% end %>
-      ERB
-    end
+    assert_file "app/views/rodauth/otp_auth.html.erb", <<-ERB.strip_heredoc
+      <%= form_tag rodauth.otp_auth_path, method: :post do %>
+        <%= render "otp_auth_code_field" %>
+        <%= render "submit", value: "Authenticate Using TOTP" %>
+      <% end %>
+    ERB
   end
 
   test "password_field partial" do
     run_generator %w[--features create_account]
 
-    if Rodauth::MAJOR >= 2 && Rodauth::MINOR >= 1
-      assert_file "app/views/rodauth/_password_field.html.erb", <<-ERB.strip_heredoc
-        <div class="form-group">
-          <%= label_tag "password", "Password" %>
-          <%= render "field", name: rodauth.password_param, id: "password", type: :password, value: "", autocomplete: rodauth.password_field_autocomplete_value %>
-        </div>
-      ERB
-    else
-      assert_file "app/views/rodauth/_password_field.html.erb", <<-ERB.strip_heredoc
-        <div class="form-group">
-          <%= label_tag "password", "Password" %>
-          <%= render "field", name: rodauth.password_param, id: "password", type: :password, value: "", autocomplete: "current-password" %>
-        </div>
-      ERB
-    end
+    assert_file "app/views/rodauth/_password_field.html.erb", <<-ERB.strip_heredoc
+      <div class="form-group">
+        <%= label_tag "password", "Password" %>
+        <%= render "field", name: rodauth.password_param, id: "password", type: :password, value: "", autocomplete: rodauth.password_field_autocomplete_value %>
+      </div>
+    ERB
   end
 end

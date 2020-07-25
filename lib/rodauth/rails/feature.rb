@@ -28,22 +28,14 @@ module Rodauth
         super
     end
 
-    if Rodauth::MAJOR >= 2 && Rodauth::MINOR >= 1
-      # Verify Rails' authenticity token.
-      def check_csrf
-        rails_check_csrf!
-      end
+    # Verify Rails' authenticity token.
+    def check_csrf
+      rails_check_csrf!
+    end
 
-      # Have Rodauth call #check_csrf automatically.
-      def check_csrf?
-        true
-      end
-    else
-      # Verify Rails' authenticity token before each Rodauth route.
-      def before_rodauth
-        rails_check_csrf!
-        super
-      end
+    # Have Rodauth call #check_csrf automatically.
+    def check_csrf?
+      true
     end
 
     # Render Rails CSRF tags in Rodauth templates.

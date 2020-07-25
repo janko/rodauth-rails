@@ -47,12 +47,7 @@ class FlashTest < IntegrationTest
     login(password: "invalid")
 
     assert_includes page.html, %(id="unlock-account-request-form")
-
-    if Rodauth::MAJOR == 2
-      assert_includes page.html, %(<p id="alert">This account is currently locked out and cannot be logged in to</p>)
-    else
-      assert_includes page.html, %(<p id="alert">This account is currently locked out and cannot be logged in to.</p>)
-    end
+    assert_includes page.html, %(<p id="alert">This account is currently locked out and cannot be logged in to</p>)
 
     visit "/"
 

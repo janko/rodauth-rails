@@ -1,14 +1,10 @@
 class RodauthApp < Rodauth::Rails::App
   configure do
     enable :create_account, :verify_account, :verify_account_grace_period,
-      :login, :remember, :logout,
+      :login, :remember, :logout, :active_sessions,
       :reset_password, :change_password, :change_password_notify,
       :change_login, :verify_login_change,
       :close_account, :lockout
-
-    if Rodauth::MAJOR == 2
-      enable :active_sessions
-    end
 
     rails_controller { RodauthController }
 
