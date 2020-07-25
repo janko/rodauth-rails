@@ -1,5 +1,7 @@
 ## HEAD
 
+* Bump `sequel-activerecord_connection` dependency to `~> 0.3` (@janko)
+
 * Use the JDBC adapter in sequel.rb initializer when on JRuby (@janko)
 
 ## 0.1.3 (2020-07-04)

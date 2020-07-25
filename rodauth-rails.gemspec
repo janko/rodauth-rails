@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "railties", ">= 4.2", "< 7"
   spec.add_dependency "rodauth", ">= 1.23", "< 3"
-  spec.add_dependency "sequel-activerecord_connection", "~> 0.2"
+  spec.add_dependency "sequel-activerecord_connection", "~> 0.3"
   spec.add_dependency "tilt"
   spec.add_dependency "bcrypt"
 end
