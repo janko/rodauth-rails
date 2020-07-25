@@ -358,23 +358,29 @@ class RodauthApp < Rodauth::Rails::App
   configure do
     # ...
     send_reset_password_email do
-      RodauthMailer.reset_password(email_to, reset_password_email_link).deliver_now
+      mailer_send(:reset_password, email_to, reset_password_email_link)
     end
     send_verify_account_email do
-      RodauthMailer.verify_account(email_to, verify_account_email_link).deliver_now
+      mailer_send(:verify_account, email_to, verify_account_email_link)
     end
     send_verify_login_change_email do |login|
-      RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_email_link).deliver_now
+      mailer_send(:verify_login_change, login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_email_link)
     end
     send_password_changed_email do
-      RodauthMailer.password_changed(email_to).deliver_now
+      mailer_send(:password_changed, email_to)
     end
     # send_email_auth_email do
-    #   RodauthMailer.email_auth(email_to, email_auth_email_link).deliver_now
+    #   mailer_send(:email_auth, email_to, email_auth_email_link)
     # end
     # send_unlock_account_email do
-    #   RodauthMailer.unlock_account(email_to, unlock_account_email_link).deliver_now
+    #   mailer_send(:unlock_account, email_to, unlock_account_email_link)
     # end
+    auth_class_eval do
+      # queue email delivery on the mailer after the transaction commits
+      def mailer_send(type, *args)
+        db.after_commit { RodauthMailer.public_send(type, *args).deliver_later }
+      end
+    end
     # ...
   end
 end
