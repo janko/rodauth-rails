@@ -13,7 +13,7 @@ Provides Rails integration for the [Rodauth] authentication framework.
 Add the gem to your Gemfile:
 
 ```rb
-gem "rodauth-rails", "~> 0.1"
+gem "rodauth-rails", "~> 0.2"
 ```
 
 Then run `bundle install`.
