@@ -1,3 +1,7 @@
+## 0.2.1 (2020-07-26)
+
+* Fix incorrect JDBC connect syntax in `sequel.rb` template on JRuby (@janko)
+
 ## 0.2.0 (2020-07-26)
 
 * Drop support for Rodauth 1.x (@janko)
