@@ -5,7 +5,8 @@ gemspec path: ".."
 gem "rake", "~> 12.0"
 
 gem "rails", "~> 5.2.0"
-gem "sqlite3", "~> 1.4"
+gem "sqlite3", "~> 1.4",                platforms: :mri
+gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 
 if RUBY_VERSION.start_with?("2.3.")
   gem "sprockets", "~> 3.7.2"
