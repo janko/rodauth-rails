@@ -32,7 +32,11 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
     Sequel::DATABASES.push(db)
 
-    assert_file "config/initializers/sequel.rb", /Sequel\.sqlite\(test: false\)/
+    if RUBY_ENGINE == "jruby"
+      assert_file "config/initializers/sequel.rb", /Sequel\.connect\("jdbc:sqlite:\/\/", test: false\)/
+    else
+      assert_file "config/initializers/sequel.rb", /Sequel\.sqlite\(test: false\)/
+    end
   end
 
   test "app" do

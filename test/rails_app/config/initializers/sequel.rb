@@ -1,4 +1,4 @@
 require "sequel/core"
 
-DB = Sequel.sqlite(test: false)
+DB = Sequel.connect("#{"jdbc:" if RUBY_ENGINE == "jruby"}sqlite://", test: false)
 DB.extension :activerecord_connection
