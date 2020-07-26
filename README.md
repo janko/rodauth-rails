@@ -378,7 +378,9 @@ class RodauthApp < Rodauth::Rails::App
     auth_class_eval do
       # queue email delivery on the mailer after the transaction commits
       def mailer_send(type, *args)
-        db.after_commit { RodauthMailer.public_send(type, *args).deliver_later }
+        db.after_commit do
+          RodauthMailer.public_send(type, *args).deliver_later
+        end
       end
     end
     # ...
