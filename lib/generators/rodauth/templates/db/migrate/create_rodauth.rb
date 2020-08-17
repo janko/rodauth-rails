@@ -53,7 +53,7 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
 
     # # Used by the audit logging feature
     # create_table :account_authentication_audit_logs do |t|
-    #   t.references :account, null: false
+    #   t.references :account, foreign_key: true, null: false
     #   t.datetime :at, null: false, default: -> { "CURRENT_TIMESTAMP" }
     #   t.text :message, null: false
 <% case activerecord_adapter -%>
@@ -70,7 +70,7 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
 
     # # Used by the jwt refresh feature
     # create_table :account_jwt_refresh_keys do |t|
-    #   t.references :account, null: false
+    #   t.references :account, foreign_key: true, null: false
     #   t.string :key, null: false
     #   t.datetime :deadline, null: false
     #   t.index :account_id, name: "account_jwt_rk_account_id_idx"
@@ -78,7 +78,7 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
 
     # # Used by the disallow_password_reuse feature
     # create_table :account_previous_password_hashes do |t|
-    #   t.references :account
+    #   t.references :account, foreign_key: true
     #   t.string :password_hash, null: false
     # end
 
@@ -124,7 +124,7 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
 
     # # Used by the active sessions feature
     # create_table :account_active_session_keys, primary_key: [:account_id, :session_id] do |t|
-    #   t.references :account
+    #   t.references :account, foreign_key: true
     #   t.string :session_id
     #   t.datetime :created_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
     #   t.datetime :last_use, null: false, default: -> { "CURRENT_TIMESTAMP" }
@@ -136,7 +136,7 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
     #   t.string :webauthn_id, null: false
     # end
     # create_table :account_webauthn_keys, primary_key: [:account_id, :webauthn_id] do |t|
-    #   t.references :account
+    #   t.references :account, foreign_key: true
     #   t.string :webauthn_id
     #   t.string :public_key, null: false
     #   t.integer :sign_count, null: false

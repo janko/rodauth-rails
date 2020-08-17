@@ -1,3 +1,7 @@
+## HEAD
+
+* Add some missing foreign key constraints in generated migration file (@janko)
+
 ## 0.2.1 (2020-07-26)
 
 * Fix incorrect JDBC connect syntax in `sequel.rb` template on JRuby (@janko)
