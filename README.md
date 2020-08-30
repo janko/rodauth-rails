@@ -258,7 +258,7 @@ You can pass a list of Rodauth features to the generator to create views for
 these features (this will not remove any existing views):
 
 ```sh
-$ rails generate rodauth:views --features login create_account lockout otp
+$ rails generate rodauth:views login create_account lockout otp
 ```
 
 Or you can generate views for all features:

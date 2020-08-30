@@ -7,6 +7,21 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace "rodauth:views"
 
+        argument :features, optional: true, type: :array,
+          desc: "Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)",
+          default: %w[login logout create_account verify_account reset_password change_password change_login verify_login_change close_account]
+
+        class_option :features, type: :array,
+          desc: "[DEPRECATED] Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)"
+
+        class_option :all, aliases: "-a", type: :boolean,
+          desc: "Generates views for all Rodauth features",
+          default: false
+
+        class_option :directory, aliases: "-d", type: :string,
+          desc: "The directory under app/views/* into which to create views",
+          default: "rodauth"
+
         VIEWS = {
           login: %w[
             _field _field_error _login_field _login_display _password_field
@@ -83,20 +98,12 @@ module Rodauth
           webauthn:        :two_factor_base,
         }
 
-        class_option :features, type: :array,
-          desc: "Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)",
-          default: %w[login logout create_account verify_account reset_password change_password change_login verify_login_change close_account]
-
-        class_option :all, aliases: "-a", type: :boolean,
-          desc: "Generates views for all Rodauth features",
-          default: false
-
-        class_option :directory, aliases: "-d", type: :string,
-          desc: "The directory under app/views/* into which to create views",
-          default: "rodauth"
-
         def create_views
-          features = options[:all] ? VIEWS.keys : options[:features].map(&:to_sym)
+          if options[:all]
+            features = VIEWS.keys
+          else
+            features = (options[:features] || self.features).map(&:to_sym)
+          end
 
           views = features.inject([]) do |list, feature|
             list |= VIEWS[feature] || []

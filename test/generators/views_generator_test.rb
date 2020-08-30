@@ -26,7 +26,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   end
 
   test "choosing features" do
-    run_generator ["--features", "lockout"]
+    run_generator ["lockout"]
 
     %w[_login_hidden_field _submit unlock_account_request unlock_account].each do |template|
       assert_file "app/views/rodauth/#{template}.html.erb"
@@ -37,7 +37,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   end
 
   test "dependencies" do
-    run_generator ["--features", "sms_codes"]
+    run_generator ["sms_codes"]
 
     templates = %w[
       _field _field_error _password_field _submit two_factor_manage
@@ -92,7 +92,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   end
 
   test "otp_auth template" do
-    run_generator %w[--features otp]
+    run_generator %w[otp]
 
     assert_file "app/views/rodauth/otp_auth.html.erb", <<-ERB.strip_heredoc
       <%= form_tag rodauth.otp_auth_path, method: :post do %>
@@ -103,7 +103,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   end
 
   test "password_field partial" do
-    run_generator %w[--features create_account]
+    run_generator %w[create_account]
 
     assert_file "app/views/rodauth/_password_field.html.erb", <<-ERB.strip_heredoc
       <div class="form-group">
@@ -111,5 +111,13 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
         <%= render "field", name: rodauth.password_param, id: "password", type: :password, value: "", autocomplete: rodauth.password_field_autocomplete_value %>
       </div>
     ERB
+  end
+
+  test "deprecated --features option" do
+    run_generator %w[--features lockout]
+
+    %w[_login_hidden_field _submit unlock_account_request unlock_account].each do |template|
+      assert_file "app/views/rodauth/#{template}.html.erb"
+    end
   end
 end

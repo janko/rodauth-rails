@@ -1,5 +1,7 @@
 ## HEAD
 
+* Allow specifying features as plain arguments in `rodauth:views` generator (@janko)
+
 * Add some missing foreign key constraints in generated migration file (@janko)
 
 ## 0.2.1 (2020-07-26)
