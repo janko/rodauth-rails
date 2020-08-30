@@ -56,21 +56,11 @@ module Rodauth
           end
         end
 
-        if RUBY_ENGINE == "jruby"
-          def sequel_adapter
-            case activerecord_adapter
-            when "postgresql" then "postgresql"
-            when "mysql2"     then "mysql"
-            when "sqlite3"    then "sqlite"
-            end
-          end
-        else
-          def sequel_adapter
-            case activerecord_adapter
-            when "postgresql" then "postgres"
-            when "mysql2"     then "mysql2"
-            when "sqlite3"    then "sqlite"
-            end
+        def sequel_adapter
+          case activerecord_adapter
+          when "postgresql" then "postgres#{"ql" if RUBY_ENGINE == "jruby"}"
+          when "mysql2"     then "mysql#{"2" unless RUBY_ENGINE == "jruby"}"
+          when "sqlite3"    then "sqlite"
           end
         end
 
