@@ -9,7 +9,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "migration" do
     run_generator
 
-    if ActiveRecord.version >= Gem::Version.new("5.0.0")
+    if ActiveRecord.version >= Gem::Version.new("5.0")
       migration_version = Regexp.escape("[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]")
     end
 

@@ -1,12 +1,11 @@
 require "rails/generators/base"
-require "rails/generators/migration"
-require "rails/generators/active_record"
+require "rails/generators/active_record/migration"
 
 module Rodauth
   module Rails
     module Generators
       class InstallGenerator < ::Rails::Generators::Base
-        include ::Rails::Generators::Migration
+        include ::ActiveRecord::Generators::Migration
 
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
@@ -14,7 +13,7 @@ module Rodauth
         def create_rodauth_migration
           return unless defined?(ActiveRecord::Base)
 
-          migration_template "db/migrate/create_rodauth.rb", "db/migrate/create_rodauth.rb"
+          migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "create_rodauth.rb")
         end
 
         def create_rodauth_initializer
@@ -45,13 +44,13 @@ module Rodauth
 
         private
 
-        # required by #migration_template action
-        def self.next_migration_number(dirname)
-          ActiveRecord::Generators::Base.next_migration_number(dirname)
+        def db_migrate_path
+          return "db/migrate" unless activerecord_at_least?(5, 0)
+          super
         end
 
         def migration_version
-          if ActiveRecord.version >= Gem::Version.new("5.0.0")
+          if activerecord_at_least?(5, 0)
             "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
           end
         end
@@ -66,6 +65,10 @@ module Rodauth
 
         def activerecord_adapter
           ActiveRecord::Base.connection_config.fetch(:adapter)
+        end
+
+        def activerecord_at_least?(major, minor)
+          ActiveRecord.version >= Gem::Version.new("#{major}.#{minor}")
         end
       end
     end

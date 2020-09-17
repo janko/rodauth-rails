@@ -1,5 +1,7 @@
 ## HEAD
 
+* Handle custom configured database migration paths in install generator (@janko)
+
 * Allow specifying features as plain arguments in `rodauth:views` generator (@janko)
 
 * Add some missing foreign key constraints in generated migration file (@janko)
