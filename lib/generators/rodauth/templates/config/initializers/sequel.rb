@@ -1,10 +1,8 @@
 require "sequel/core"
 
-# initialize the appropriate Sequel adapter without creating a connection
+# initialize Sequel and have it reuse Active Record's database connection
 <%- if RUBY_ENGINE == "jruby" -%>
-DB = Sequel.connect("jdbc:<%= sequel_adapter %>://", test: false)
+DB = Sequel.connect("jdbc:<%= sequel_adapter %>://", extensions: :activerecord_connection)
 <% else -%>
-DB = Sequel.<%= sequel_adapter %>(test: false)
+DB = Sequel.<%= sequel_adapter %>(extensions: :activerecord_connection)
 <% end -%>
-# have Sequel use ActiveRecord's connection for database interaction
-DB.extension :activerecord_connection
