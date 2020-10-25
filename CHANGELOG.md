@@ -1,3 +1,7 @@
+## HEAD
+
+* Depend on sequel-activerecord_connection 1.0+ (@janko)
+
 ## 0.3.0 (2020-09-18)
 
 * Handle custom configured database migration paths in install generator (@janko)
