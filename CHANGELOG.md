@@ -1,4 +1,4 @@
-## HEAD
+## 0.3.1 (2020-10-25)
 
 * Depend on sequel-activerecord_connection 1.0+ (@janko)
 

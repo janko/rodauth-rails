@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name          = "rodauth-rails"
-  spec.version       = "0.3.0"
+  spec.version       = "0.3.1"
   spec.authors       = ["Janko Marohnić"]
   spec.email         = ["janko.marohnic@gmail.com"]
 
