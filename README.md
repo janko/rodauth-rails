@@ -14,6 +14,11 @@ Add the gem to your Gemfile:
 
 ```rb
 gem "rodauth-rails", "~> 0.3"
+
+# gem "jwt",      require: false # for JWT feature
+# gem "rotp",     require: false # for OTP feature
+# gem "rqrcode",  require: false # for OTP feature
+# gem "webauthn", require: false # for WebAuthn feature
 ```
 
 Then run `bundle install`.
