@@ -44,12 +44,21 @@ class CreateRodauth < ActiveRecord::Migration<%= migration_version %>
       t.datetime :deadline, null: false
     end
 
+<% unless api_only? -%>
     # Used by the remember me feature
     create_table :account_remember_keys do |t|
       t.foreign_key :accounts, column: :id
       t.string :key, null: false
       t.datetime :deadline, null: false
     end
+<% else -%>
+    # # Used by the remember me feature
+    # create_table :account_remember_keys do |t|
+    #   t.foreign_key :accounts, column: :id
+    #   t.string :key, null: false
+    #   t.datetime :deadline, null: false
+    # end
+<% end -%>
 
     # # Used by the audit logging feature
     # create_table :account_authentication_audit_logs do |t|

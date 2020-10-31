@@ -4,15 +4,16 @@ module Rodauth
   module Rails
     # The superclass for creating a Rodauth middleware.
     class App < Roda
-      require "rodauth/rails/app/flash"
-
       plugin :middleware
       plugin :hooks
       plugin :render, layout: false
 
-      plugin Flash
-
       def self.configure(name = nil, **options, &block)
+        unless options[:json] == :only
+          require "rodauth/rails/app/flash"
+          plugin Flash
+        end
+
         plugin :rodauth, name: name, csrf: false, flash: false, **options do
           # load the Rails integration
           enable :rails

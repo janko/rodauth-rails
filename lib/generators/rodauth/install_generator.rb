@@ -1,6 +1,8 @@
 require "rails/generators/base"
 require "rails/generators/active_record/migration"
 
+require "securerandom"
+
 module Rodauth
   module Rails
     module Generators
@@ -65,6 +67,10 @@ module Rodauth
 
         def activerecord_adapter
           ActiveRecord::Base.connection_config.fetch(:adapter)
+        end
+
+        def api_only?
+          ::Rails.application.config.api_only
         end
 
         def activerecord_at_least?(major, minor)

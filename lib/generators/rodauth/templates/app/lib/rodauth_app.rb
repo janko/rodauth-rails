@@ -1,8 +1,8 @@
 class RodauthApp < Rodauth::Rails::App
-  configure do
+  configure<%= " json: :only" if api_only? %> do
     # List of authentication features that are loaded.
     enable :create_account, :verify_account, :verify_account_grace_period,
-      :login, :remember, :logout,
+      :login, :logout, <%= api_only? ? ":jwt" : ":remember" %>,
       :reset_password, :change_password, :change_password_notify,
       :change_login, :verify_login_change,
       :close_account
@@ -38,6 +38,18 @@ class RodauthApp < Rodauth::Rails::App
 
     # Redirect to the app from login and registration pages if already logged in.
     # already_logged_in { redirect login_redirect }
+<% if api_only? -%>
+
+    # ==> JWT
+    # Set JWT secret, which is used to cryptographically protect the token.
+    jwt_secret "<%= SecureRandom.hex(64) %>"
+
+    # Don't require login confirmation param.
+    require_login_confirmation? false
+
+    # Don't require password confirmation param.
+    require_password_confirmation? false
+<% end -%>
 
     # ==> Emails
     # Uncomment the lines below once you've imported mailer views.
@@ -75,10 +87,12 @@ class RodauthApp < Rodauth::Rails::App
     # reset_password_email_body { "Click here to reset your password: #{reset_password_email_link}" }
 
     # ==> Flash
+<% unless api_only? -%>
     # Match flash keys with ones already used in the Rails app.
     # flash_notice_key :success # default is :notice
     # flash_error_key :error # default is :alert
 
+<% end -%>
     # Override default flash messages.
     # create_account_notice_flash "Your account has been created. Please verify your account by visiting the confirmation link sent to your email address."
     # require_login_error_flash "Login is required for accessing this page"
@@ -93,6 +107,7 @@ class RodauthApp < Rodauth::Rails::App
 
     # Change minimum number of password characters required when creating an account.
     # password_minimum_length 8
+<% unless api_only? -%>
 
     # ==> Remember Feature
     # Remember all logged in users.
@@ -103,6 +118,7 @@ class RodauthApp < Rodauth::Rails::App
 
     # Extend user's remember period when remembered via a cookie
     extend_remember_deadline? true
+<% end -%>
 
     # ==> Hooks
     # Validate custom fields in the create account form.
@@ -147,8 +163,10 @@ class RodauthApp < Rodauth::Rails::App
   # end
 
   route do |r|
+<% unless api_only? -%>
     rodauth.load_memory # autologin remembered users
 
+<% end -%>
     r.rodauth # route rodauth requests
 
     # ==> Authenticating Requests

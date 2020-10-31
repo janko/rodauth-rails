@@ -487,17 +487,25 @@ end
 
 ## Working with JWT
 
-To use Rodauth's [JWT feature], you'll need to load Roda's JSON support:
+To use Rodauth's [JWT feature], you'll need to load Roda's JSON support in
+`configure`:
 
 ```rb
 # lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure(json: true) do
     enable :jwt
+    jwt_secret "...your secret key..."
     # your configuration
   end
 end
 ```
+
+Make sure to store the `jwt_secret` in a secure place, such as Rails
+credentials or environment variables.
+
+Rodauth's JWT feature depends on the [JWT gem], so make sure to add it to your
+Gemfile.
 
 ## Testing
 
@@ -621,6 +629,7 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [rendering views outside of controllers]: https://blog.bigbinary.com/2016/01/08/rendering-views-outside-of-controllers-in-rails-5.html
 [feature documentation]: http://rodauth.jeremyevans.net/documentation.html
 [JWT feature]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
+[JWT gem]: https://github.com/jwt/ruby-jwt
 [Bootstrap]: https://getbootstrap.com/
 [Roda]: http://roda.jeremyevans.net/
 [HMAC]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-HMAC

@@ -1,5 +1,7 @@
 ## HEAD
 
+* Support Rails API-only mode (@janko)
+
 * Make `rodauth:install` create `rodauth_app.rb` in `app/lib/` directory (@janko)
 
 ## 0.3.1 (2020-10-25)
