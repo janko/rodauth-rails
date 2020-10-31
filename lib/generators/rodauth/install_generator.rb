@@ -47,12 +47,13 @@ module Rodauth
         private
 
         def db_migrate_path
-          return "db/migrate" unless activerecord_at_least?(5, 0)
+          return "db/migrate" unless ActiveRecord.version >= Gem::Version.new("5.0")
+
           super
         end
 
         def migration_version
-          if activerecord_at_least?(5, 0)
+          if ActiveRecord.version >= Gem::Version.new("5.0")
             "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
           end
         end
@@ -73,10 +74,6 @@ module Rodauth
           return false if ::Rails.gem_version < Gem::Version.new("5.0")
 
           ::Rails.application.config.api_only
-        end
-
-        def activerecord_at_least?(major, minor)
-          ActiveRecord.version >= Gem::Version.new("#{major}.#{minor}")
         end
       end
     end

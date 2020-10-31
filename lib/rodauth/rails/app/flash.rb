@@ -31,7 +31,7 @@ module Rodauth
           end
 
           def commit_flash
-            if ActionPack.version >= Gem::Version.new("5.0.0")
+            if ActionPack.version >= Gem::Version.new("5.0")
               rails_request.commit_flash
             else
               # ActionPack 4.2 automatically commits flash

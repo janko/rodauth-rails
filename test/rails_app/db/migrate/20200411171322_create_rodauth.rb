@@ -1,6 +1,5 @@
-version = eval("#{::ActiveRecord::VERSION::MAJOR}.#{::ActiveRecord::VERSION::MINOR}")
-
-if ActiveRecord.version >= Gem::Version.new("5.0.0")
+if ActiveRecord.version >= Gem::Version.new("5.0")
+  version    = Float("#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}")
   superclass = ActiveRecord::Migration[version]
 else
   superclass = ActiveRecord::Migration
@@ -57,7 +56,7 @@ class CreateRodauth < superclass
       t.references :account, null: false
       t.datetime :at, null: false, default: -> { "CURRENT_TIMESTAMP" }
       t.text :message, null: false
-      if ActiveRecord.version >= Gem::Version.new("5.2.0")
+      if ActiveRecord.version >= Gem::Version.new("5.2")
         t.json :metadata
       else
         t.text :metadata

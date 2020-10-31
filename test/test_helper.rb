@@ -43,7 +43,7 @@ class IntegrationTest < ActiveSupport::TestCase
 
   def setup
     super
-    if ActiveRecord.version >= Gem::Version.new("5.2.0")
+    if ActiveRecord.version >= Gem::Version.new("5.2")
       ActiveRecord::Base.connection.migration_context.up
     else
       ActiveRecord::Migrator.up(Rails.application.paths["db/migrate"].to_a)
@@ -52,7 +52,7 @@ class IntegrationTest < ActiveSupport::TestCase
 
   def teardown
     super
-    if ActiveRecord.version >= Gem::Version.new("5.2.0")
+    if ActiveRecord.version >= Gem::Version.new("5.2")
       ActiveRecord::Base.connection.migration_context.down
     else
       ActiveRecord::Migrator.down(Rails.application.paths["db/migrate"].to_a)

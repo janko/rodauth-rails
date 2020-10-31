@@ -92,7 +92,7 @@ module Rodauth
       request  = ActionDispatch::Request.new(scope.env)
       instance = rails_controller.new
 
-      if ActionPack.version >= Gem::Version.new("5.0.0")
+      if ActionPack.version >= Gem::Version.new("5.0")
         instance.set_request! request
         instance.set_response! rails_controller.make_response!(request)
       else
