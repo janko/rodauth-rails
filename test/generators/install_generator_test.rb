@@ -42,7 +42,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "app" do
     run_generator
 
-    assert_file "lib/rodauth_app.rb", /class RodauthApp < Rodauth::Rails::App/
+    assert_file "app/lib/rodauth_app.rb", /class RodauthApp < Rodauth::Rails::App/
   end
 
   test "controller" do

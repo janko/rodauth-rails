@@ -29,7 +29,7 @@ The generator will create the following files:
 * Rodauth migration at `db/migrate/*_create_rodauth.rb`
 * Rodauth initializer at `config/initializers/rodauth.rb`
 * Sequel initializer at `config/initializers/sequel.rb` for ActiveRecord integration
-* Rodauth app at `lib/rodauth_app.rb`
+* Rodauth app at `app/lib/rodauth_app.rb`
 * Rodauth controller at `app/controllers/rodauth_controller.rb`
 * Account model at `app/models/account.rb`
 
@@ -88,12 +88,12 @@ DB = Sequel.postgres(extensions: :activerecord_connection)
 
 ### Rodauth app
 
-Your Rodauth app is created in the `lib/` directory, which comes with a default
-set of authentication features enabled, as well as extensive examples on ways
-you can configure authentication behaviour.
+Your Rodauth app is created in the `app/lib/` directory, and comes with a
+default set of authentication features enabled, as well as extensive examples
+on ways you can configure authentication behaviour.
 
 ```rb
-# lib/rodauth_app.rb
+# app/lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure do
     # authentication configuration
@@ -101,19 +101,6 @@ class RodauthApp < Rodauth::Rails::App
 
   route do |r|
     # request handling
-  end
-end
-```
-
-Note that Rails doesn't autoload files in the `lib/` directory by default, so
-make sure to add `lib/` to your `config.autoload_paths`:
-
-```rb
-# config/application.rb
-module YourApp
-  class Application < Rails::Application
-    # ...
-    config.autoload_paths += %W[#{config.root}/lib]
   end
 end
 ```

@@ -1,3 +1,7 @@
+## HEAD
+
+* Make `rodauth:install` create `rodauth_app.rb` in `app/lib/` directory (@janko)
+
 ## 0.3.1 (2020-10-25)
 
 * Depend on sequel-activerecord_connection 1.0+ (@janko)
