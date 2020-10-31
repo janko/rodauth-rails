@@ -70,6 +70,8 @@ module Rodauth
         end
 
         def api_only?
+          return false if ::Rails.gem_version < Gem::Version.new("5.0")
+
           ::Rails.application.config.api_only
         end
 

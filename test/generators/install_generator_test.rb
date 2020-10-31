@@ -60,7 +60,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/lib/rodauth_app.rb", /jwt_secret "[a-z0-9]{128}"/
 
     Rails.application.config.api_only = false
-  end
+  end if Rails.gem_version >= Gem::Version.new("5.0")
 
   test "controller" do
     run_generator
