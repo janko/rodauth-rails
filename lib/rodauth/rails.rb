@@ -1,4 +1,4 @@
-require "rodauth/version"
+require "rodauth/rails/version"
 require "rodauth/rails/railtie"
 
 module Rodauth

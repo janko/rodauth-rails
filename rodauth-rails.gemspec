@@ -1,6 +1,8 @@
+require_relative "lib/rodauth/rails/version"
+
 Gem::Specification.new do |spec|
   spec.name          = "rodauth-rails"
-  spec.version       = "0.3.1"
+  spec.version       = Rodauth::Rails::VERSION
   spec.authors       = ["Janko Marohnić"]
   spec.email         = ["janko.marohnic@gmail.com"]
 
