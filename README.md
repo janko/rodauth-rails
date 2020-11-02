@@ -13,7 +13,7 @@ Provides Rails integration for the [Rodauth] authentication framework.
 Add the gem to your Gemfile:
 
 ```rb
-gem "rodauth-rails", "~> 0.3"
+gem "rodauth-rails", "~> 0.4"
 
 # gem "jwt",      require: false # for JWT feature
 # gem "rotp",     require: false # for OTP feature

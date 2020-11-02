@@ -1,4 +1,4 @@
-## HEAD
+## 0.4.1 (2020-11-02)
 
 * Don't generate `RodauthController` in API-only mode (@janko)
 
