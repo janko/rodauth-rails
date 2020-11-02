@@ -184,7 +184,7 @@ our app. We can do this in our Rodauth app's routing block, which helps keep
 the authentication logic encapsulated:
 
 ```rb
-# lib/rodauth_app.rb
+# app/lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   # ...
   route do |r|
@@ -304,7 +304,7 @@ Rodauth may send emails as part of the authentication flow. Most email settings
 can be customized:
 
 ```rb
-# lib/rodauth_app.rb
+# app/lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   # ...
   configure do
@@ -349,7 +349,7 @@ your mailer. If you've enabled additional authentication features, make sure to
 override their `send_*_email` methods as well.
 
 ```rb
-# lib/rodauth_app.rb
+# app/lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   # ...
   configure do
@@ -384,6 +384,37 @@ class RodauthApp < Rodauth::Rails::App
   end
 end
 ```
+
+### JSON API
+
+JSON API support in Rodauth is provided by the [JWT feature]. First you'll need
+to add the [JWT gem] to your Gemfile:
+
+```rb
+gem "jwt"
+```
+
+The following configuration will enable the Rodauth endpoints to be accessed
+via JSON requests (in addition to HTML requests):
+
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure(json: true) do
+    # ...
+    enable :jwt
+    jwt_secret "...your secret key..."
+    # ...
+  end
+end
+```
+
+If you want the endpoints to be only accessible via JSON requests, or if your
+Rails app is in API-only mode, instead of `json: true` pass `json: :only` to
+the configure method.
+
+Make sure to store the `jwt_secret` in a secure place, such as Rails
+credentials or environment variables.
 
 ## How it works
 
@@ -489,28 +520,6 @@ Rodauth::Rails.configure do |config|
   config.middleware = true
 end
 ```
-
-## Working with JWT
-
-To use Rodauth's [JWT feature], you'll need to load Roda's JSON support in
-`configure`:
-
-```rb
-# lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure(json: true) do
-    enable :jwt
-    jwt_secret "...your secret key..."
-    # your configuration
-  end
-end
-```
-
-Make sure to store the `jwt_secret` in a secure place, such as Rails
-credentials or environment variables.
-
-Rodauth's JWT feature depends on the [JWT gem], so make sure to add it to your
-Gemfile.
 
 ## Testing
 
