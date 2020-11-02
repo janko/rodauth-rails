@@ -62,9 +62,13 @@ module Rodauth
 
     # Calls the Rails renderer, returning nil if a template is missing.
     def rails_render(*args)
-      rails_controller_instance.render_to_string(*args)
-    rescue ActionView::MissingTemplate
-      nil
+      return if only_json?
+
+      begin
+        rails_controller_instance.render_to_string(*args)
+      rescue ActionView::MissingTemplate
+        nil
+      end
     end
 
     # Hidden tag with Rails CSRF token inserted into Rodauth templates.

@@ -1,5 +1,7 @@
 ## HEAD
 
+* Don't generate `RodauthController` in API-only mode (@janko)
+
 * Pass `test: false` to Sequel in the `sequel.rb` initializer (@janko)
 
 ## 0.4.0 (2020-11-02)

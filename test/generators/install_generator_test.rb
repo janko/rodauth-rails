@@ -45,6 +45,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/lib/rodauth_app.rb", /class RodauthApp < Rodauth::Rails::App/
     assert_file "app/lib/rodauth_app.rb", /configure do/
     assert_file "app/lib/rodauth_app.rb", /:login, :logout, :remember,/
+    assert_file "app/lib/rodauth_app.rb", /rails_controller { RodauthController }/
     assert_file "app/lib/rodauth_app.rb", /flash_notice_key/
     assert_file "app/lib/rodauth_app.rb", /Remember Feature/
     assert_file "app/lib/rodauth_app.rb", /rodauth\.load_memory/
@@ -52,7 +53,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
   test "app with API only" do
     Rails.application.config.api_only = true
-
     run_generator
 
     assert_file "app/lib/rodauth_app.rb", /configure json: :only do/
@@ -66,6 +66,15 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "app/controllers/rodauth_controller.rb", /class RodauthController < ApplicationController/
+  end
+
+  test "controller with API only" do
+    Rails.application.config.api_only = true
+    run_generator
+
+    assert_no_file "app/controllers/rodauth_controller.rb"
+
+    Rails.application.config.api_only = false
   end
 
   test "model" do

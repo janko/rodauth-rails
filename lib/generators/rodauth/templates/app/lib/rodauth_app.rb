@@ -11,8 +11,10 @@ class RodauthApp < Rodauth::Rails::App
     # http://rodauth.jeremyevans.net/documentation.html
 
     # ==> General
+<% unless api_only? -%>
     # Specify the controller used for view rendering and CSRF verification.
     rails_controller { RodauthController }
+<% end -%>
 
     # Store account status in a text column.
     account_status_column :status
