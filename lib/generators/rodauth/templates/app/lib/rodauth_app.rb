@@ -14,8 +14,8 @@ class RodauthApp < Rodauth::Rails::App
 <% unless api_only? -%>
     # Specify the controller used for view rendering and CSRF verification.
     rails_controller { RodauthController }
-<% end -%>
 
+<% end -%>
     # Store account status in a text column.
     account_status_column :status
     account_unverified_status_value "unverified"
