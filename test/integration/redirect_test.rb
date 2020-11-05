@@ -1,6 +1,6 @@
 require "test_helper"
 
-class AuthenticationTest < IntegrationTest
+class RedirectTest < IntegrationTest
   test "requiring authentication from Rodauth app" do
     visit "/auth1"
     assert_equal current_path, "/login"
