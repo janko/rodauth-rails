@@ -69,7 +69,11 @@ module Rodauth
         end
 
         def activerecord_adapter
-          ActiveRecord::Base.connection_config.fetch(:adapter)
+          if ActiveRecord::Base.respond_to?(:connection_db_config)
+            ActiveRecord::Base.connection_db_config.adapter
+          else
+            ActiveRecord::Base.connection_config.fetch(:adapter)
+          end
         end
 
         def api_only?

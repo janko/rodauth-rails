@@ -1,3 +1,7 @@
+# HEAD
+
+* Call `AR::Base.connection_db_config` on Rails 6.1+ in `rodauth:install` generator (@janko)
+
 ## 0.4.1 (2020-11-02)
 
 * Don't generate `RodauthController` in API-only mode (@janko)
