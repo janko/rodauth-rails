@@ -1,5 +1,7 @@
 # HEAD
 
+* Set default bcrypt hash cost to `1` in tests (@janko)
+
 * Call `AR::Base.connection_db_config` on Rails 6.1+ in `rodauth:install` generator (@janko)
 
 ## 0.4.1 (2020-11-02)

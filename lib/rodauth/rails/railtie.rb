@@ -13,6 +13,11 @@ module Rodauth
           include Rodauth::Rails::ControllerMethods
         end
       end
+
+      initializer "rodauth.test" do
+        # Rodauth uses RACK_ENV to set the default bcrypt hash cost
+        ENV["RACK_ENV"] = "test" if ::Rails.env.test?
+      end
     end
   end
 end
