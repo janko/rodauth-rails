@@ -1,5 +1,7 @@
 # HEAD
 
+* Drop support for Ruby 2.2 (@janko)
+
 * Bump `sequel-activerecord_connection` dependency to 1.1+ (@janko)
 
 * Set default bcrypt hash cost to `1` in tests (@janko)
