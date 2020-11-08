@@ -1,5 +1,7 @@
 # HEAD
 
+* Bump `sequel-activerecord_connection` dependency to 1.1+ (@janko)
+
 * Set default bcrypt hash cost to `1` in tests (@janko)
 
 * Call `AR::Base.connection_db_config` on Rails 6.1+ in `rodauth:install` generator (@janko)
