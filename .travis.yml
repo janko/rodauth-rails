@@ -21,8 +21,6 @@ matrix:
       gemfile: gemfiles/Gemfile.rails-6.0
     - rvm: 2.4
       gemfile: gemfiles/Gemfile.rails-6.0
-    - rvm: 2.7
-      gemfile: gemfiles/Gemfile.rails-4.2
 
 before_script: "bundle update"
 

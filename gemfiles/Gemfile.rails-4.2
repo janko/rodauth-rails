@@ -3,6 +3,7 @@ source "https://rubygems.org"
 gemspec path: ".."
 
 gem "rake", "~> 12.0"
+gem "bigdecimal", "~> 1.4" if RUBY_VERSION >= "2.7"
 
 gem "rails", "~> 4.2.0"
 gem "sqlite3", "~> 1.3.6",                        platforms: :mri
