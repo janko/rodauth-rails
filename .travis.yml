@@ -22,6 +22,9 @@ matrix:
     - rvm: 2.4
       gemfile: gemfiles/Gemfile.rails-6.0
 
+# for Rails 4.2
+before_install: "gem install bundler -v '< 2'"
+
 before_script: "bundle update"
 
 cache: bundler
