@@ -21,9 +21,10 @@ matrix:
       gemfile: gemfiles/Gemfile.rails-6.0
     - rvm: 2.4
       gemfile: gemfiles/Gemfile.rails-6.0
-
-# for Rails 4.2
-before_install: "gem install bundler -v '< 2'"
+    - rvm: 2.7
+      gemfile: gemfiles/Gemfile.rails-4.2
+    - rvm: jruby-9.2.13.0
+      gemfile: gemfiles/Gemfile.rails-4.2
 
 before_script: "bundle update"
 
