@@ -8,6 +8,14 @@ class RodauthApp < Rodauth::Rails::App
 
     rails_controller { RodauthController }
 
+    before_rodauth do
+      if param_or_nil("raise")
+        raise NotImplementedError
+      elsif param_or_nil("fail")
+        fail "failed"
+      end
+    end
+
     account_status_column :status
     account_unverified_status_value "unverified"
     account_open_status_value "verified"

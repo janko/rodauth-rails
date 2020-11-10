@@ -1,3 +1,13 @@
+## HEAD
+
+* Remove `#rails_check_csrf!` configuration method (@janko)
+
+* Add default Action Dispatch response headers in Rodauth responses (@janko)
+
+* Run controller rescue handlers around Rodauth actions (@janko)
+
+* Run controller action callbacks around Rodauth actions (@janko)
+
 ## 0.5.0 (2020-11-16)
 
 * Support more Active Record adapters in `rodauth:install` generator (@janko)

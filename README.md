@@ -546,7 +546,6 @@ list of its configuration methods:
 | `rails_csrf_tag`            | Hidden field added to Rodauth templates containing the CSRF token. |
 | `rails_csrf_param`          | Value of the `name` attribute for the CSRF tag.                    |
 | `rails_csrf_token`          | Value of the `value` attribute for the CSRF tag.                   |
-| `rails_check_csrf!`         | Verifies the authenticity token for the current request.           |
 | `rails_controller_instance` | Instance of the controller with the request env context.           |
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 

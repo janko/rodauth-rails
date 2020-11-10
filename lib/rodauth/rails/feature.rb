@@ -8,10 +8,10 @@ module Rodauth
       :rails_csrf_tag,
       :rails_csrf_param,
       :rails_csrf_token,
-      :rails_check_csrf!,
-      :rails_controller_instance,
       :rails_controller,
     )
+
+    auth_cached_method :rails_controller_instance
 
     # Renders templates with layout. First tries to render a user-defined
     # template, otherwise falls back to Rodauth's template.
@@ -28,16 +28,6 @@ module Rodauth
         super
     end
 
-    # Verify Rails' authenticity token.
-    def check_csrf
-      rails_check_csrf!
-    end
-
-    # Have Rodauth call #check_csrf automatically.
-    def check_csrf?
-      true
-    end
-
     # Render Rails CSRF tags in Rodauth templates.
     def csrf_tag(*)
       rails_csrf_tag
@@ -49,6 +39,53 @@ module Rodauth
     end
 
     private
+
+    # Runs controller callbacks and rescue handlers around Rodauth actions.
+    def _around_rodauth(&block)
+      result = nil
+
+      rails_controller_rescue do
+        rails_controller_callbacks do
+          result = catch(:halt) { super(&block) }
+        end
+      end
+
+      if rails_controller_instance.performed?
+        rails_controller_response
+      else
+        result[1].merge!(rails_controller_instance.response.headers)
+        throw :halt, result
+      end
+    end
+
+    # Runs any #(before|around|after)_action controller callbacks.
+    def rails_controller_callbacks
+      rails_controller_instance.run_callbacks(:process_action) do
+        yield
+      end
+    end
+
+    # Runs any registered #rescue_from controller handlers.
+    def rails_controller_rescue
+      yield
+    rescue Exception => exception
+      rails_controller_instance.rescue_with_handler(exception) || raise
+
+      unless rails_controller_instance.performed?
+        raise Rodauth::Rails::Error, "rescue_from handler didn't write any response"
+      end
+    end
+
+    # Returns Roda response from controller response if set.
+    def rails_controller_response
+      controller_response = rails_controller_instance.response
+
+      response.status = controller_response.status
+      response.headers.merge! controller_response.headers
+      response.write controller_response.body
+
+      request.halt
+    end
 
     # Create emails with ActionMailer which uses configured delivery method.
     def create_email_to(to, subject, body)
@@ -64,11 +101,9 @@ module Rodauth
     def rails_render(*args)
       return if only_json?
 
-      begin
-        rails_controller_instance.render_to_string(*args)
-      rescue ActionView::MissingTemplate
-        nil
-      end
+      rails_controller_instance.render_to_string(*args)
+    rescue ActionView::MissingTemplate
+      nil
     end
 
     # Hidden tag with Rails CSRF token inserted into Rodauth templates.
@@ -86,13 +121,8 @@ module Rodauth
       rails_controller_instance.send(:form_authenticity_token)
     end
 
-    # Calls the controller to verify the authenticity token.
-    def rails_check_csrf!
-      rails_controller_instance.send(:verify_authenticity_token)
-    end
-
     # Instances of the configured controller with current request's env hash.
-    def rails_controller_instance
+    def _rails_controller_instance
       request  = ActionDispatch::Request.new(scope.env)
       instance = rails_controller.new
 
