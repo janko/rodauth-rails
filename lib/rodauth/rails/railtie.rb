@@ -20,6 +20,10 @@ module Rodauth
         # Rodauth uses RACK_ENV to set the default bcrypt hash cost
         ENV["RACK_ENV"] = "test" if ::Rails.env.test?
       end
+
+      rake_tasks do
+        load "rodauth/rails/tasks.rake"
+      end
     end
   end
 end

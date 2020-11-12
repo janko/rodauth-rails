@@ -121,7 +121,7 @@ class RodauthController < ApplicationController
 end
 ```
 
-### Account Model
+### Account model
 
 Rodauth stores user accounts in the `accounts` table, so the generator will
 also create an `Account` model for custom use.
@@ -134,8 +134,30 @@ end
 
 ## Getting started
 
-Let's start by adding some basic authentication navigation links to our home
-page:
+First, let's see what routes our Rodauth middleware will handle:
+
+```sh
+$ rails rodauth:routes
+```
+```
+Routes handled by Rodauth::Rails::Middleware:
+
+  GET/POST  /login                   rodauth.login_path
+  GET/POST  /create-account          rodauth.create_account_path
+  GET/POST  /verify-account-resend   rodauth.verify_account_resend_path
+  GET/POST  /verify-account          rodauth.verify_account_path
+  GET/POST  /change-password         rodauth.change_password_path
+  GET/POST  /change-login            rodauth.change_login_path
+  GET/POST  /logout                  rodauth.logout_path
+  GET/POST  /remember                rodauth.remember_path
+  GET/POST  /reset-password-request  rodauth.reset_password_request_path
+  GET/POST  /reset-password          rodauth.reset_password_path
+  GET/POST  /verify-login-change     rodauth.verify_login_change_path
+  GET/POST  /close-account           rodauth.close_account_path
+```
+
+We can use this information to add some basic authentication navigation links
+to our home page:
 
 ```erb
 <ul>

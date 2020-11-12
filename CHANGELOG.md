@@ -1,3 +1,7 @@
+## HEAD
+
+* Add `rodauth:routes` rake task for printing routes handled by Rodauth middleware (@janko)
+
 ## 0.4.2 (2020-11-08)
 
 * Drop support for Ruby 2.2 (@janko)
