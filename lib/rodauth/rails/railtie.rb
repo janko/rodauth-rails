@@ -1,6 +1,8 @@
 require "rodauth/rails/middleware"
 require "rodauth/rails/controller_methods"
 
+require "rails"
+
 module Rodauth
   module Rails
     class Railtie < ::Rails::Railtie
