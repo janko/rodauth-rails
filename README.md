@@ -140,7 +140,7 @@ First, let's see what routes our Rodauth middleware will handle:
 $ rails rodauth:routes
 ```
 ```
-Routes handled by Rodauth::Rails::Middleware:
+Routes handled by RodauthApp:
 
   /login                   rodauth.login_path
   /create-account          rodauth.create_account_path
