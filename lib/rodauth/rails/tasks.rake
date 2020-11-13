@@ -2,7 +2,7 @@ namespace :rodauth do
   task routes: :environment do
     app = Rodauth::Rails.app
 
-    puts "Routes handled by Rodauth::Rails::Middleware:"
+    puts "Routes handled by #{app}:"
     puts
 
     app.opts[:rodauths].each do |rodauth_name, rodauth_class|

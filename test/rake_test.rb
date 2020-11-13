@@ -9,7 +9,7 @@ class RakeTest < ActiveSupport::TestCase
     end
 
     assert_equal <<~EOS, stdout.strip + "\n"
-      Routes handled by Rodauth::Rails::Middleware:
+      Routes handled by RodauthApp:
 
         /login                   rodauth.login_path
         /create-account          rodauth.create_account_path
