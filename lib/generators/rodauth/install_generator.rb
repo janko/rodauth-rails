@@ -1,6 +1,6 @@
 require "rails/generators/base"
 require "rails/generators/active_record/migration"
-
+require "generators/rodauth/migration_helpers"
 require "securerandom"
 
 module Rodauth
@@ -8,6 +8,7 @@ module Rodauth
     module Generators
       class InstallGenerator < ::Rails::Generators::Base
         include ::ActiveRecord::Generators::Migration
+        include MigrationHelpers
 
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
@@ -15,7 +16,7 @@ module Rodauth
         def create_rodauth_migration
           return unless defined?(ActiveRecord::Base)
 
-          migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "create_rodauth.rb")
+          migration_template "db/migrate/create_rodauth.rb"
         end
 
         def create_rodauth_initializer
@@ -56,50 +57,16 @@ module Rodauth
           end
         end
 
-        def activerecord_adapter
-          if ActiveRecord::Base.respond_to?(:connection_db_config)
-            ActiveRecord::Base.connection_db_config.adapter
-          else
-            ActiveRecord::Base.connection_config.fetch(:adapter)
-          end
+        def api_only?
+          return unless ::Rails.gem_version >= Gem::Version.new("5.0")
+
+          ::Rails.application.config.api_only
         end
 
-        if ::Rails.gem_version >= Gem::Version.new("5.0")
-          def migration_version
-            "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
-          end
-
-          def api_only?
-            rails_config.api_only
-          end
-        else
-          def migration_version
-            nil
-          end
-
-          def api_only?
-            false
-          end
-
-          def db_migrate_path
-            "db/migrate"
-          end
-        end
-
-        def primary_key_type(key = :id)
-          column_type = rails_config.generators.options[:active_record][:primary_key_type]
-
-          return unless column_type
-
-          if key
-            ", #{key}: :#{column_type}"
-          else
-            column_type
-          end
-        end
-
-        def rails_config
-          ::Rails.application.config
+        def migration_features
+          features = [:base, :reset_password, :verify_account, :verify_login_change]
+          features << :remember unless api_only?
+          features
         end
       end
     end

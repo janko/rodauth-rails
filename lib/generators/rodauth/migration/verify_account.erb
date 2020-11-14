@@ -1,0 +1,7 @@
+# Used by the account verification feature
+create_table :account_verification_keys<%= primary_key_type %> do |t|
+  t.foreign_key :accounts, column: :id
+  t.string :key, null: false
+  t.datetime :requested_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
+  t.datetime :email_last_sent, null: false, default: -> { "CURRENT_TIMESTAMP" }
+end

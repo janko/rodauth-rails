@@ -1,0 +1,11 @@
+# Used by the lockout feature
+create_table :account_login_failures<%= primary_key_type %> do |t|
+  t.foreign_key :accounts, column: :id
+  t.integer :number, null: false, default: 1
+end
+create_table :account_lockouts<%= primary_key_type %> do |t|
+  t.foreign_key :accounts, column: :id
+  t.string :key, null: false
+  t.datetime :deadline, null: false
+  t.datetime :email_last_sent
+end

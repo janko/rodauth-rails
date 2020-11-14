@@ -1,0 +1,5 @@
+# Used by the single session feature
+create_table :account_session_keys<%= primary_key_type %> do |t|
+  t.foreign_key :accounts, column: :id
+  t.string :key, null: false
+end

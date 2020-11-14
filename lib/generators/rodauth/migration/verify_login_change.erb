@@ -1,0 +1,7 @@
+# Used by the verify login change feature
+create_table :account_login_change_keys<%= primary_key_type %> do |t|
+  t.foreign_key :accounts, column: :id
+  t.string :key, null: false
+  t.string :login, null: false
+  t.datetime :deadline, null: false
+end

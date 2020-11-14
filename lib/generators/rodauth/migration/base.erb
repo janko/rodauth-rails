@@ -1,0 +1,19 @@
+<% if activerecord_adapter == "postgresql" -%>
+enable_extension "citext"
+
+<% end -%>
+create_table :accounts<%= primary_key_type %> do |t|
+<% case activerecord_adapter -%>
+<% when "postgresql" -%>
+  t.citext :email, null: false, index: { unique: true, where: "status IN ('verified', 'unverified')" }
+<% else -%>
+  t.string :email, null: false, index: { unique: true }
+<% end -%>
+  t.string :status, null: false, default: "verified"
+end
+
+# Used if storing password hashes in a separate table (default)
+create_table :account_password_hashes<%= primary_key_type %> do |t|
+  t.foreign_key :accounts, column: :id
+  t.string :password_hash, null: false
+end

@@ -18,18 +18,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_migration "db/migrate/create_rodauth.rb", /t\.string :email, null: false, index: { unique: true }/
   end
 
-  test "migration uuid" do
-    Rails.application.config.generators do |g|
-      g.orm :active_record, primary_key_type: :uuid
-    end
-
-    run_generator
-
-    assert_migration "db/migrate/create_rodauth.rb", /create_table :accounts, id: :uuid do/
-
-    Rails.application.config.generators.options[:active_record].delete(:primary_key_type)
-  end
-
   test "rodauth initializer" do
     run_generator
 

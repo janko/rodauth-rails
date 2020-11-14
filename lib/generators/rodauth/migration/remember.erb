@@ -1,0 +1,6 @@
+# Used by the remember me feature
+create_table :account_remember_keys<%= primary_key_type %> do |t|
+  t.foreign_key :accounts, column: :id
+  t.string :key, null: false
+  t.datetime :deadline, null: false
+end

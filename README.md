@@ -54,7 +54,6 @@ class CreateRodauth < ActiveRecord::Migration
     create_table :account_verification_keys do |t| ... end
     create_table :account_login_change_keys do |t| ... end
     create_table :account_remember_keys do |t| ... end
-    # ...
   end
 end
 ```
@@ -403,6 +402,25 @@ class RodauthApp < Rodauth::Rails::App
       end
     end
     # ...
+  end
+end
+```
+
+### Migrations
+
+The install generator will have created some default tables, but you can use
+the migration generator to create tables for any additional Rodauth features:
+
+```
+$ rails generate rodauth:migration otp sms_codes recovery_codes
+```
+```rb
+# db/migration/*_create_rodauth_otp_sms_codes_recovery_codes.rb
+class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration
+  def change
+    create_table :account_otp_keys do |t| ... end
+    create_table :account_sms_codes do |t| ... end
+    create_table :account_recovery_codes do |t| ... end
   end
 end
 ```
