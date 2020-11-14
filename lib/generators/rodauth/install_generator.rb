@@ -70,7 +70,7 @@ module Rodauth
           end
 
           def api_only?
-            ::Rails.application.config.api_only
+            rails_config.api_only
           end
         else
           def migration_version
@@ -84,6 +84,22 @@ module Rodauth
           def db_migrate_path
             "db/migrate"
           end
+        end
+
+        def primary_key_type(key = :id)
+          column_type = rails_config.generators.options[:active_record][:primary_key_type]
+
+          return unless column_type
+
+          if key
+            ", #{key}: :#{column_type}"
+          else
+            column_type
+          end
+        end
+
+        def rails_config
+          ::Rails.application.config
         end
       end
     end

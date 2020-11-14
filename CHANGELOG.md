@@ -1,5 +1,7 @@
 ## HEAD
 
+* Use UUIDs for primary keys if so configured in Rails generators (@janko)
+
 * Add `rodauth:routes` rake task for printing routes handled by Rodauth middleware (@janko)
 
 ## 0.4.2 (2020-11-08)
