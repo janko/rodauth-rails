@@ -48,18 +48,6 @@ module Rodauth
 
         private
 
-        def db_migrate_path
-          return "db/migrate" unless ActiveRecord.version >= Gem::Version.new("5.0")
-
-          super
-        end
-
-        def migration_version
-          if ActiveRecord.version >= Gem::Version.new("5.0")
-            "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
-          end
-        end
-
         def sequel_adapter
           case activerecord_adapter
           when "postgresql" then "postgres#{"ql" if RUBY_ENGINE == "jruby"}"
@@ -76,10 +64,26 @@ module Rodauth
           end
         end
 
-        def api_only?
-          return false if ::Rails.gem_version < Gem::Version.new("5.0")
+        if ::Rails.gem_version >= Gem::Version.new("5.0")
+          def migration_version
+            "[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]"
+          end
 
-          ::Rails.application.config.api_only
+          def api_only?
+            ::Rails.application.config.api_only
+          end
+        else
+          def migration_version
+            nil
+          end
+
+          def api_only?
+            false
+          end
+
+          def db_migrate_path
+            "db/migrate"
+          end
         end
       end
     end
