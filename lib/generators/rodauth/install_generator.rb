@@ -25,7 +25,6 @@ module Rodauth
 
         def create_sequel_initializer
           return unless defined?(ActiveRecord::Base)
-          return unless %w[postgresql mysql2 sqlite3].include?(activerecord_adapter)
           return if defined?(Sequel) && !Sequel::DATABASES.empty?
 
           template "config/initializers/sequel.rb"
@@ -49,11 +48,31 @@ module Rodauth
 
         private
 
+        def sequel_uri_scheme
+          if RUBY_ENGINE == "jruby"
+            "jdbc:#{sequel_jdbc_subadapter}"
+          else
+            sequel_adapter
+          end
+        end
+
         def sequel_adapter
           case activerecord_adapter
-          when "postgresql" then "postgres#{"ql" if RUBY_ENGINE == "jruby"}"
-          when "mysql2"     then "mysql#{"2" unless RUBY_ENGINE == "jruby"}"
-          when "sqlite3"    then "sqlite"
+          when "sqlite3"         then "sqlite"
+          when "oracle_enhanced" then "oracle" # https://github.com/rsim/oracle-enhanced
+          when "sqlserver"       then "tinytds" # https://github.com/rails-sqlserver/activerecord-sqlserver-adapter
+          else
+            activerecord_adapter
+          end
+        end
+
+        def sequel_jdbc_subadapter
+          case activerecord_adapter
+          when "sqlite3"         then "sqlite"
+          when "oracle_enhanced" then "oracle" # https://github.com/rsim/oracle-enhanced
+          when "sqlserver"       then "mssql"
+          else
+            activerecord_adapter
           end
         end
 

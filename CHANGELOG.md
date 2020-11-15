@@ -1,5 +1,7 @@
 ## HEAD
 
+* Support more Active Record adapters in `rodauth:install` generator (@janko)
+
 * Add `rodauth:migration` generator for creating tables of specified features (@janko)
 
 * Use UUIDs for primary keys if so configured in Rails generators (@janko)
