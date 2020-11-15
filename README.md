@@ -628,6 +628,26 @@ disables the use of database functions, though you can always turn it back on.
 use_database_authentication_functions? true
 ```
 
+To create the database functions, pass the Sequel database object into the
+Rodauth method for creating database functions:
+
+```rb
+# db/migrate/*_create_rodauth_database_functions.rb
+class CreateRodauthDatabaseFunctions < ActiveRecord::Migration
+  def up
+    # ...
+    Rodauth.create_database_authentication_functions(DB)
+    # ...
+  end
+
+  def down
+    # ...
+    Rodauth.drop_database_authentication_functions(DB)
+    # ...
+  end
+end
+```
+
 ### Account statuses
 
 The recommended [Rodauth migration] stores possible account status values in a
