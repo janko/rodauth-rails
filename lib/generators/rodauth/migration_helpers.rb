@@ -57,7 +57,7 @@ module Rodauth
         end
 
         def erb_eval(content)
-          if RUBY_VERSION >= "2.4"
+          if ERB.version[/\d+\.\d+\.\d+/].to_s >= "2.2.0"
             ERB.new(content, trim_mode: "-").result(binding)
           else
             ERB.new(content, 0, "-").result(binding)
