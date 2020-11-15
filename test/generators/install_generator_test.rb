@@ -46,6 +46,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/lib/rodauth_app.rb", /class RodauthApp < Rodauth::Rails::App/
     assert_file "app/lib/rodauth_app.rb", /configure do/
     assert_file "app/lib/rodauth_app.rb", /:login, :logout, :remember,/
+    assert_file "app/lib/rodauth_app.rb", /hmac_secret "[a-z0-9]{128}"/
     assert_file "app/lib/rodauth_app.rb", /rails_controller { RodauthController }/
     assert_file "app/lib/rodauth_app.rb", /flash_notice_key/
     assert_file "app/lib/rodauth_app.rb", /Remember Feature/

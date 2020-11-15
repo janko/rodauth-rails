@@ -11,6 +11,10 @@ class RodauthApp < Rodauth::Rails::App
     # http://rodauth.jeremyevans.net/documentation.html
 
     # ==> General
+    # The secret key used for hashing public-facing tokens for various features.
+    # Defaults to Rails `secret_key_base`, but you can use your own secret key.
+    # hmac_secret "<%= SecureRandom.hex(64) %>"
+
 <% unless api_only? -%>
     # Specify the controller used for view rendering and CSRF verification.
     rails_controller { RodauthController }
