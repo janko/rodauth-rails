@@ -87,7 +87,7 @@ ActiveRecord connection.
 require "sequel/core"
 
 # initialize Sequel and have it reuse Active Record's database connection
-DB = Sequel.postgres(extensions: :activerecord_connection)
+DB = Sequel.connect("postgresql://", extensions: :activerecord_connection)
 ```
 
 ### Rodauth app
@@ -286,7 +286,7 @@ $ rails generate rodauth:views --all
 ```
 
 You can also tell the generator to create views into another directory (in this
-case don't forget to rename the Rodauth controller accordingly).
+case make sure to rename the Rodauth controller accordingly).
 
 ```sh
 # generates views into app/views/authentication
@@ -321,8 +321,8 @@ end
 
 ### Mailer
 
-Rodauth may send emails as part of the authentication flow. Most email settings
-can be customized:
+Depending on the features you've enabled, Rodauth may send emails as part of
+the authentication flow. Most email settings can be customized:
 
 ```rb
 # app/lib/rodauth_app.rb
