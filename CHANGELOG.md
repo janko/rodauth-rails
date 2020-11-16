@@ -1,4 +1,4 @@
-## HEAD
+## 0.5.0 (2020-11-16)
 
 * Support more Active Record adapters in `rodauth:install` generator (@janko)
 
