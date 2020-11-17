@@ -179,18 +179,16 @@ Let's also load the account record for authenticated requests and expose it via
 ```rb
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
-  before_action :load_account, if: -> { rodauth.authenticated? }
+  before_action :current_account, if: -> { rodauth.authenticated? }
 
   private
 
-  def load_account
-    @current_account = Account.find(rodauth.session_value)
+  def current_account
+    @current_account ||= Account.find(rodauth.session_value)
   rescue ActiveRecord::RecordNotFound
     rodauth.logout
     rodauth.login_required
   end
-
-  attr_reader   :current_account
   helper_method :current_account
 end
 ```
