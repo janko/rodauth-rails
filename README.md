@@ -4,9 +4,15 @@ Provides Rails integration for the [Rodauth] authentication framework.
 
 ## Resources
 
+Basic resources:
+
 * [Rodauth documentation](http://rodauth.jeremyevans.net/documentation.html)
-* [rodauth-rails wiki](https://github.com/janko/rodauth-rails/wiki)
 * [Rails demo](https://github.com/janko/rodauth-demo-rails)
+
+Articles:
+
+* [Rodauth: A Refreshing Authentication Solution for Ruby](https://janko.io/rodauth-a-refreshing-authentication-solution-for-ruby/)
+* [Adding Authentication in Rails 6 with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
 
 ## Installation
 
@@ -698,7 +704,6 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 
 [Rodauth]: https://github.com/jeremyevans/rodauth
 [Sequel]: https://github.com/jeremyevans/sequel
-[rendering views outside of controllers]: https://blog.bigbinary.com/2016/01/08/rendering-views-outside-of-controllers-in-rails-5.html
 [feature documentation]: http://rodauth.jeremyevans.net/documentation.html
 [JWT feature]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
 [JWT gem]: https://github.com/jwt/ruby-jwt
