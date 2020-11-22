@@ -16,9 +16,11 @@ module Rodauth
       def rodauth(name = nil)
         url_options = ActionMailer::Base.default_url_options
 
-        host    = url_options[:host]
-        host   += ":#{url_options[:port]}" if url_options[:port]
-        scheme  = url_options[:protocol] || "http"
+        scheme   = url_options[:protocol] || "http"
+        port     = url_options[:port]
+        port   ||= Rack::Request::DEFAULT_PORTS[scheme] if Gem::Version.new(Rack.release) < Gem::Version.new("2.0")
+        host     = url_options[:host]
+        host    += ":#{port}" if port
 
         rack_env = {
           "HTTP_HOST"       => host,
