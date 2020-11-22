@@ -15,7 +15,6 @@ module RailsApp
     config.eager_load = true
     config.action_dispatch.show_exceptions = false
     config.action_mailer.delivery_method = :test
-    config.autoload_paths += %W[#{config.root}/lib]
     config.active_record.maintain_test_schema = false
   end
 end

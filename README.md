@@ -515,11 +515,12 @@ end
 The `Rodauth::Rails::App` class is a [Roda] subclass that provides Rails
 integration for Rodauth:
 
-* uses Rails' flash instead of Roda's
-* uses Rails' CSRF protection instead of Roda's
+* uses Action Dispatch flash instead of Roda's
+* uses Action Dispatch CSRF protection instead of Roda's
 * sets [HMAC] secret to Rails' secret key base
-* uses ActionController for rendering templates
-* uses ActionMailer for sending emails
+* uses Action Controller for rendering templates
+* runs Action Controller callbacks & rescue handlers around Rodauth actions
+* uses Action Mailer for sending emails
 
 The `configure { ... }` method wraps configuring the Rodauth plugin, forwarding
 any additional [plugin options].
@@ -650,15 +651,11 @@ Rodauth method for creating database functions:
 # db/migrate/*_create_rodauth_database_functions.rb
 class CreateRodauthDatabaseFunctions < ActiveRecord::Migration
   def up
-    # ...
     Rodauth.create_database_authentication_functions(DB)
-    # ...
   end
 
   def down
-    # ...
     Rodauth.drop_database_authentication_functions(DB)
-    # ...
   end
 end
 ```
