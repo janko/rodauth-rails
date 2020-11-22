@@ -8,7 +8,6 @@ namespace :rodauth do
     app.opts[:rodauths].each do |rodauth_name, rodauth_class|
       route_names = rodauth_class.routes
         .map { |handle_method| handle_method.to_s.sub(/\Ahandle_/, "") }
-        .uniq
 
       rodauth = rodauth_class.allocate
 
