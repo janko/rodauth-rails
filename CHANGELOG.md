@@ -1,7 +1,5 @@
 ## HEAD
 
-* Remove `#rails_check_csrf!` configuration method (@janko)
-
 * Add default Action Dispatch response headers in Rodauth responses (@janko)
 
 * Run controller rescue handlers around Rodauth actions (@janko)
