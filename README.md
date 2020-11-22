@@ -4,7 +4,7 @@ Provides Rails integration for the [Rodauth] authentication framework.
 
 ## Resources
 
-Basic resources:
+Useful links:
 
 * [Rodauth documentation](http://rodauth.jeremyevans.net/documentation.html)
 * [Rails demo](https://github.com/janko/rodauth-demo-rails)
@@ -117,8 +117,9 @@ end
 
 ### Controller
 
-Your Rodauth app will by default use `RodauthController` for view rendering
-and CSRF protection.
+Your Rodauth app will by default use `RodauthController` for view rendering,
+CSRF protection, and running controller callbacks and rescue handlers around
+Rodauth actions.
 
 ```rb
 # app/controllers/rodauth_controller.rb
@@ -137,9 +138,11 @@ class Account < ApplicationRecord
 end
 ```
 
-## Getting started
+## Usage
 
-First, let's see what routes our Rodauth middleware will handle:
+### Routes
+
+We can see the list of routes our Rodauth middleware handles:
 
 ```sh
 $ rails rodauth:routes
@@ -161,8 +164,8 @@ Routes handled by RodauthApp:
   /close-account           rodauth.close_account_path
 ```
 
-We can use this information to add some basic authentication navigation links
-to our home page:
+Using this information, we could add some basic authentication links to our
+navigation header:
 
 ```erb
 <ul>
@@ -175,12 +178,15 @@ to our home page:
 </ul>
 ```
 
-These links are fully functional, feel free to visit them and interact with the
+These routes are fully functional, feel free to visit them and interact with the
 pages. The templates that ship with Rodauth aim to provide a complete
 authentication experience, and the forms use [Bootstrap] markup.
 
-Let's also load the account record for authenticated requests and expose it via
-`#current_account`:
+### Current account
+
+To be able to fetch currently authenticated account, let's define a
+`#current_account` method that fetches the account id from session and
+retrieves the corresponding account record:
 
 ```rb
 # app/controllers/application_controller.rb
@@ -198,15 +204,19 @@ class ApplicationController < ActionController::Base
   helper_method :current_account
 end
 ```
+
+This allows us to access the current account in controllers and views:
+
 ```erb
 <p>Authenticated as: <%= current_account.email %></p>
 ```
 
 ### Requiring authentication
 
-Next, we'll likely want to require authentication for certain sections/pages of
-our app. We can do this in our Rodauth app's routing block, which helps keep
-the authentication logic encapsulated:
+We'll likely want to require authentication for certain parts of our app,
+redirecting the user to the login page if they're not logged in. We can do this
+in our Rodauth app's routing block, which helps keep the authentication logic
+encapsulated:
 
 ```rb
 # app/lib/rodauth_app.rb
@@ -264,9 +274,9 @@ end
 
 ### Views
 
-The templates built into Rodauth are useful when getting started, but at some
-point we'll probably want more control over the markup. For that we can run the
-following command:
+The templates built into Rodauth are useful when getting started, but soon
+you'll want to start editing the markup. You can run the following command to
+copy Rodauth templates into your Rails app:
 
 ```sh
 $ rails generate rodauth:views
@@ -290,7 +300,7 @@ $ rails generate rodauth:views --all
 ```
 
 You can also tell the generator to create views into another directory (in this
-case make sure to rename the Rodauth controller accordingly).
+case make sure to rename the Rodauth controller accordingly):
 
 ```sh
 # generates views into app/views/authentication
@@ -370,8 +380,8 @@ end
 ```
 
 You can then uncomment the lines in your Rodauth configuration to have it call
-your mailer. If you've enabled additional authentication features, make sure to
-override their `send_*_email` methods as well.
+your mailer. If you've enabled additional authentication features that send
+emails, make sure to override their `send_*_email` methods as well.
 
 ```rb
 # app/lib/rodauth_app.rb
@@ -412,10 +422,11 @@ end
 
 ### Migrations
 
-The install generator will have created some default tables, but you can use
-the migration generator to create tables for any additional Rodauth features:
+The install generator will create a migration for tables used by the Rodauth
+features enabled by default. For any additional features, you can use the
+migration generator to create the corresponding tables:
 
-```
+```sh
 $ rails generate rodauth:migration otp sms_codes recovery_codes
 ```
 ```rb
