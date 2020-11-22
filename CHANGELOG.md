@@ -1,4 +1,4 @@
-## HEAD
+## 0.6.0 (2020-11-22)
 
 * Add `Rodauth::Rails.rodauth` method for retrieving Rodauth instance outside of request context (@janko)
 
