@@ -471,6 +471,25 @@ the configure method.
 Make sure to store the `jwt_secret` in a secure place, such as Rails
 credentials or environment variables.
 
+### Rodauth instance
+
+In some cases you might need to use Rodauth more programmatically, and perform
+Rodauth operations outside of the request context. rodauth-rails gives you the
+ability to retrieve the Rodauth instance:
+
+```rb
+rodauth = Rodauth::Rails.rodauth # or Rodauth::Rails.rodauth(:secondary)
+
+rodauth.login_url #=> "https://example.com/login"
+rodauth.account_from_login("user@example.com") # loads user by email
+rodauth.password_match?("secret") #=> true
+rodauth.setup_account_verification
+rodauth.close_account
+```
+
+This Rodauth instance will be initialized with basic Rack env that allows is it
+to generate URLs, using `config.action_mailer.default_url_options` options.
+
 ## How it works
 
 ### Middleware

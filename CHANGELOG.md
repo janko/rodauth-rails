@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add `Rodauth::Rails.rodauth` method for retrieving Rodauth instance outside of request context (@janko)
+
 * Add default Action Dispatch response headers in Rodauth responses (@janko)
 
 * Run controller rescue handlers around Rodauth actions (@janko)

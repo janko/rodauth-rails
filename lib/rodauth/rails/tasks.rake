@@ -3,18 +3,16 @@ namespace :rodauth do
     app = Rodauth::Rails.app
 
     puts "Routes handled by #{app}:"
-    puts
 
-    app.opts[:rodauths].each do |rodauth_name, rodauth_class|
-      route_names = rodauth_class.routes
-        .map { |handle_method| handle_method.to_s.sub(/\Ahandle_/, "") }
+    app.opts[:rodauths].each_key do |rodauth_name|
+      rodauth = Rodauth::Rails.rodauth(rodauth_name)
 
-      rodauth = rodauth_class.allocate
+      routes = rodauth.class.routes.map do |handle_method|
+        path_method = "#{handle_method.to_s.sub(/\Ahandle_/, "")}_path"
 
-      routes = route_names.map do |name|
         [
-          rodauth.public_send(:"#{name}_path"),
-          "rodauth#{rodauth_name && "(:#{rodauth_name})"}.#{name}_path",
+          rodauth.public_send(path_method),
+          "rodauth#{rodauth_name && "(:#{rodauth_name})"}.#{path_method}",
         ]
       end
 
@@ -24,8 +22,7 @@ namespace :rodauth do
         "#{path.ljust(padding)}  #{code}"
       end
 
-      puts "  #{route_lines.join("\n  ")}"
-      puts
+      puts "\n  #{route_lines.join("\n  ")}"
     end
   end
 end

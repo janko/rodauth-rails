@@ -15,6 +15,7 @@ module RailsApp
     config.eager_load = true
     config.action_dispatch.show_exceptions = false
     config.action_mailer.delivery_method = :test
+    config.action_mailer.default_url_options = { host: "example.com", protocol: "https" }
     config.active_record.maintain_test_schema = false
   end
 end

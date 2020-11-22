@@ -9,14 +9,31 @@ module Rodauth
     # This allows the developer to avoid loading Rodauth at boot time.
     autoload :App, "rodauth/rails/app"
 
-    def self.configure
-      yield self
-    end
-
     @app = nil
     @middleware = true
 
     class << self
+      def rodauth(name = nil)
+        url_options = ActionMailer::Base.default_url_options
+
+        host    = url_options[:host]
+        host   += ":#{url_options[:port]}" if url_options[:port]
+        scheme  = url_options[:protocol] || "http"
+
+        rack_env = {
+          "HTTP_HOST"       => host,
+          "rack.url_scheme" => scheme,
+        }
+
+        scope = app.new(rack_env)
+
+        scope.rodauth(name)
+      end
+
+      def configure
+        yield self
+      end
+
       attr_writer :app
       attr_writer :middleware
 
