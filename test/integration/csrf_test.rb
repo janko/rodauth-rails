@@ -7,6 +7,12 @@ class CsrfTest < IntegrationTest
     assert_match %r(<input type="hidden" name="authenticity_token" value="\S+">), page.html
   end
 
+  test "custom templates include CSRF token" do
+    visit "/reset-password-request"
+
+    assert_match %r(<input type="hidden" name="authenticity_token" value="\S+" />), page.html
+  end
+
   test "rodauth actions verify CSRF token" do
     assert_raises ActionController::InvalidAuthenticityToken do
       page.driver.browser.post "/login", params: {
