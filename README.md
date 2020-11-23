@@ -381,7 +381,7 @@ end
 
 You can then uncomment the lines in your Rodauth configuration to have it call
 your mailer. If you've enabled additional authentication features that send
-emails, make sure to override their `send_*_email` methods as well.
+emails, make sure to override their `create_*_email` methods as well.
 
 ```rb
 # app/lib/rodauth_app.rb
@@ -389,36 +389,37 @@ class RodauthApp < Rodauth::Rails::App
   # ...
   configure do
     # ...
-    send_reset_password_email do
-      mailer_send(:reset_password, email_to, reset_password_email_link)
+    create_reset_password_email do
+      RodauthMailer.reset_password(email_to, reset_password_email_link)
     end
-    send_verify_account_email do
-      mailer_send(:verify_account, email_to, verify_account_email_link)
+    create_verify_account_email do
+      RodauthMailer.verify_account(email_to, verify_account_email_link)
     end
-    send_verify_login_change_email do |login|
-      mailer_send(:verify_login_change, login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_email_link)
+    create_verify_login_change_email do |login|
+      RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_email_link)
     end
-    send_password_changed_email do
-      mailer_send(:password_changed, email_to)
+    create_password_changed_email do
+      RodauthMailer.password_changed(email_to)
     end
-    # send_email_auth_email do
-    #   mailer_send(:email_auth, email_to, email_auth_email_link)
+    # create_email_auth_email do
+    #   RodauthMailer.email_auth(email_to, email_auth_email_link)
     # end
-    # send_unlock_account_email do
-    #   mailer_send(:unlock_account, email_to, unlock_account_email_link)
+    # create_unlock_account_email do
+    #   RodauthMailer.unlock_account(email_to, unlock_account_email_link)
     # end
-    auth_class_eval do
+    send_email do |email|
       # queue email delivery on the mailer after the transaction commits
-      def mailer_send(type, *args)
-        db.after_commit do
-          RodauthMailer.public_send(type, *args).deliver_later
-        end
-      end
+      db.after_commit { email.deliver_later }
     end
     # ...
   end
 end
 ```
+
+This approach can be used even if you're using a 3rd-party service for
+transactional emails, where emails are sent via API requests instead of
+SMTP. Whatever the `create_*_email` block returns will be passed to
+`send_email`, so you can be creative.
 
 ### Migrations
 
