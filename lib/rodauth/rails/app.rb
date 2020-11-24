@@ -10,7 +10,7 @@ module Rodauth
 
       def self.configure(name = nil, **options, &block)
         unless options[:json] == :only
-          require "rodauth/rails/flash"
+          require "rodauth/rails/app/flash"
           plugin Flash
         end
 
