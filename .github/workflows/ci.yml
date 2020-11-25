@@ -19,10 +19,6 @@ jobs:
             rails: "6.0"
           - ruby: "2.4"
             rails: "6.0"
-          - ruby: "2.7"
-            rails: "4.2"
-          - ruby: "jruby-9.2"
-            rails: "4.2"
 
     steps:
       - uses: actions/checkout@v2
@@ -33,6 +29,7 @@ jobs:
           BUNDLE_GEMFILE: gemfiles/Gemfile.rails-${{ matrix.rails }}
         with:
           ruby-version: ${{ matrix.ruby }}
+          bundler: ${{ matrix.rails == '4.2' && '1' || '2' }}
           bundler-cache: true
 
       - name: Run tests
