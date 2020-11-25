@@ -15,11 +15,9 @@ class RodauthApp < Rodauth::Rails::App
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
     # hmac_secret "<%= SecureRandom.hex(64) %>"
 
-<% unless api_only? -%>
     # Specify the controller used for view rendering and CSRF verification.
     rails_controller { RodauthController }
 
-<% end -%>
     # Store account status in a text column.
     account_status_column :status
     account_unverified_status_value "unverified"

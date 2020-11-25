@@ -145,23 +145,34 @@ module Rodauth
 
     # Instances of the configured controller with current request's env hash.
     def _rails_controller_instance
-      request  = ActionDispatch::Request.new(scope.env)
-      instance = rails_controller.new
+      controller    = rails_controller.new
+      rails_request = ActionDispatch::Request.new(scope.env)
 
-      if ActionPack.version >= Gem::Version.new("5.0")
-        instance.set_request! request
-        instance.set_response! rails_controller.make_response!(request)
-      else
-        instance.send(:set_response!, request)
-        instance.instance_variable_set(:@_request, request)
-      end
+      prepare_rails_controller(controller, rails_request)
 
-      instance
+      controller
     end
 
-    # Controller class to use for rendering and CSRF protection.
-    def rails_controller
-      ActionController::Base
+    if ActionPack.version >= Gem::Version.new("5.0")
+      # Controller class to use for view rendering, CSRF protection, and
+      # running any registered action callbacks and rescue_from handlers.
+      def rails_controller
+        only_json? ? ActionController::API : ActionController::Base
+      end
+
+      def prepare_rails_controller(controller, rails_request)
+        controller.set_request! rails_request
+        controller.set_response! rails_controller.make_response!(rails_request)
+      end
+    else
+      def rails_controller
+        ActionController::Base
+      end
+
+      def prepare_rails_controller(controller, rails_request)
+        controller.send(:set_response!, rails_request)
+        controller.instance_variable_set(:@_request, rails_request)
+      end
     end
 
     # ActionMailer subclass for correct email delivering.

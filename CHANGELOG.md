@@ -1,5 +1,7 @@
 ## 0.6.1 (2020-11-25)
 
+* Generate the Rodauth controller for API-only Rails apps as well (@janko)
+
 * Fix remember cookie deadline not extending in remember feature (@janko)
 
 ## 0.6.0 (2020-11-22)

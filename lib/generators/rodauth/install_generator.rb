@@ -35,8 +35,6 @@ module Rodauth
         end
 
         def create_rodauth_controller
-          return if api_only?
-
           template "app/controllers/rodauth_controller.rb"
         end
 

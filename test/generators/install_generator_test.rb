@@ -70,15 +70,6 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/controllers/rodauth_controller.rb", /class RodauthController < ApplicationController/
   end
 
-  test "controller with API only" do
-    Rails.application.config.api_only = true
-    run_generator
-
-    assert_no_file "app/controllers/rodauth_controller.rb"
-
-    Rails.application.config.api_only = false
-  end if Rails.gem_version >= Gem::Version.new("5.0")
-
   test "model" do
     run_generator
 
