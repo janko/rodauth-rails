@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ '**' ]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: ["ruby-2.3", "ruby-2.4", "ruby-2.5", "ruby-2.6", "ruby-2.7", "jruby-9.2"]
+        gemfile: ["rails-4.2", "rails-5.0", "rails-5.1", "rails-5.2", "rails-6.0"]
+        exclude:
+          - ruby: "ruby-2.3"
+            gemfile: "rails-6.0"
+          - ruby: "ruby-2.4"
+            gemfile: "rails-6.0"
+          - ruby: "ruby-2.7"
+            gemfile: "rails-4.2"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        env:
+          BUNDLE_GEMFILE: gemfiles/Gemfile.${{ matrix.gemfile }}
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler: ${{ matrix.gemfile == 'rails-4.2' && '1' || '2' }}
+          bundler-cache: true
+
+      - name: Run tests
+        env:
+          BUNDLE_GEMFILE: gemfiles/Gemfile.${{ matrix.gemfile }}
+        run: bundle exec rake test

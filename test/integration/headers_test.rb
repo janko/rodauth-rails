@@ -1,6 +1,6 @@
 require "test_helper"
 
-class DefaultHeaders < IntegrationTest
+class HeadersTest < IntegrationTest
   test "included Action Dispatch default headers in response" do
     visit "/login"
 
@@ -23,5 +23,5 @@ class DefaultHeaders < IntegrationTest
 
     assert_match "Authenticated as user@example.com", page.text
     assert_match "_remember", page.response_headers["Set-Cookie"] # remember deadline extended
-  end
+  end if Gem::Version.new(Rack::Test::VERSION) >= Gem::Version.new("1.0")
 end
