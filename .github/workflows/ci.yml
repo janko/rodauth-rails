@@ -35,8 +35,6 @@ jobs:
           - ruby: jruby-9.2
             rails: 4.2
 
-      name: tests (ruby ${{ matrix.ruby }} / rails ${{ matrix.rails }})
-
     steps:
       - uses: actions/checkout@v2
 
