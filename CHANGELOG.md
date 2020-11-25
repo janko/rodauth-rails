@@ -1,3 +1,7 @@
+## 0.6.1 (2020-11-25)
+
+* Fix remember cookie deadline not extending in remember feature (@janko)
+
 ## 0.6.0 (2020-11-22)
 
 * Add `Rodauth::Rails.rodauth` method for retrieving Rodauth instance outside of request context (@janko)
