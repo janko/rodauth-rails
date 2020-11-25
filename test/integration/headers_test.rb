@@ -1,6 +1,6 @@
 require "test_helper"
 
-class DefaultHeaders < IntegrationTest
+class HeadersTest < IntegrationTest
   test "included Action Dispatch default headers in response" do
     visit "/login"
 
