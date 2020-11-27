@@ -458,37 +458,6 @@ class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration
 end
 ```
 
-### JSON API
-
-JSON API support in Rodauth is provided by the [JWT feature]. First you'll need
-to add the [JWT gem] to your Gemfile:
-
-```rb
-gem "jwt"
-```
-
-The following configuration will enable the Rodauth endpoints to be accessed
-via JSON requests (in addition to HTML requests):
-
-```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure(json: true) do
-    # ...
-    enable :jwt
-    jwt_secret "...your secret key..."
-    # ...
-  end
-end
-```
-
-If you want the endpoints to be only accessible via JSON requests, or if your
-Rails app is in API-only mode, instead of `json: true` pass `json: :only` to
-the configure method.
-
-Make sure to store the `jwt_secret` in a secure place, such as Rails
-credentials or environment variables.
-
 ### Calling controller methods
 
 When using Rodauth before/after hooks or generally overriding your Rodauth
@@ -606,6 +575,31 @@ connection (using the [sequel-activerecord_connection] gem).
 
 This means that, from the usage perspective, Sequel can be considered just
 as an implementation detail of Rodauth.
+
+## JSON API
+
+JSON API support in Rodauth is provided by the [JWT feature]. You'll need to
+install the [JWT gem], enable JSON support and enable the JWT feature:
+
+```sh
+$ bundle add jwt
+```
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure(json: :only) do
+    # ...
+    enable :jwt
+    # make sure to store the JWT secret below in a safe place
+    jwt_secret "...your secret key..."
+    # ...
+  end
+end
+```
+
+With the above configuration, Rodauth routes will only be accessible via JSON
+requests. If you still want to allow HTML access alongside JSON, change `json:
+:only` to `json: true`.
 
 ## Configuring
 
