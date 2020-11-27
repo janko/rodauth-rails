@@ -186,7 +186,7 @@ navigation header:
 
 ```erb
 <ul>
-  <% if rodauth.authenticated? %>
+  <% if rodauth.logged_in? %>
     <li><%= link_to "Sign out", rodauth.logout_path, method: :post %></li>
   <% else %>
     <li><%= link_to "Sign in", rodauth.login_path %></li>
@@ -208,7 +208,7 @@ retrieves the corresponding account record:
 ```rb
 # app/controllers/application_controller.rb
 class ApplicationController < ActionController::Base
-  before_action :current_account, if: -> { rodauth.authenticated? }
+  before_action :current_account, if: -> { rodauth.logged_in? }
 
   private
 
