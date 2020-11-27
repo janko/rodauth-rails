@@ -21,20 +21,18 @@ jobs:
             gemfile: "rails-6.0"
           - ruby: "ruby-2.7"
             gemfile: "rails-4.2"
+    env:
+      BUNDLE_GEMFILE: gemfiles/Gemfile.${{ matrix.gemfile }}
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
-        env:
-          BUNDLE_GEMFILE: gemfiles/Gemfile.${{ matrix.gemfile }}
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler: ${{ matrix.gemfile == 'rails-4.2' && '1' || '2' }}
           bundler-cache: true
 
       - name: Run tests
-        env:
-          BUNDLE_GEMFILE: gemfiles/Gemfile.${{ matrix.gemfile }}
         run: bundle exec rake test
