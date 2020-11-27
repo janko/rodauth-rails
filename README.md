@@ -601,6 +601,113 @@ With the above configuration, Rodauth routes will only be accessible via JSON
 requests. If you still want to allow HTML access alongside JSON, change `json:
 :only` to `json: true`.
 
+## OmniAuth
+
+While Rodauth doesn't yet come with [OmniAuth] integration, we can build one
+ourselves using the existing Rodauth API.
+
+In order to allow the user to login via multiple external providers, let's
+create an `account_identities` table that will have a many-to-one relationship
+with the `accounts` table:
+
+```sh
+$ rails generate model AccountIdentity
+```
+```rb
+# db/migrate/*_create_account_identities.rb
+class CreateAccountIdentities < ActiveRecord::Migration
+  def change
+    create_table :account_identities do |t|
+      t.references :account, null: false, foreign_key: { on_delete: :cascade }
+      t.string :provider, null: false
+      t.string :uid, null: false
+      t.jsonb :info, null: false, default: {} # adjust JSON column type for your database
+
+      t.timestamps
+
+      t.index [:provider, :uid], unique: true
+    end
+  end
+end
+```
+```rb
+# app/models/account_identity.rb
+class AcccountIdentity < ApplicationRecord
+  belongs_to :account
+end
+```
+```rb
+# app/models/account.rb
+class Account < ApplicationRecord
+  has_many :identities, class_name: "AccountIdentity"
+end
+```
+
+Let's assume we want to implement Facebook login, and have added the
+corresponding OmniAuth strategy to the middleware stack, together with an
+authorization link on the login form:
+
+```rb
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :facebook, ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_APP_SECRET"],
+    scope: "email", callback_path: "/auth/facebook/callback"
+end
+```
+```erb
+<%= link_to "Login via Facebook", "/auth/facebook" %>
+```
+
+Let's implement the OmniAuth callback endpoint on our Rodauth controller:
+
+```rb
+# config/routes.rb
+Rails.application.routes.draw do
+  # ...
+  get "/auth/:provider/callback", to: "rodauth#omniauth"
+end
+```
+```rb
+# app/controllres/rodauth_controller.rb
+class RodauthController < ApplicationController
+  def omniauth
+    auth = request.env["omniauth.auth"]
+
+    # attempt to find existing identity directly
+    identity = AccountIdentity.find_by(provider: auth["provider"], uid: auth["uid"])
+
+    if identity
+      # update any external info changes
+      identity.update!(info: auth["info"])
+      # set account from identity
+      account = identity.account
+    end
+
+    # attempt to find an existing account by email
+    account ||= Account.find_by(email: auth["info"]["email"])
+
+    # disallow login if account is not verified
+    if account && account.status != rodauth.account_open_status_value
+      redirect_to rodauth.login_path, alert: rodauth.unverified_account_message
+      return
+    end
+
+    # create new account if it doesn't exist
+    unless account
+      account = Account.create!(email: auth["info"]["email"])
+    end
+
+    # create new identity if it doesn't exist
+    unless identity
+      account.identities.create!(provider: auth["provider"], uid: auth["uid"], info: auth["info"])
+    end
+
+    # login with Rodauth
+    rodauth.account_from_login(account.email)
+    rodauth.login("omniauth")
+  end
+end
+```
+
 ## Configuring
 
 For the list of configuration methods provided by Rodauth, see the [feature
@@ -780,3 +887,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [sequel-activerecord_connection]: https://github.com/janko/sequel-activerecord_connection
 [plugin options]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Plugin+Options
 [hmac]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-HMAC
+[OmniAuth]: https://github.com/omniauth/omniauth
