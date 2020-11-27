@@ -14,6 +14,23 @@ Articles:
 * [Rodauth: A Refreshing Authentication Solution for Ruby](https://janko.io/rodauth-a-refreshing-authentication-solution-for-ruby/)
 * [Adding Authentication in Rails 6 with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
 
+## Upgrading
+
+### Upgrading to 0.7.0
+
+Starting from version 0.7.0, rodauth-rails now correctly detects Rails
+application's `secret_key_base` when setting default `hmac_secret`, including
+when it's set via credentials or `$SECRET_KEY_BASE` environment variable. This
+means authentication will be more secure by default, and Rodauth features that
+require `hmac_secret` should now work automatically as well.
+
+However, if you've already been using rodauth-rails in production, where the
+`secret_key_base` is set via credentials or environment variable and `hmac_secret`
+was not explicitly set, the fact that your authentication will now start using
+HMACs has backwards compatibility considerations. See the [Rodauth
+documentation](hmac) for instructions on how to safely transition, or just set
+`hmac_secret nil` in your Rodauth configuration.
+
 ## Installation
 
 Add the gem to your Gemfile:
@@ -768,3 +785,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [Rodauth migration]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Creating+tables
 [sequel-activerecord_connection]: https://github.com/janko/sequel-activerecord_connection
 [plugin options]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Plugin+Options
+[hmac]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-HMAC

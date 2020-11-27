@@ -1,4 +1,4 @@
-## HEAD
+## 0.7.0 (2020-11-27)
 
 * Add `#rails_controller_eval` method for running code in context of a controller instance (@janko)
 
