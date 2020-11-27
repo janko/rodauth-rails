@@ -718,6 +718,13 @@ configure do
   # ...
 end
 ```
+## Heroku
+
+Rodauth-rails sets the `hmac_secret` to Rails' secret key base by using `::Rails.application.secrets.secret_key_base`. This is fine for environments where the secret_key_base is available through Rails (e.g. in development). However, Heroku defines Rails' secret key base via the `SECRET_KEY_BASE` environment variable. This means that any method that needs access to the `hmac_secret` (for example WebAuthn credential creation) will fail with errors such as `no implicit conversion of nil into String`. To solve this, you can either use a custom `hmac_secret` with the eponymous configuration option in your `RodauthApp`. Or you can use a setup similar to this to use the `SECRET_KEY_BASE` env in production and fallback to `::Rails.application.secrets.secret_key_base` for other environments:
+
+```
+hmac_secret { Rails.env.production? ? ENV["SECRET_KEY_BASE"] : ::Rails.application.secrets.secret_key_base }
+```
 
 ## License
 
