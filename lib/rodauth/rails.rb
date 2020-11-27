@@ -32,6 +32,16 @@ module Rodauth
         scope.rodauth(name)
       end
 
+      if ::Rails.gem_version >= Gem::Version.new("5.2")
+        def secret_key_base
+          ::Rails.application.secret_key_base
+        end
+      else
+        def secret_key_base
+          ::Rails.application.secrets.secret_key_base
+        end
+      end
+
       def configure
         yield self
       end

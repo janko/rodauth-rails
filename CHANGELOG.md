@@ -1,3 +1,7 @@
+## HEAD
+
+* Detect `secret_key_base` from credentials and `$SECRET_KEY_BASE` environment variable (@janko)
+
 ## 0.6.1 (2020-11-25)
 
 * Generate the Rodauth controller for API-only Rails apps as well (@janko)
