@@ -472,6 +472,32 @@ the configure method.
 Make sure to store the `jwt_secret` in a secure place, such as Rails
 credentials or environment variables.
 
+### Calling controller methods
+
+When using Rodauth before/after hooks or generally overriding your Rodauth
+configuration, in some cases you might want to call methods defined on your
+controllers. You can do so with `rails_controller_eval`, for example:
+
+```rb
+# app/controllers/application_controller.rb
+class ApplicationController < ActionController::Base
+  private
+  def setup_tracking(account_id)
+    # ... some implementation ...
+  end
+end
+```
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    after_create_account do
+      rails_controller_eval { setup_tracking(account_id) }
+    end
+  end
+end
+```
+
 ### Rodauth instance
 
 In some cases you might need to use Rodauth more programmatically, and perform

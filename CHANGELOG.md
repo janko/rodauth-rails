@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add `#rails_controller_eval` method for running code in context of a controller instance (@janko)
+
 * Detect `secret_key_base` from credentials and `$SECRET_KEY_BASE` environment variable (@janko)
 
 ## 0.6.1 (2020-11-25)

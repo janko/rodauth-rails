@@ -49,6 +49,11 @@ module Rodauth
       :alert
     end
 
+    # Evaluates the block in context of a Rodauth controller instance.
+    def rails_controller_eval(&block)
+      rails_controller_instance.instance_exec(&block)
+    end
+
     private
 
     # Runs controller callbacks and rescue handlers around Rodauth actions.

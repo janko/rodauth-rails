@@ -26,4 +26,8 @@ class RodauthController < ApplicationController
     yield
     response.headers["X-After-Around-Action"] = "true"
   end
+
+  def some_method
+    "controller method"
+  end
 end
