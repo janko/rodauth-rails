@@ -68,9 +68,11 @@ module Rodauth
 
       if rails_controller_instance.performed?
         rails_controller_response
-      else
+      elsif result
         result[1].merge!(rails_controller_instance.response.headers)
         throw :halt, result
+      else
+        result
       end
     end
 
