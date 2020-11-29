@@ -185,14 +185,12 @@ Using this information, we could add some basic authentication links to our
 navigation header:
 
 ```erb
-<ul>
-  <% if rodauth.logged_in? %>
-    <li><%= link_to "Sign out", rodauth.logout_path, method: :post %></li>
-  <% else %>
-    <li><%= link_to "Sign in", rodauth.login_path %></li>
-    <li><%= link_to "Sign up", rodauth.create_account_path %></li>
-  <% end %>
-</ul>
+<% if rodauth.logged_in? %>
+  <%= link_to "Sign out", rodauth.logout_path, method: :post %>
+<% else %>
+  <%= link_to "Sign in", rodauth.login_path %>
+  <%= link_to "Sign up", rodauth.create_account_path %>
+<% end %>
 ```
 
 These routes are fully functional, feel free to visit them and interact with the
