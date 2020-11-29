@@ -741,6 +741,37 @@ Rodauth::Rails.configure do |config|
 end
 ```
 
+## Custom extensions
+
+When developing custom extensions for Rodauth inside your Rails project, it's
+better to use plain modules (at least in the beginning), because Rodauth
+feature API doesn't yet support Zeitwerk reloading well.
+
+```rb
+# app/lib/rodauth_argon2.rb
+module RodauthArgon2
+  def password_hash(password)
+    Argon2::Password.create(password, t_cost: password_hash_cost, m_cost: password_hash_cost)
+  end
+
+  def password_hash_match?(hash, password)
+    Argon2::Password.verify_password(password, hash)
+  end
+end
+```
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    # ...
+    auth_class_eval do
+      include RodauthArgon2
+    end
+    # ...
+  end
+end
+```
+
 ## Testing
 
 If you're writing system tests, it's generally better to go through the actual
