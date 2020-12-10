@@ -842,6 +842,8 @@ Rodauth method for creating database functions:
 
 ```rb
 # db/migrate/*_create_rodauth_database_functions.rb
+require "rodauth/migrations"
+
 class CreateRodauthDatabaseFunctions < ActiveRecord::Migration
   def up
     Rodauth.create_database_authentication_functions(DB)
