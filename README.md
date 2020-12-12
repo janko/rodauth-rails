@@ -17,8 +17,8 @@ Articles:
 ## Why Rodauth?
 
 There are already several popular authentication solutions for Rails (Devise,
-Sorcery, Clearance, Authlogic etc), so why would you choose Rodauth? Well,
-because it has many advantages over the mentioned alternatives:
+Sorcery, Clearance, Authlogic), so why would you choose Rodauth? Well, because
+it has many advantages over the mentioned alternatives:
 
 * built-in multifactor authentication ([TOTP][otp], [SMS codes][sms_codes], [recovery codes][recovery_codes], [WebAuthn][webauthn])
 * standardized [JSON API support][jwt] (for every feature)
