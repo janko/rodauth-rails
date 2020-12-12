@@ -14,6 +14,23 @@ Articles:
 * [Rodauth: A Refreshing Authentication Solution for Ruby](https://janko.io/rodauth-a-refreshing-authentication-solution-for-ruby/)
 * [Adding Authentication in Rails 6 with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
 
+## Why Rodauth?
+
+There are already several popular authentication solutions for Rails (Devise,
+Sorcery, Clearance, Authlogic etc), so why would you choose Rodauth? Well,
+because it has many advantages over the mentioned alternatives:
+
+* built-in multifactor authentication (TOTP, SMS codes, recovery codes, WebAuthn)
+* standardized JSON API support (for every feature)
+* email authentication (aka "passwordless")
+* audit logging (for any action)
+* uniform configuration DSL (any setting can be static or dynamic)
+* consistent before/after hooks
+* authentication logic is encapsulated in a dedicated object
+* bruteforce on tokens can be attempted only for a single account
+* ability to protect password hashes even in case of SQL injection
+* loosely coupled authentication features
+
 ## Upgrading
 
 ### Upgrading to 0.7.0
