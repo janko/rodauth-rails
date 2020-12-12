@@ -24,11 +24,11 @@ it has many advantages over the mentioned alternatives:
 * standardized [JSON API support][jwt] (for every feature)
 * [email authentication][email_auth] (aka "passwordless")
 * [audit logging][audit_logging] (for any action)
+* ability to protect password hashes even in case of SQL injection ([more details][password protection])
+* additional bruteforce protection for tokens ([more details][bruteforce tokens])
 * uniform configuration DSL (any setting can be static or dynamic)
 * consistent before/after hooks
 * dedicated object encapsulating all authentication logic
-* ability to protect password hashes even in case of SQL injection ([more details][password protection])
-* additional bruteforce protection for tokens ([more details][bruteforce tokens])
 
 ## Upgrading
 
