@@ -20,16 +20,15 @@ There are already several popular authentication solutions for Rails (Devise,
 Sorcery, Clearance, Authlogic etc), so why would you choose Rodauth? Well,
 because it has many advantages over the mentioned alternatives:
 
-* built-in multifactor authentication (TOTP, SMS codes, recovery codes, WebAuthn)
-* standardized JSON API support (for every feature)
-* email authentication (aka "passwordless")
-* audit logging (for any action)
+* built-in multifactor authentication ([TOTP][otp], [SMS codes][sms_codes], [recovery codes][recovery_codes], [WebAuthn][webauthn])
+* standardized [JSON API support][jwt] (for every feature)
+* [email authentication][email_auth] (aka "passwordless")
+* [audit logging][audit_logging] (for any action)
 * uniform configuration DSL (any setting can be static or dynamic)
 * consistent before/after hooks
-* authentication logic is encapsulated in a dedicated object
-* bruteforce on tokens can be attempted only for a single account
-* ability to protect password hashes even in case of SQL injection
-* loosely coupled authentication features
+* dedicated object encapsulating all authentication logic
+* ability to protect password hashes even in case of SQL injection ([more details][password protection])
+* additional bruteforce protection for tokens ([more details][bruteforce tokens])
 
 ## Upgrading
 
@@ -593,8 +592,8 @@ as an implementation detail of Rodauth.
 
 ## JSON API
 
-JSON API support in Rodauth is provided by the [JWT feature]. You'll need to
-install the [JWT gem], enable JSON support and enable the JWT feature:
+JSON API support in Rodauth is provided by the [JWT feature][jwt]. You'll need
+to install the [JWT gem], enable JSON support and enable the JWT feature:
 
 ```sh
 $ bundle add jwt
@@ -925,7 +924,6 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [Rodauth]: https://github.com/jeremyevans/rodauth
 [Sequel]: https://github.com/jeremyevans/sequel
 [feature documentation]: http://rodauth.jeremyevans.net/documentation.html
-[JWT feature]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
 [JWT gem]: https://github.com/jwt/ruby-jwt
 [Bootstrap]: https://getbootstrap.com/
 [Roda]: http://roda.jeremyevans.net/
@@ -936,3 +934,12 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [plugin options]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Plugin+Options
 [hmac]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-HMAC
 [OmniAuth]: https://github.com/omniauth/omniauth
+[otp]: http://rodauth.jeremyevans.net/rdoc/files/doc/otp_rdoc.html
+[sms_codes]: http://rodauth.jeremyevans.net/rdoc/files/doc/sms_codes_rdoc.html
+[recovery_codes]: http://rodauth.jeremyevans.net/rdoc/files/doc/recovery_codes_rdoc.html
+[webauthn]: http://rodauth.jeremyevans.net/rdoc/files/doc/webauthn_rdoc.html
+[jwt]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
+[email_auth]: http://rodauth.jeremyevans.net/rdoc/files/doc/email_auth_rdoc.html
+[audit_logging]: http://rodauth.jeremyevans.net/rdoc/files/doc/audit_logging_rdoc.html
+[password protection]: https://github.com/jeremyevans/rodauth#label-Password+Hash+Access+Via+Database+Functions
+[bruteforce tokens]: https://github.com/jeremyevans/rodauth#label-Tokens
