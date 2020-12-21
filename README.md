@@ -12,7 +12,8 @@ Useful links:
 Articles:
 
 * [Rodauth: A Refreshing Authentication Solution for Ruby](https://janko.io/rodauth-a-refreshing-authentication-solution-for-ruby/)
-* [Adding Authentication in Rails 6 with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
+* [Adding Authentication in Rails with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
+* [Adding Multifactor Authentication in Rails with Rodauth](https://janko.io/adding-multifactor-authentication-in-rails-with-rodauth/)
 
 ## Why Rodauth?
 
