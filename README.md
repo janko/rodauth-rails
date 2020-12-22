@@ -21,8 +21,9 @@ There are already several popular authentication solutions for Rails (Devise,
 Sorcery, Clearance, Authlogic), so why would you choose Rodauth? Well, because
 it has many advantages over the mentioned alternatives:
 
-* built-in multifactor authentication ([TOTP][otp], [SMS codes][sms_codes], [recovery codes][recovery_codes], [WebAuthn][webauthn])
+* multifactor authentication ([TOTP][otp], [SMS codes][sms_codes], [recovery codes][recovery_codes], [WebAuthn][webauthn])
 * standardized [JSON API support][jwt] (for every feature)
+* enterprise security features ([password complexity][password_complexity], [disallow password reuse][disallow_password_reuse], [password expiration][password_expiration], [session expiration][session_expiration], [single session][single_session], [account expiration][account_expiration])
 * [email authentication][email_auth] (aka "passwordless")
 * [audit logging][audit_logging] (for any action)
 * ability to protect password hashes even in case of SQL injection ([more details][password protection])
@@ -944,3 +945,9 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [audit_logging]: http://rodauth.jeremyevans.net/rdoc/files/doc/audit_logging_rdoc.html
 [password protection]: https://github.com/jeremyevans/rodauth#label-Password+Hash+Access+Via+Database+Functions
 [bruteforce tokens]: https://github.com/jeremyevans/rodauth#label-Tokens
+[password_complexity]: http://rodauth.jeremyevans.net/rdoc/files/doc/password_complexity_rdoc.html
+[disallow_password_reuse]: http://rodauth.jeremyevans.net/rdoc/files/doc/disallow_password_reuse_rdoc.html
+[password_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/password_expiration_rdoc.html
+[session_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/session_expiration_rdoc.html
+[single_session]: http://rodauth.jeremyevans.net/rdoc/files/doc/single_session_rdoc.html
+[account_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/account_expiration_rdoc.html
