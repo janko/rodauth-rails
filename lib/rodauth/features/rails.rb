@@ -1,1 +1,0 @@
-require "rodauth/rails/feature"

@@ -1,4 +1,6 @@
 require "roda"
+require "rodauth"
+require "rodauth/rails/feature"
 
 module Rodauth
   module Rails
