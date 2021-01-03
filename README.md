@@ -29,7 +29,7 @@ it has many advantages over the mentioned alternatives:
 * ability to protect password hashes even in case of SQL injection ([more details][password protection])
 * additional bruteforce protection for tokens ([more details][bruteforce tokens])
 * uniform configuration DSL (any setting can be static or dynamic)
-* consistent before/after hooks
+* consistent before/after hooks around everything
 * dedicated object encapsulating all authentication logic
 
 ## Upgrading
@@ -405,7 +405,7 @@ $ rails generate rodauth:mailer
 ```
 
 This will create a `RodauthMailer` with the associated mailer views in
-`app/views/rodauth_mailer` directory.
+`app/views/rodauth_mailer` directory:
 
 ```rb
 # app/mailers/rodauth_mailer.rb
@@ -457,9 +457,9 @@ end
 ```
 
 This approach can be used even if you're using a 3rd-party service for
-transactional emails, where emails are sent via API requests instead of
-SMTP. Whatever the `create_*_email` block returns will be passed to
-`send_email`, so you can be creative.
+transactional emails, where emails are sent via HTTP instead of SMTP. Whatever
+the `create_*_email` block returns will be passed to `send_email`, so you can
+be creative.
 
 ### Migrations
 
@@ -577,13 +577,38 @@ integration for Rodauth:
 * runs Action Controller callbacks & rescue handlers around Rodauth actions
 * uses Action Mailer for sending emails
 
-The `configure { ... }` method wraps configuring the Rodauth plugin, forwarding
+The `configure` method wraps configuring the Rodauth plugin, forwarding
 any additional [plugin options].
 
 ```rb
-configure { ... }             # defining default Rodauth configuration
-configure(json: true) { ... } # passing options to the Rodauth plugin
-configure(:secondary) { ... } # defining multiple Rodauth configurations
+class RodauthApp < Rodauth::Rails::App
+  configure { ... }             # defining default Rodauth configuration
+  configure(json: true) { ... } # passing options to the Rodauth plugin
+  configure(:secondary) { ... } # defining multiple Rodauth configurations
+end
+```
+
+The `route` block is provided by Roda, and it's called on each request before
+it reaches the Rails router.
+
+```rb
+class RodauthApp < Rodauth::Rails::App
+  route do |r|
+    # ... called before each request ...
+  end
+end
+```
+
+Since `Rodauth::Rails::App` is just a Roda subclass, you can do anything you
+would with a Roda app:
+
+```rb
+class RodauthApp < Rodauth::Rails::App
+  plugin :request_headers # easier access to request headers
+  plugin :typecast_params # methods for conversion of request params
+  plugin :default_headers, { "Foo" => "Bar" }
+  # ...
+end
 ```
 
 ### Sequel
@@ -623,6 +648,10 @@ end
 With the above configuration, Rodauth routes will only be accessible via JSON
 requests. If you still want to allow HTML access alongside JSON, change `json:
 :only` to `json: true`.
+
+Emails will automatically work in JSON-only mode, because `Rodauth::Rails::App`
+comes with Roda's `render` plugin loaded. They are customized the same as in
+the non-JSON case.
 
 ## OmniAuth
 
