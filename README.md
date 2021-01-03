@@ -600,7 +600,7 @@ end
 ```
 
 Since `Rodauth::Rails::App` is just a Roda subclass, you can do anything you
-would with a Roda app:
+would with a Roda app, such as loading additional Roda plugins:
 
 ```rb
 class RodauthApp < Rodauth::Rails::App
