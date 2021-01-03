@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add `--api` option to `rodauth:install` generator for choosing JSON-only configuration (@janko)
+
 * Don't blow up when a Rodauth request is made using an unsupported HTTP verb (@janko)
 
 ## 0.7.0 (2020-11-27)

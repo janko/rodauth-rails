@@ -13,6 +13,15 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
 
+        # The :api option is a Rails-recognized option that always
+        # defaults to false, so we make it use our provided default
+        # value instead.
+        def self.default_value_for_option(name, options)
+          name == :api ? options[:default] : super
+        end
+
+        class_option :api, type: :boolean, desc: "Generate JSON-only configuration"
+
         def create_rodauth_migration
           return unless defined?(ActiveRecord::Base)
 
@@ -75,9 +84,11 @@ module Rodauth
         end
 
         def api_only?
-          return unless ::Rails.gem_version >= Gem::Version.new("5.0")
-
-          ::Rails.application.config.api_only
+          if options.key?(:api)
+            options[:api]
+          elsif ::Rails.gem_version >= Gem::Version.new("5.0")
+            ::Rails.application.config.api_only
+          end
         end
 
         def migration_features

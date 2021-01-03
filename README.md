@@ -66,8 +66,15 @@ Then run `bundle install`.
 
 Next, run the install generator:
 
-```
+```sh
 $ rails generate rodauth:install
+```
+
+Or if you want Rodauth endpoints to be exposed via JSON API:
+
+```sh
+$ rails generate rodauth:install --api
+$ bundle add jwt
 ```
 
 The generator will create the following files:

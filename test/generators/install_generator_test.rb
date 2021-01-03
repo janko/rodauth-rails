@@ -53,7 +53,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/lib/rodauth_app.rb", /rodauth\.load_memory/
   end
 
-  test "app with API only" do
+  test "app in API-only mode" do
     Rails.application.config.api_only = true
     run_generator
 
@@ -61,6 +61,22 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/lib/rodauth_app.rb", /:login, :logout, :jwt,/
     assert_file "app/lib/rodauth_app.rb", /jwt_secret "[a-z0-9]{128}"/
 
+    Rails.application.config.api_only = false
+  end if Rails.gem_version >= Gem::Version.new("5.0")
+
+  test "app with --api option" do
+    run_generator %w[--api]
+
+    assert_file "app/lib/rodauth_app.rb", /configure json: :only do/
+    assert_file "app/lib/rodauth_app.rb", /:login, :logout, :jwt,/
+    assert_file "app/lib/rodauth_app.rb", /jwt_secret "[a-z0-9]{128}"/
+  end
+
+  test "app in API-only mode with --no-api" do
+    Rails.application.config.api_only = true
+    run_generator %w[--no-api]
+
+    assert_file "app/lib/rodauth_app.rb", /configure do/
     Rails.application.config.api_only = false
   end if Rails.gem_version >= Gem::Version.new("5.0")
 
