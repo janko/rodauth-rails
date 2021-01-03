@@ -1,4 +1,4 @@
-## HEAD
+## 0.8.0 (2021-01-03)
 
 * Add `--api` option to `rodauth:install` generator for choosing JSON-only configuration (@janko)
 
