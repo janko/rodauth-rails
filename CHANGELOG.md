@@ -1,4 +1,4 @@
-## HEAD
+## 0.8.1 (2021-01-04)
 
 * Fix blank email body when `json: true` and `ActionController::API` descendant are used (@janko)
 
