@@ -1,5 +1,11 @@
 ## HEAD
 
+* Fix blank email body when `json: true` and `ActionController::API` descendant are used (@janko)
+
+* Make view and email rendering work when there are multiple configurations and one is `json: :only` (@janko)
+
+* Don't attempt to protect against forgery when `ActionController::API` descendant is used (@janko)
+
 * Mark content of rodauth built-in partials as HTML-safe (@janko)
 
 ## 0.8.0 (2021-01-03)

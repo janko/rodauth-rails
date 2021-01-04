@@ -8,7 +8,7 @@ class RakeTest < ActiveSupport::TestCase
       Rake::Task["rodauth:routes"].invoke
     end
 
-    assert_equal <<~EOS, stdout.strip + "\n"
+    assert_equal <<~EOS, stdout
       Routes handled by RodauthApp:
 
         /login                   rodauth.login_path
@@ -25,6 +25,11 @@ class RakeTest < ActiveSupport::TestCase
         /close-account           rodauth.close_account_path
         /unlock-account-request  rodauth.unlock_account_request_path
         /unlock-account          rodauth.unlock_account_path
+
+        /json/login                  rodauth(:json).login_path
+        /json/create-account         rodauth(:json).create_account_path
+        /json/verify-account-resend  rodauth(:json).verify_account_resend_path
+        /json/verify-account         rodauth(:json).verify_account_path
     EOS
   end
 end

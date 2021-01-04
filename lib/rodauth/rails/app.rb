@@ -22,6 +22,12 @@ module Rodauth
           # load the Rails integration
           enable :rails
 
+          if options[:json] == :only && ActionPack.version >= Gem::Version.new("5.0")
+            rails_controller { ActionController::API }
+          else
+            rails_controller { ActionController::Base }
+          end
+
           # database functions are more complex to set up, so disable them by default
           use_database_authentication_functions? false
 

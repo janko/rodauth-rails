@@ -40,14 +40,20 @@ class RodauthApp < Rodauth::Rails::App
     prefix "/admin"
   end
 
+  configure(:json, json: true) do
+    enable :jwt, :create_account, :verify_account
+    rails_controller { ActionController::API }
+    prefix "/json"
+    jwt_secret "secret"
+    account_status_column :status
+  end
+
   route do |r|
     rodauth.load_memory
 
     r.rodauth
-
-    r.on "admin" do
-      r.rodauth(:admin)
-    end
+    r.on("admin") { r.rodauth(:admin) }
+    r.on("json")  { r.rodauth(:json) }
 
     if r.path == "/auth1"
       rodauth.require_authentication

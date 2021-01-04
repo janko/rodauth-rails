@@ -22,7 +22,7 @@ namespace :rodauth do
         "#{path.ljust(padding)}  #{code}"
       end
 
-      puts "\n  #{route_lines.join("\n  ")}"
+      puts "\n  #{route_lines.join("\n  ")}" unless route_lines.empty?
     end
   end
 end

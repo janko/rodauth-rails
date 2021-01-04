@@ -83,11 +83,11 @@ module Rodauth
     # Runs any #(before|around|after)_action controller callbacks.
     def rails_controller_callbacks
       # don't verify CSRF token as part of callbacks, Rodauth will do that
-      rails_controller_instance.allow_forgery_protection = false
+      rails_controller_forgery_protection { false }
 
       rails_controller_instance.run_callbacks(:process_action) do
         # turn the setting back to default so that form tags generate CSRF tags
-        rails_controller_instance.allow_forgery_protection = rails_controller.allow_forgery_protection
+        rails_controller_forgery_protection { rails_controller.allow_forgery_protection }
 
         yield
       end
@@ -127,7 +127,7 @@ module Rodauth
 
     # Calls the Rails renderer, returning nil if a template is missing.
     def rails_render(*args)
-      return if only_json?
+      return if rails_api_controller?
 
       rails_controller_instance.render_to_string(*args)
     rescue ActionView::MissingTemplate
@@ -154,6 +154,13 @@ module Rodauth
       rails_controller_instance.send(:form_authenticity_token)
     end
 
+    # allows/disables forgery protection
+    def rails_controller_forgery_protection(&value)
+      return if rails_api_controller?
+
+      rails_controller_instance.allow_forgery_protection = value.call
+    end
+
     # Instances of the configured controller with current request's env hash.
     def _rails_controller_instance
       controller    = rails_controller.new
@@ -165,25 +172,19 @@ module Rodauth
     end
 
     if ActionPack.version >= Gem::Version.new("5.0")
-      # Controller class to use for view rendering, CSRF protection, and
-      # running any registered action callbacks and rescue_from handlers.
-      def rails_controller
-        only_json? ? ActionController::API : ActionController::Base
-      end
-
       def prepare_rails_controller(controller, rails_request)
         controller.set_request! rails_request
         controller.set_response! rails_controller.make_response!(rails_request)
       end
     else
-      def rails_controller
-        ActionController::Base
-      end
-
       def prepare_rails_controller(controller, rails_request)
         controller.send(:set_response!, rails_request)
         controller.instance_variable_set(:@_request, rails_request)
       end
+    end
+
+    def rails_api_controller?
+      defined?(ActionController::API) && rails_controller <= ActionController::API
     end
 
     # ActionMailer subclass for correct email delivering.
