@@ -26,7 +26,7 @@ module Rodauth
     def render(page)
       rails_render(partial: page.tr("-", "_"), layout: false) ||
         rails_render(action: page.tr("-", "_"), layout: false) ||
-        super
+        super.html_safe
     end
 
     # Render Rails CSRF tags in Rodauth templates.
@@ -52,6 +52,10 @@ module Rodauth
     # Evaluates the block in context of a Rodauth controller instance.
     def rails_controller_eval(&block)
       rails_controller_instance.instance_exec(&block)
+    end
+
+    def button(*)
+      super.html_safe
     end
 
     private

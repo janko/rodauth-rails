@@ -1,7 +1,7 @@
 require "test_helper"
 
 class RenderTest < IntegrationTest
-  test "built-in Rodauth templates" do
+  test "built-in Rodauth views" do
     visit "/login"
 
     assert_includes page.html, %(id="login-form")
@@ -11,17 +11,22 @@ class RenderTest < IntegrationTest
     assert_includes page.html, %(<title>Rodauth::Rails Test</title>)
   end
 
-  test "built-in Rodauth templates with halting" do
+  test "built-in Rodauth views with halting" do
     register(verify: true)
     logout
 
-    login(password: "invalid")
-    login(password: "invalid")
-    login(password: "invalid")
-    login(password: "invalid")
+    4.times { login(password: "invalid") }
 
     assert_includes page.html, %(id="unlock-account-request-form")
     assert_includes page.html, %(<title>Rodauth::Rails Test</title>)
+  end
+
+  test "built-in Rodauth partials" do
+    register
+    visit "/close-account"
+
+    assert_includes page.html, %(name="password")
+    assert_includes page.html, %(type="submit")
   end
 
   test "custom views" do

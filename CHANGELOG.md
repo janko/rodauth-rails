@@ -1,3 +1,7 @@
+## HEAD
+
+* Mark content of rodauth built-in partials as HTML-safe (@janko)
+
 ## 0.8.0 (2021-01-03)
 
 * Add `--api` option to `rodauth:install` generator for choosing JSON-only configuration (@janko)
