@@ -42,6 +42,7 @@ class RodauthApp < Rodauth::Rails::App
 
   configure(:json, json: true) do
     enable :jwt, :create_account, :verify_account
+    only_json? true
     rails_controller { ActionController::API } if ActionPack.version >= Gem::Version.new("5.0")
     prefix "/json"
     jwt_secret "secret"
