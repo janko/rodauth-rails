@@ -1,3 +1,7 @@
+## HEAD
+
+* Reset Rails session on `#clear_session`, protecting from potential session fixation attacks (@janko)
+
 ## 0.8.1 (2021-01-04)
 
 * Fix blank email body when `json: true` and `ActionController::API` descendant are used (@janko)

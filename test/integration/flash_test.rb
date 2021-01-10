@@ -41,10 +41,7 @@ class FlashTest < IntegrationTest
     register(verify: true)
     logout
 
-    login(password: "invalid")
-    login(password: "invalid")
-    login(password: "invalid")
-    login(password: "invalid")
+    4.times { login(password: "invalid") }
 
     assert_includes page.html, %(id="unlock-account-request-form")
     assert_includes page.html, %(<p id="alert">This account is currently locked out and cannot be logged in to</p>)

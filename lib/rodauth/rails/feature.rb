@@ -44,6 +44,11 @@ module Rodauth
       true
     end
 
+    # Reset Rails session to protect from session fixation attacks.
+    def clear_session
+      rails_controller_instance.reset_session
+    end
+
     # Default the flash error key to Rails' default :alert.
     def flash_error_key
       :alert
