@@ -33,8 +33,6 @@ jobs:
             gemfile: "rails-6.1"
           - ruby: "ruby-2.3"
             gemfile: "rails-6.0"
-          - ruby: "jruby-9.2"
-            gemfile: "rails-6.1"
     env:
       BUNDLE_GEMFILE: gemfiles/Gemfile.${{ matrix.gemfile }}
 
