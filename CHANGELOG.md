@@ -1,4 +1,4 @@
-## HEAD
+## 0.8.2 (2021-01-10)
 
 * Reset Rails session on `#clear_session`, protecting from potential session fixation attacks (@janko)
 
