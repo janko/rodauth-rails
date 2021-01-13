@@ -128,12 +128,12 @@ class RodauthApp < Rodauth::Rails::App
 
     # Perform additional actions after the account is created.
     # after_create_account do
-    #   Profile.create!(account_id: account[:id], name: param("name"))
+    #   Profile.create!(account_id: account_id, name: param("name"))
     # end
 
     # Do additional cleanup after the account is closed.
     # after_close_account do
-    #   Profile.find_by!(account_id: account[:id]).destroy
+    #   Profile.find_by!(account_id: account_id).destroy
     # end
 
     # ==> Redirects
