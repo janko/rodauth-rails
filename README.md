@@ -481,6 +481,42 @@ class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration
 end
 ```
 
+### Multiple configurations
+
+If you need to handle multiple types of accounts that require different
+authentication logic, you can create different configurations for them:
+
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  # primary configuration
+  configure do
+    # ...
+  end
+
+  # alternative configuration
+  configure(:admin) do
+    # ... enable features ...
+    prefix "/admin"
+    session_key_prefix "admin_"
+    remember_cookie_key "_admin_remember" # if using remember feature
+    # ...
+  end
+
+  route do |r|
+    r.rodauth
+    r.on("admin") { r.rodauth(:admin) }
+    # ...
+  end
+end
+```
+
+Then in your application you can reference the secondary Rodauth instance:
+
+```rb
+rodauth(:admin).login_path #=> "/admin/login"
+```
+
 ### Calling controller methods
 
 When using Rodauth before/after hooks or generally overriding your Rodauth
@@ -619,7 +655,7 @@ function calls).
 
 If ActiveRecord is used in the application, the `rodauth:install` generator
 will have automatically configured Sequel to reuse ActiveRecord's database
-connection (using the [sequel-activerecord_connection] gem).
+connection, using the [sequel-activerecord_connection] gem.
 
 This means that, from the usage perspective, Sequel can be considered just
 as an implementation detail of Rodauth.
