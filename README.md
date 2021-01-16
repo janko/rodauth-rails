@@ -579,7 +579,7 @@ Rodauth operations outside of the request context. rodauth-rails gives you the
 ability to retrieve the Rodauth instance:
 
 ```rb
-rodauth = Rodauth::Rails.rodauth # or Rodauth::Rails.rodauth(:secondary)
+rodauth = Rodauth::Rails.rodauth # or Rodauth::Rails.rodauth(:admin)
 
 rodauth.login_url #=> "https://example.com/login"
 rodauth.account_from_login("user@example.com") # loads user by email
@@ -610,8 +610,8 @@ The Rodauth app stores the `Rodauth::Auth` instance in the Rack env hash, which
 is then available in your Rails app:
 
 ```rb
-request.env["rodauth"]           #=> #<Rodauth::Auth>
-request.env["rodauth.secondary"] #=> #<Rodauth::Auth> (if using multiple configurations)
+request.env["rodauth"]       #=> #<Rodauth::Auth>
+request.env["rodauth.admin"] #=> #<Rodauth::Auth> (if using multiple configurations)
 ```
 
 For convenience, this object can be accessed via the `#rodauth` method in views
@@ -620,14 +620,14 @@ and controllers:
 ```rb
 class MyController < ApplicationController
   def my_action
-    rodauth             #=> #<Rodauth::Auth>
-    rodauth(:secondary) #=> #<Rodauth::Auth> (if using multiple configurations)
+    rodauth         #=> #<Rodauth::Auth>
+    rodauth(:admin) #=> #<Rodauth::Auth> (if using multiple configurations)
   end
 end
 ```
 ```erb
-<% rodauth             #=> #<Rodauth::Auth> %>
-<% rodauth(:secondary) #=> #<Rodauth::Auth> (if using multiple configurations) %>
+<% rodauth         #=> #<Rodauth::Auth> %>
+<% rodauth(:admin) #=> #<Rodauth::Auth> (if using multiple configurations) %>
 ```
 
 ### App
@@ -649,7 +649,7 @@ any additional [plugin options].
 class RodauthApp < Rodauth::Rails::App
   configure { ... }             # defining default Rodauth configuration
   configure(json: true) { ... } # passing options to the Rodauth plugin
-  configure(:secondary) { ... } # defining multiple Rodauth configurations
+  configure(:admin) { ... }     # defining multiple Rodauth configurations
 end
 ```
 
