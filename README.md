@@ -873,17 +873,19 @@ end
 
 When developing custom extensions for Rodauth inside your Rails project, it's
 better to use plain modules (at least in the beginning), because Rodauth
-feature API doesn't yet support Zeitwerk reloading well.
+feature design doesn't yet support Zeitwerk reloading well. Here is
+an example of an LDAP authentication extension that uses the
+[simple_ldap_authenticator] gem.
 
 ```rb
-# app/lib/rodauth_argon2.rb
-module RodauthArgon2
-  def password_hash(password)
-    Argon2::Password.create(password, t_cost: password_hash_cost, m_cost: password_hash_cost)
+# app/lib/rodauth_ldap.rb
+module RodauthLdap
+  def require_bcrypt?
+    false
   end
 
-  def password_hash_match?(hash, password)
-    Argon2::Password.verify_password(password, hash)
+  def password_match?(password)
+    SimpleLdapAuthenticator.valid?(account[:email], password)
   end
 end
 ```
@@ -893,7 +895,7 @@ class RodauthApp < Rodauth::Rails::App
   configure do
     # ...
     auth_class_eval do
-      include RodauthArgon2
+      include RodauthLdap
     end
     # ...
   end
@@ -1064,3 +1066,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [session_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/session_expiration_rdoc.html
 [single_session]: http://rodauth.jeremyevans.net/rdoc/files/doc/single_session_rdoc.html
 [account_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/account_expiration_rdoc.html
+[simple_ldap_authenticator]: https://github.com/jeremyevans/simple_ldap_authenticator
