@@ -156,10 +156,9 @@ class RodauthApp < Rodauth::Rails::App
 
   # ==> Multiple configurations
   # configure(:admin) do
-  #   enable :http_basic_auth
-  #
+  #   enable :http_basic_auth # enable different set of features
   #   prefix "/admin"
-  #   session_key :admin_id
+  #   session_key_prefix "admin_"
   # end
 
   route do |r|
