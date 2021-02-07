@@ -1,4 +1,4 @@
-## HEAD
+## 0.9.0 (2021-02-07)
 
 * Load Roda's JSON support by default, so that enabling `json`/`jwt` feature is all that's needed (@janko)
 
