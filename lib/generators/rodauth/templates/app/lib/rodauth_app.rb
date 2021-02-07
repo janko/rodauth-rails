@@ -1,5 +1,5 @@
 class RodauthApp < Rodauth::Rails::App
-  configure<%= " json: true" if json? || jwt? %> do
+  configure do
     # List of authentication features that are loaded.
     enable :create_account, :verify_account, :verify_account_grace_period,
       :login, :logout<%= ", :remember" unless jwt? %>,
