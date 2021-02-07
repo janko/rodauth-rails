@@ -699,7 +699,7 @@ feature:
 ```rb
 # app/lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
-  configure(json: true) do
+  configure do
     # ...
     enable :json
     only_json? true # accept only JSON requests
@@ -719,7 +719,7 @@ $ bundle add jwt
 ```rb
 # app/lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
-  configure(json: :only) do
+  configure do
     # ...
     enable :jwt
     jwt_secret "<YOUR_SECRET_KEY>" # store the JWT secret in a safe place

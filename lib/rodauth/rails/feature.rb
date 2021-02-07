@@ -192,6 +192,14 @@ module Rodauth
       defined?(ActionController::API) && rails_controller <= ActionController::API
     end
 
+    def rails_controller
+      if only_json? && Rodauth::Rails.api_only?
+        ActionController::API
+      else
+        ActionController::Base
+      end
+    end
+
     # ActionMailer subclass for correct email delivering.
     class Mailer < ActionMailer::Base
       def create_email(**options)

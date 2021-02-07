@@ -1,5 +1,7 @@
 ## HEAD
 
+* Load Roda's JSON support by default, so that enabling `json`/`jwt` feature is all that's needed (@janko)
+
 * Bump Rodauth dependency to 2.9+ (@janko)
 
 * Add `--json` option for `rodauth:install` generator for configuring `json` feature (@janko)
