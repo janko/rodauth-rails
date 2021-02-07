@@ -45,40 +45,32 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/lib/rodauth_app.rb", /class RodauthApp < Rodauth::Rails::App/
     assert_file "app/lib/rodauth_app.rb", /configure do/
-    assert_file "app/lib/rodauth_app.rb", /:login, :logout, :remember,/
+    assert_file "app/lib/rodauth_app.rb", /:login, :logout, :remember,$/
     assert_file "app/lib/rodauth_app.rb", /hmac_secret "[a-z0-9]{128}"/
     assert_file "app/lib/rodauth_app.rb", /rails_controller { RodauthController }/
     assert_file "app/lib/rodauth_app.rb", /flash_notice_key/
     assert_file "app/lib/rodauth_app.rb", /Remember Feature/
+    assert_file "app/lib/rodauth_app.rb", /logout_redirect/
     assert_file "app/lib/rodauth_app.rb", /rodauth\.load_memory/
   end
 
-  test "app in API-only mode" do
-    Rails.application.config.api_only = true
-    run_generator
+  test "app with --json option" do
+    run_generator %w[--json]
 
-    assert_file "app/lib/rodauth_app.rb", /configure json: :only do/
-    assert_file "app/lib/rodauth_app.rb", /:login, :logout, :jwt,/
-    assert_file "app/lib/rodauth_app.rb", /jwt_secret "[a-z0-9]{128}"/
-
-    Rails.application.config.api_only = false
-  end if Rails.gem_version >= Gem::Version.new("5.0")
-
-  test "app with --api option" do
-    run_generator %w[--api]
-
-    assert_file "app/lib/rodauth_app.rb", /configure json: :only do/
-    assert_file "app/lib/rodauth_app.rb", /:login, :logout, :jwt,/
-    assert_file "app/lib/rodauth_app.rb", /jwt_secret "[a-z0-9]{128}"/
+    assert_file "app/lib/rodauth_app.rb", /configure json: true do/
+    assert_file "app/lib/rodauth_app.rb", /:login, :logout, :remember,$/
+    assert_file "app/lib/rodauth_app.rb", /:close_account, :json$/
+    assert_file "app/lib/rodauth_app.rb", /only_json\? true/
   end
 
-  test "app in API-only mode with --no-api" do
-    Rails.application.config.api_only = true
-    run_generator %w[--no-api]
+  test "app with --jwt option" do
+    run_generator %w[--jwt]
 
-    assert_file "app/lib/rodauth_app.rb", /configure do/
-    Rails.application.config.api_only = false
-  end if Rails.gem_version >= Gem::Version.new("5.0")
+    assert_file "app/lib/rodauth_app.rb", /configure json: true do/
+    assert_file "app/lib/rodauth_app.rb", /:login, :logout,$/
+    assert_file "app/lib/rodauth_app.rb", /:close_account, :jwt$/
+    assert_file "app/lib/rodauth_app.rb", /jwt_secret "[a-z0-9]{128}"/
+  end
 
   test "controller" do
     run_generator

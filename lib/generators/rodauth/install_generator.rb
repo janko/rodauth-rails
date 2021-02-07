@@ -13,14 +13,8 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
 
-        # The :api option is a Rails-recognized option that always
-        # defaults to false, so we make it use our provided default
-        # value instead.
-        def self.default_value_for_option(name, options)
-          name == :api ? options[:default] : super
-        end
-
-        class_option :api, type: :boolean, desc: "Generate JSON-only configuration"
+        class_option :json, type: :boolean, desc: "Configure JSON support"
+        class_option :jwt, type: :boolean, desc: "Configure JWT support"
 
         def create_rodauth_migration
           return unless defined?(ActiveRecord::Base)
@@ -83,17 +77,17 @@ module Rodauth
           end
         end
 
-        def api_only?
-          if options.key?(:api)
-            options[:api]
-          elsif ::Rails.gem_version >= Gem::Version.new("5.0")
-            ::Rails.application.config.api_only
-          end
+        def json?
+          options[:json]
+        end
+
+        def jwt?
+          options[:jwt] || Rodauth::Rails.api_only?
         end
 
         def migration_features
           features = [:base, :reset_password, :verify_account, :verify_login_change]
-          features << :remember unless api_only?
+          features << :remember unless jwt?
           features
         end
       end

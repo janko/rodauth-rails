@@ -1,11 +1,11 @@
 class RodauthApp < Rodauth::Rails::App
-  configure<%= " json: :only" if api_only? %> do
+  configure<%= " json: true" if json? || jwt? %> do
     # List of authentication features that are loaded.
     enable :create_account, :verify_account, :verify_account_grace_period,
-      :login, :logout, <%= api_only? ? ":jwt" : ":remember" %>,
+      :login, :logout<%= ", :remember" unless jwt? %>,
       :reset_password, :change_password, :change_password_notify,
       :change_login, :verify_login_change,
-      :close_account
+      :close_account<%= ", :json" if json? %><%= ", :jwt" if jwt? %>
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -14,6 +14,16 @@ class RodauthApp < Rodauth::Rails::App
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
     # hmac_secret "<%= SecureRandom.hex(64) %>"
+<% if jwt? -%>
+
+    # Set JWT secret, which is used to cryptographically protect the token.
+    jwt_secret "<%= SecureRandom.hex(64) %>"
+<% end -%>
+<% if json? || jwt? -%>
+
+    # Accept only JSON requests.
+    only_json? true
+<% end -%>
 
     # Specify the controller used for view rendering and CSRF verification.
     rails_controller { RodauthController }
@@ -42,18 +52,6 @@ class RodauthApp < Rodauth::Rails::App
 
     # Redirect to the app from login and registration pages if already logged in.
     # already_logged_in { redirect login_redirect }
-<% if api_only? -%>
-
-    # ==> JWT
-    # Set JWT secret, which is used to cryptographically protect the token.
-    jwt_secret "<%= SecureRandom.hex(64) %>"
-
-    # Don't require login confirmation param.
-    require_login_confirmation? false
-
-    # Don't require password confirmation param.
-    require_password_confirmation? false
-<% end -%>
 
     # ==> Emails
     # Uncomment the lines below once you've imported mailer views.
@@ -80,14 +78,14 @@ class RodauthApp < Rodauth::Rails::App
     #   db.after_commit { email.deliver_later }
     # end
 
-    # In the meantime you can tweak settings for emails created by Rodauth
+    # In the meantime, you can tweak settings for emails created by Rodauth.
     # email_subject_prefix "[MyApp] "
     # email_from "noreply@myapp.com"
     # send_email(&:deliver_later)
     # reset_password_email_body { "Click here to reset your password: #{reset_password_email_link}" }
 
     # ==> Flash
-<% unless api_only? -%>
+<% unless json? || jwt? -%>
     # Match flash keys with ones already used in the Rails app.
     # flash_notice_key :success # default is :notice
     # flash_error_key :error # default is :alert
@@ -107,7 +105,7 @@ class RodauthApp < Rodauth::Rails::App
 
     # Change minimum number of password characters required when creating an account.
     # password_minimum_length 8
-<% unless api_only? -%>
+<% unless jwt? -%>
 
     # ==> Remember Feature
     # Remember all logged in users.
@@ -135,6 +133,7 @@ class RodauthApp < Rodauth::Rails::App
     # after_close_account do
     #   Profile.find_by!(account_id: account_id).destroy
     # end
+<% unless json? || jwt? -%>
 
     # ==> Redirects
     # Redirect to home page after logout.
@@ -145,6 +144,7 @@ class RodauthApp < Rodauth::Rails::App
 
     # Redirect to login page after password reset.
     reset_password_redirect { login_path }
+<% end -%>
 
     # ==> Deadlines
     # Change default deadlines for some actions.
@@ -163,7 +163,7 @@ class RodauthApp < Rodauth::Rails::App
   # end
 
   route do |r|
-<% unless api_only? -%>
+<% unless jwt? -%>
     rodauth.load_memory # autologin remembered users
 
 <% end -%>

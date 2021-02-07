@@ -51,7 +51,7 @@ Sorcery, Clearance, Authlogic), so why would you choose Rodauth? Here are some
 of the advantages that stand out for me:
 
 * multifactor authentication ([TOTP][otp], [SMS codes][sms_codes], [recovery codes][recovery_codes], [WebAuthn][webauthn])
-* standardized [JSON API support][jwt] (for every feature)
+* standardized [JSON API support][json] for every feature (including [JWT][jwt])
 * enterprise security features ([password complexity][password_complexity], [disallow password reuse][disallow_password_reuse], [password expiration][password_expiration], [session expiration][session_expiration], [single session][single_session], [account expiration][account_expiration])
 * [email authentication][email_auth] (aka "passwordless")
 * [audit logging][audit_logging] (for any action)
@@ -102,7 +102,9 @@ $ rails generate rodauth:install
 Or if you want Rodauth endpoints to be exposed via JSON API:
 
 ```sh
-$ rails generate rodauth:install --api
+$ rails generate rodauth:install --json # regular authentication using the Rails session
+# or
+$ rails generate rodauth:install --jwt # token authentication via the "Authorization" header
 $ bundle add jwt
 ```
 
@@ -691,8 +693,25 @@ as an implementation detail of Rodauth.
 
 ## JSON API
 
-JSON API support in Rodauth is provided by the [JWT feature][jwt]. You'll need
-to install the [JWT gem], enable JSON support and enable the JWT feature:
+To make Rodauth endpoints accessible via JSON API, enable the [`json`][json]
+feature:
+
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure(json: true) do
+    # ...
+    enable :json
+    only_json? true # accept only JSON requests
+    # ...
+  end
+end
+```
+
+This will store account session data into the Rails session. If you rather want
+stateless token-based authentication via the `Authorization` header, enable the
+[`jwt`][jwt] feature (which builds on top of the `json` feature) and add the
+[JWT gem] to the Gemfile:
 
 ```sh
 $ bundle add jwt
@@ -703,20 +722,12 @@ class RodauthApp < Rodauth::Rails::App
   configure(json: :only) do
     # ...
     enable :jwt
-    # make sure to store the JWT secret below in a safe place
-    jwt_secret "...your secret key..."
+    jwt_secret "<YOUR_SECRET_KEY>" # store the JWT secret in a safe place
+    only_json? true # accept only JSON requests
     # ...
   end
 end
 ```
-
-With the above configuration, Rodauth routes will only be accessible via JSON
-requests. If you still want to allow HTML access alongside JSON, change `json:
-:only` to `json: true`.
-
-Emails will automatically work in JSON-only mode, because `Rodauth::Rails::App`
-comes with Roda's `render` plugin loaded. They are customized the same as in
-the non-JSON case.
 
 ## OmniAuth
 
@@ -1041,6 +1052,7 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [sms_codes]: http://rodauth.jeremyevans.net/rdoc/files/doc/sms_codes_rdoc.html
 [recovery_codes]: http://rodauth.jeremyevans.net/rdoc/files/doc/recovery_codes_rdoc.html
 [webauthn]: http://rodauth.jeremyevans.net/rdoc/files/doc/webauthn_rdoc.html
+[json]: http://rodauth.jeremyevans.net/rdoc/files/doc/json_rdoc.html
 [jwt]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
 [email_auth]: http://rodauth.jeremyevans.net/rdoc/files/doc/email_auth_rdoc.html
 [audit_logging]: http://rodauth.jeremyevans.net/rdoc/files/doc/audit_logging_rdoc.html

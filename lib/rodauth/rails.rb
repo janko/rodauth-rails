@@ -42,6 +42,16 @@ module Rodauth
         end
       end
 
+      if ::Rails.gem_version >= Gem::Version.new("5.0")
+        def api_only?
+          ::Rails.application.config.api_only
+        end
+      else
+        def api_only?
+          false
+        end
+      end
+
       def configure
         yield self
       end

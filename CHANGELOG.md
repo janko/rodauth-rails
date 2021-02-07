@@ -1,3 +1,13 @@
+## HEAD
+
+* Bump Rodauth dependency to 2.9+ (@janko)
+
+* Add `--json` option for `rodauth:install` generator for configuring `json` feature (@janko)
+
+* Add `--jwt` option for `rodauth:install` generator for configuring `jwt` feature (@janko)
+
+* Remove the `--api` option from `rodauth:install` generator (@janko)
+
 ## 0.8.2 (2021-01-10)
 
 * Reset Rails session on `#clear_session`, protecting from potential session fixation attacks (@janko)
