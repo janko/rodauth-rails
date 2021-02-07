@@ -729,6 +729,24 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
+If you need Cross-Origin Resource Sharing and/or JWT refresh tokens, enable the
+corresponding Rodauth features and create the necessary tables:
+
+```sh
+$ rails generate rodauth:migration jwt_refresh
+$ rails db:migrate
+```
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    # ...
+    enable :jwt, :jwt_cors, :jwt_refresh
+    # ...
+  end
+end
+```
+
 ## OmniAuth
 
 While Rodauth doesn't yet come with [OmniAuth] integration, we can build one
