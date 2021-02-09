@@ -11,7 +11,7 @@ class CreateRodauth < superclass
   def change
     create_table :accounts do |t|
       t.string :email, null: false, index: { unique: true }
-      t.string :status, null: false, default: "verified"
+      t.string :status, null: false, default: "unverified"
     end
 
     # Used if storing password hashes in a separate table (default)
