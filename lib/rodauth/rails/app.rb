@@ -12,7 +12,7 @@ module Rodauth
       plugin :hooks
       plugin :render, layout: false
 
-      if defined?(ActionDispatch::Flash) # not in API-only mode
+      unless ::Rails.configuration.api_only # not in API-only mode
         require "rodauth/rails/app/flash"
         plugin Flash
       end
