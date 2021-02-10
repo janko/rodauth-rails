@@ -12,7 +12,7 @@ module Rodauth
       plugin :hooks
       plugin :render, layout: false
 
-      unless ::Rails::VERSION::MAJOR > 4 && ::Rails.configuration.api_only # not in API-only mode
+      unless Rodauth::Rails.api_only?
         require "rodauth/rails/app/flash"
         plugin Flash
       end
