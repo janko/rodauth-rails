@@ -839,7 +839,7 @@ class RodauthController < ApplicationController
 
     # create new account if it doesn't exist
     unless account
-      account = Account.create!(email: auth["info"]["email"])
+      account = Account.create!(email: auth["info"]["email"], status: rodauth.account_open_status_value)
     end
 
     # create new identity if it doesn't exist

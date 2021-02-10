@@ -1,3 +1,9 @@
+## 0.9.1 (2021-02-10)
+
+* Fix flash integration being loaded for API-only apps and causing an error (@dmitryzuev)
+
+* Change account status column default to `unverified` in migration to match Rodauth's default (@basabin54)
+
 ## 0.9.0 (2021-02-07)
 
 * Load Roda's JSON support by default, so that enabling `json`/`jwt` feature is all that's needed (@janko)
