@@ -531,6 +531,8 @@ class RodauthApp < Rodauth::Rails::App
     prefix "/admin"
     session_key_prefix "admin_"
     remember_cookie_key "_admin_remember" # if using remember feature
+    accounts_table :admin_accounts
+    password_hash_table :admin_account_password_hashes # if storing password hash in a different table
     # ...
   end
 
