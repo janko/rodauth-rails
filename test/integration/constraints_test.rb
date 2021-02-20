@@ -1,6 +1,6 @@
 require "test_helper"
 
-class RedirectTest < IntegrationTest
+class ConstraintsTest < IntegrationTest
   test "requiring authentication from Rodauth app" do
     visit "/under_constraints"
     assert_equal current_path, "/login"
