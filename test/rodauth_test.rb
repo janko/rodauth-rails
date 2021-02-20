@@ -1,7 +1,7 @@
 require "test_helper"
 
 class RodauthTest < UnitTest
-  test "allows retrieving Rodauth instance" do
+  test "allows retrieving a Rodauth instance" do
     rodauth = Rodauth::Rails.rodauth
 
     assert_kind_of Rodauth::Auth, rodauth

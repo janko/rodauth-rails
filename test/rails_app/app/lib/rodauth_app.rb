@@ -36,9 +36,7 @@ class RodauthApp < Rodauth::Rails::App
     reset_password_redirect { login_path }
   end
 
-  configure(:admin) do
-    prefix "/admin"
-  end
+  configure(RodauthAdmin, :admin)
 
   configure(:json) do
     enable :jwt, :create_account, :verify_account

@@ -1,6 +1,5 @@
 require "roda"
-require "rodauth"
-require "rodauth/rails/feature"
+require "rodauth/rails/auth"
 
 module Rodauth
   module Rails
@@ -18,32 +17,22 @@ module Rodauth
         plugin Flash
       end
 
-      def self.configure(name = nil, **options, &block)
-        plugin :rodauth, name: name, csrf: false, flash: false, json: true, **options do
-          # load the Rails integration
-          enable :rails
+      def self.configure(*args, **options, &block)
+        auth_class = args.shift if args[0].is_a?(Class)
+        name       = args.shift if args[0].is_a?(Symbol)
 
-          # database functions are more complex to set up, so disable them by default
-          use_database_authentication_functions? false
+        fail ArgumentError, "need to pass optional Rodauth::Auth subclass and optional configuration name" if args.any?
 
-          # avoid having to set deadline values in column default values
-          set_deadline_values? true
+        auth_class ||= Class.new(Rodauth::Rails::Auth)
 
-          # use HMACs for additional security
-          hmac_secret { Rodauth::Rails.secret_key_base }
-
-          # evaluate user configuration
-          instance_exec(&block)
+        plugin :rodauth, auth_class: auth_class, name: name, csrf: false, flash: false, json: true, **options do
+          instance_exec(&block) if block
         end
       end
 
       before do
-        (opts[:rodauths] || {}).each do |name, _|
-          if name
-            env["rodauth.#{name}"] = rodauth(name)
-          else
-            env["rodauth"] = rodauth
-          end
+        opts[:rodauths]&.each_key do |name|
+          env[["rodauth", *name].join(".")] = rodauth(name)
         end
       end
     end

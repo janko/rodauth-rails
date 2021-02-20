@@ -572,8 +572,10 @@ class RodauthApp < Rodauth::Rails::App
     prefix "/admin"
     session_key_prefix "admin_"
     remember_cookie_key "_admin_remember" # if using remember feature
+
+    # if you want separate tables
     accounts_table :admin_accounts
-    password_hash_table :admin_account_password_hashes # if storing password hash in a different table
+    password_hash_table :admin_account_password_hashes
     # ...
   end
 
@@ -593,6 +595,98 @@ Then in your application you can reference the secondary Rodauth instance:
 
 ```rb
 rodauth(:admin).login_path #=> "/admin/login"
+```
+
+#### Named auth classes
+
+A `configure` block inside `Rodauth::Rails::App` will internally create an
+anonymous `Rodauth::Auth` subclass, and register it under the given name.
+However, you can also define the auth classes explicitly, by creating
+subclasses of `Rodauth::Rails::Auth`:
+
+```rb
+# app/lib/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    # ... main configuration ...
+  end
+end
+```
+```rb
+# app/lib/rodauth_admin.rb
+class RodauthAdmin < Rodauth::Rails::Auth
+  configure do
+    # ...
+    prefix "/admin"
+    session_key_prefix "admin_"
+    # ...
+  end
+end
+```
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure RodauthMain
+  configure RodauthAdmin, :admin
+  # ...
+end
+```
+
+This allows having each configuration in a dedicated file, and named constants
+improve introspection and error messages. You can also use inheritance to share
+common settings:
+
+```rb
+# app/lib/rodauth_base.rb
+class RodauthBase < Rodauth::Rails::App
+  # common settings that can be shared between multiple configurations
+  configure do
+    enable :login, :logout
+    login_return_to_requested_location? true
+    logout_redirect "/"
+    # ...
+  end
+end
+```
+```rb
+# app/lib/rodauth_main.rb
+class RodauthMain < RodauthBase # inherit common settings
+  configure do
+    # ... customize main ...
+  end
+end
+```
+```rb
+# app/lib/rodauth_admin.rb
+class RodauthAdmin < RodauthBase # inherit common settings
+  configure do
+    # ... customize admin ...
+  end
+end
+```
+
+Another benefit is that you can define custom methods directly on the class
+instead of through `auth_class_eval`:
+
+```rb
+# app/lib/rodauth_admin.rb
+class RodauthAdmin < Rodauth::Rails::Auth
+  configure do
+    # ...
+  end
+
+  def superadmin?
+    Role.where(account_id: session_id).any? { |role| role.name == "superadmin" }
+  end
+end
+```
+```rb
+# config/routes.rb
+Rails.application.routes.draw do
+  constraints Rodauth::Rails.authenticated(:admin) { |rodauth| rodauth.superadmin? } do
+    mount Sidekiq::Web => "sidekiq"
+  end
+end
 ```
 
 ### Calling controller methods

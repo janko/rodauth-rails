@@ -8,6 +8,7 @@ module Rodauth
 
     # This allows the developer to avoid loading Rodauth at boot time.
     autoload :App, "rodauth/rails/app"
+    autoload :Auth, "rodauth/rails/auth"
 
     @app = nil
     @middleware = true
