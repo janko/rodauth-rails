@@ -5,5 +5,9 @@ Rails.application.routes.draw do
     get :auth1
     get :auth2
     get :secondary
+
+    constraints(->(r) {  r.env['rodauth'].require_authentication}) do
+      get :under_constraints
+    end
   end
 end

@@ -18,4 +18,8 @@ class TestController < ApplicationController
 
     render :template
   end
+
+  def under_constraints
+    render :template
+  end
 end
