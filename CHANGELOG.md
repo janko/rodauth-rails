@@ -1,3 +1,7 @@
+## HEAD
+
+* Add `Rodauth::Rails.authenticated` routing constraint for requiring authentication (@janko)
+
 ## 0.9.1 (2021-02-10)
 
 * Fix flash integration being loaded for API-only apps and causing an error (@dmitryzuev)

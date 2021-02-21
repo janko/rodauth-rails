@@ -10,10 +10,31 @@ require "capybara/rails"
 ActiveRecord::Migrator.migrations_paths = [Rails.root.join("db/migrate")]
 Rails.backtrace_cleaner.remove_silencers! # show full stack traces
 
-class IntegrationTest < ActiveSupport::TestCase
-  include Capybara::DSL
-
+class UnitTest < ActiveSupport::TestCase
   self.test_order = :random
+
+  def setup
+    super
+    if ActiveRecord.version >= Gem::Version.new("5.2")
+      ActiveRecord::Base.connection.migration_context.up
+    else
+      ActiveRecord::Migrator.up(Rails.application.paths["db/migrate"].to_a)
+    end
+  end
+
+  def teardown
+    super
+    if ActiveRecord.version >= Gem::Version.new("5.2")
+      ActiveRecord::Base.connection.migration_context.down
+    else
+      ActiveRecord::Migrator.down(Rails.application.paths["db/migrate"].to_a)
+    end
+    ActiveRecord::Base.clear_cache! # clear schema cache
+  end
+end
+
+class IntegrationTest < UnitTest
+  include Capybara::DSL
 
   def register(login: "user@example.com", password: "secret", verify: false)
     visit "/create-account"
@@ -43,23 +64,8 @@ class IntegrationTest < ActiveSupport::TestCase
     click_on "Logout"
   end
 
-  def setup
-    super
-    if ActiveRecord.version >= Gem::Version.new("5.2")
-      ActiveRecord::Base.connection.migration_context.up
-    else
-      ActiveRecord::Migrator.up(Rails.application.paths["db/migrate"].to_a)
-    end
-  end
-
   def teardown
     super
-    if ActiveRecord.version >= Gem::Version.new("5.2")
-      ActiveRecord::Base.connection.migration_context.down
-    else
-      ActiveRecord::Migrator.down(Rails.application.paths["db/migrate"].to_a)
-    end
-    ActiveRecord::Base.clear_cache! # clear schema cache
     ActionMailer::Base.deliveries.clear
     Capybara.reset_sessions!
   end

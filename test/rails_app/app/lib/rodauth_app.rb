@@ -4,7 +4,7 @@ class RodauthApp < Rodauth::Rails::App
       :login, :remember, :logout, :active_sessions,
       :reset_password, :change_password, :change_password_notify,
       :change_login, :verify_login_change,
-      :close_account, :lockout
+      :close_account, :lockout, :recovery_codes
 
     rails_controller { RodauthController }
 

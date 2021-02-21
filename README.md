@@ -330,15 +330,64 @@ class PostsController < ApplicationController
 end
 ```
 
-Or at the Rails router level:
+#### Routing constraints
+
+You can also require authentication at the Rails router level by
+using a built-in `authenticated` routing constraint:
 
 ```rb
 # config/routes.rb
 Rails.application.routes.draw do
-  constraints -> (r) { r.env["rodauth"].require_authentication } do
-    namespace :admin do
-      # ...
+  constraints Rodauth::Rails.authenticated do
+    # ... authenticated routes ...
+  end
+end
+```
+
+If you want additional conditions, you can pass in a block, which is
+called with the Rodauth instance:
+
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    # ...
+    auth_class_eval do
+      def admin?
+        User.find(account_id: account_id).admin?
+      end
     end
+  end
+end
+```
+```rb
+# config/routes.rb
+Rails.application.routes.draw do
+  constraints Rodauth::Rails.authenticated { |rodauth| rodauth.admin? } do
+    # ...
+  end
+end
+```
+
+You can specify the Rodauth configuration by passing the configuration name:
+
+```rb
+# config/routes.rb
+Rails.application.routes.draw do
+  constraints Rodauth::Rails.authenticated(:admin) do
+    # ...
+  end
+end
+```
+
+If you need something more custom, you can always create the routing constraint
+manually:
+
+```rb
+# config/routes.rb
+Rails.application.routes.draw do
+  constraints -> (r) { !r.env["rodauth"].logged_in? } do # or "rodauth.admin"
+    # routes when the user is not logged in
   end
 end
 ```

@@ -6,4 +6,8 @@ Rails.application.routes.draw do
     get :auth2
     get :secondary
   end
+
+  constraints Rodauth::Rails.authenticated do
+    get "/authenticated" => "test#root"
+  end
 end

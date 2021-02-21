@@ -32,6 +32,15 @@ module Rodauth
         scope.rodauth(name)
       end
 
+      # routing constraint that requires authentication
+      def authenticated(name = nil, &condition)
+        lambda do |request|
+          rodauth = request.env.fetch(["rodauth", *name].join("."))
+          rodauth.require_authentication
+          rodauth.authenticated? && (condition.nil? || condition.call(rodauth))
+        end
+      end
+
       if ::Rails.gem_version >= Gem::Version.new("5.2")
         def secret_key_base
           ::Rails.application.secret_key_base
