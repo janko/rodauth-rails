@@ -25,6 +25,11 @@ class RakeTest < ActiveSupport::TestCase
         /close-account           rodauth.close_account_path
         /unlock-account-request  rodauth.unlock_account_request_path
         /unlock-account          rodauth.unlock_account_path
+        /multifactor-manage      rodauth.two_factor_manage_path
+        /multifactor-auth        rodauth.two_factor_auth_path
+        /multifactor-disable     rodauth.two_factor_disable_path
+        /recovery-auth           rodauth.recovery_auth_path
+        /recovery-codes          rodauth.recovery_codes_path
 
         /json/login                  rodauth(:json).login_path
         /json/create-account         rodauth(:json).create_account_path
