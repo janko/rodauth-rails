@@ -348,22 +348,10 @@ If you want additional conditions, you can pass in a block, which is
 called with the Rodauth instance:
 
 ```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure do
-    # ...
-    auth_class_eval do
-      def admin?
-        User.find(account_id: account_id).admin?
-      end
-    end
-  end
-end
-```
-```rb
 # config/routes.rb
 Rails.application.routes.draw do
-  constraints Rodauth::Rails.authenticated { |rodauth| rodauth.admin? } do
+  # require multifactor authentication to be setup
+  constraints Rodauth::Rails.authenticated { |rodauth| rodauth.uses_two_factor_authentication? } do
     # ...
   end
 end
