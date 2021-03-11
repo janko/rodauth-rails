@@ -974,7 +974,7 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
     get posts_url
     assert_redirected_to "/login"
 
-    login
+    create_account
     get posts_url
     assert_response :success
 
@@ -984,13 +984,22 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
 
   private
 
-  def login(login: "user@example.com", password: "secret")
+  def create_account(login: "user@example.com", password: "secret", verify: true)
     post "/create-account", params: {
       "login"            => login,
       "password"         => password,
       "password-confirm" => password,
     }
 
+    if verify
+      email = ActionMailer::Base.deliveries.last
+      verify_account_key = email.body.to_s[/verify-account\?key=(\w+)/, 1]
+
+      post "/verify-account", params: { "key" => verify_account_key }
+    end
+  end
+
+  def login(login: "user@example.com", password: "secret")
     post "/login", params: {
       "login"    => login,
       "password" => password,
@@ -1001,6 +1010,14 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
     post "/logout"
   end
 end
+```
+
+Sometimes you'll want to create an account record directly:
+
+```rb
+account_id = DB[:accounts].insert(email: "user@example.com", status: "verified")
+password_hash = BCrypt::Password.create("secret", cost: BCrpyt::Engine::MIN_COST)
+DB[:account_password_hashes].insert(account_id: account_id, password_hash: password_hash)
 ```
 
 ## Rodauth defaults
