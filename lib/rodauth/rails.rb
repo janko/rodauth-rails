@@ -35,7 +35,7 @@ module Rodauth
       # routing constraint that requires authentication
       def authenticated(name = nil, &condition)
         lambda do |request|
-          rodauth = request.env.fetch(["rodauth", *name].join("."))
+          rodauth = request.env.fetch ["rodauth", *name].join(".")
           rodauth.require_authentication
           rodauth.authenticated? && (condition.nil? || condition.call(rodauth))
         end

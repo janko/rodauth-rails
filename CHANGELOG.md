@@ -1,5 +1,7 @@
 ## HEAD
 
+* Raise `KeyError` in `#rodauth` method when the Rodauth instance doesn't exist (@janko)
+
 * Add `Rodauth::Rails.authenticated` routing constraint for requiring authentication (@janko)
 
 ## 0.9.1 (2021-02-10)

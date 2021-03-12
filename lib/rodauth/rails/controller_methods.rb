@@ -9,11 +9,7 @@ module Rodauth
       end
 
       def rodauth(name = nil)
-        if name
-          request.env["rodauth.#{name}"]
-        else
-          request.env["rodauth"]
-        end
+        request.env.fetch ["rodauth", *name].join(".")
       end
     end
   end
