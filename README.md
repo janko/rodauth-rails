@@ -1012,12 +1012,18 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
 end
 ```
 
-Sometimes you'll want to create an account record directly:
+If you need to create the account manually, you can do it as follows:
 
 ```rb
-account_id = DB[:accounts].insert(email: "user@example.com", status: "verified")
-password_hash = BCrypt::Password.create("secret", cost: BCrpyt::Engine::MIN_COST)
-DB[:account_password_hashes].insert(account_id: account_id, password_hash: password_hash)
+account_id = DB[:accounts].insert(
+  email: "user@example.com",
+  status: "verified",
+)
+
+DB[:account_password_hashes].insert(
+  account_id: account_id,
+  password_hash: BCrypt::Password.create("secret", cost: BCrpyt::Engine::MIN_COST),
+)
 ```
 
 ## Rodauth defaults
