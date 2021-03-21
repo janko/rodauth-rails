@@ -10,6 +10,15 @@ module Rodauth
         include ::ActiveRecord::Generators::Migration
         include MigrationHelpers
 
+        MAILER_VIEWS = %w[
+          email_auth
+          password_changed
+          reset_password
+          unlock_account
+          verify_account
+          verify_login_change
+        ]
+
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
 
@@ -45,6 +54,14 @@ module Rodauth
           return unless defined?(ActiveRecord::Base)
 
           template "app/models/account.rb"
+        end
+
+        def create_mailer
+          template "app/mailers/rodauth_mailer.rb"
+
+          MAILER_VIEWS.each do |view|
+            template "app/views/rodauth_mailer/#{view}.text.erb"
+          end
         end
 
         private

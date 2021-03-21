@@ -1,5 +1,7 @@
 ## HEAD
 
+* Create `RodauthMailer` and email templates in `rodauth:install`, and remove `rodauth:mailer` (@janko)
+
 * Raise `KeyError` in `#rodauth` method when the Rodauth instance doesn't exist (@janko)
 
 * Add `Rodauth::Rails.authenticated` routing constraint for requiring authentication (@janko)

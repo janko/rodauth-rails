@@ -79,4 +79,17 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/models/account.rb", /class Account < ApplicationRecord/
   end
+
+  test "mailer" do
+    run_generator
+
+    assert_file "app/mailers/rodauth_mailer.rb", /class RodauthMailer < ApplicationMailer/
+
+    %w[
+      verify_account verify_login_change unlock_account reset_password
+      password_changed email_auth
+    ].each do |template|
+      assert_file "app/views/rodauth_mailer/#{template}.text.erb"
+    end
+  end
 end

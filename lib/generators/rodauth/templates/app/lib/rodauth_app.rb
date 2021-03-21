@@ -58,35 +58,29 @@ class RodauthApp < Rodauth::Rails::App
     # already_logged_in { redirect login_redirect }
 
     # ==> Emails
-    # Uncomment the lines below once you've imported mailer views.
-    # create_reset_password_email do
-    #   RodauthMailer.reset_password(email_to, reset_password_email_link)
+    # Use a custom mailer for delivering authentication emails.
+    create_reset_password_email do
+      RodauthMailer.reset_password(email_to, reset_password_email_link)
+    end
+    create_verify_account_email do
+      RodauthMailer.verify_account(email_to, verify_account_email_link)
+    end
+    create_verify_login_change_email do |login|
+      RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_email_link)
+    end
+    create_password_changed_email do
+      RodauthMailer.password_changed(email_to)
+    end
+    # create_email_auth_email do
+    #   RodauthMailer.email_auth(email_to, email_auth_email_link)
     # end
-    # create_verify_account_email do
-    #   RodauthMailer.verify_account(email_to, verify_account_email_link)
+    # create_unlock_account_email do
+    #   RodauthMailer.unlock_account(email_to, unlock_account_email_link)
     # end
-    # create_verify_login_change_email do |login|
-    #   RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_email_link)
-    # end
-    # create_password_changed_email do
-    #   RodauthMailer.password_changed(email_to)
-    # end
-    # # create_email_auth_email do
-    # #   RodauthMailer.email_auth(email_to, email_auth_email_link)
-    # # end
-    # # create_unlock_account_email do
-    # #   RodauthMailer.unlock_account(email_to, unlock_account_email_link)
-    # # end
-    # send_email do |email|
-    #   # queue email delivery on the mailer after the transaction commits
-    #   db.after_commit { email.deliver_later }
-    # end
-
-    # In the meantime, you can tweak settings for emails created by Rodauth.
-    # email_subject_prefix "[MyApp] "
-    # email_from "noreply@myapp.com"
-    # send_email(&:deliver_later)
-    # reset_password_email_body { "Click here to reset your password: #{reset_password_email_link}" }
+    send_email do |email|
+      # queue email delivery on the mailer after the transaction commits
+      db.after_commit { email.deliver_later }
+    end
 
     # ==> Flash
 <% unless json? || jwt? -%>

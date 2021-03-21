@@ -116,6 +116,7 @@ The generator will create the following files:
 * Rodauth app at `app/lib/rodauth_app.rb`
 * Rodauth controller at `app/controllers/rodauth_controller.rb`
 * Account model at `app/models/account.rb`
+* Rodauth mailer at `app/mailers/rodauth_mailer.rb` with views
 
 ### Migration
 
@@ -208,6 +209,23 @@ also create an `Account` model for custom use.
 ```rb
 # app/models/account.rb
 class Account < ApplicationRecord
+end
+```
+
+### Rodauth mailer
+
+The default Rodauth app is configured to use `RodauthMailer` mailer
+for sending authentication emails.
+
+```rb
+# app/mailers/rodauth_mailer.rb
+class RodauthMailer < ApplicationMailer
+  def verify_account(recipient, email_link) ... end
+  def reset_password(recipient, email_link) ... end
+  def verify_login_change(recipient, old_login, new_login, email_link) ... end
+  def password_changed(recipient) ... end
+  # def email_auth(recipient, email_link) ... end
+  # def unlock_account(recipient, email_link) ... end
 end
 ```
 
@@ -443,54 +461,33 @@ end
 
 ### Mailer
 
-Depending on the features you've enabled, Rodauth may send emails as part of
-the authentication flow. Most email settings can be customized:
-
-```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  # ...
-  configure do
-    # ...
-    # general settings
-    email_from "no-reply@myapp.com"
-    email_subject_prefix "[MyApp] "
-    send_email(&:deliver_later)
-    # ...
-    # feature settings
-    verify_account_email_subject "Verify your account"
-    verify_account_email_body { "Verify your account by visting this link: #{verify_account_email_link}" }
-    # ...
-  end
-end
-```
-
-This is convenient when starting out, but eventually you might want to use your
-own mailer. You can start by running the following command:
-
-```sh
-$ rails generate rodauth:mailer
-```
-
-This will create a `RodauthMailer` with the associated mailer views in
-`app/views/rodauth_mailer` directory:
+The install generator will create `RodauthMailer` with default email templates,
+and configure Rodauth features that send emails as part of the authentication
+flow to use it.
 
 ```rb
 # app/mailers/rodauth_mailer.rb
 class RodauthMailer < ApplicationMailer
-  def verify_account(recipient, email_link) ... end
-  def reset_password(recipient, email_link) ... end
-  def verify_login_change(recipient, old_login, new_login, email_link) ... end
-  def password_changed(recipient) ... end
-  # def email_auth(recipient, email_link) ... end
-  # def unlock_account(recipient, email_link) ... end
+  def verify_account(recipient, email_link)
+    # ...
+  end
+  def reset_password(recipient, email_link)
+    # ...
+  end
+  def verify_login_change(recipient, old_login, new_login, email_link)
+    # ...
+  end
+  def password_changed(recipient)
+    # ...
+  end
+  # def email_auth(recipient, email_link)
+  # ...
+  # end
+  # def unlock_account(recipient, email_link)
+  # ...
+  # end
 end
 ```
-
-You can then uncomment the lines in your Rodauth configuration to have it call
-your mailer. If you've enabled additional authentication features that send
-emails, make sure to override their `create_*_email` methods as well.
-
 ```rb
 # app/lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
@@ -524,10 +521,17 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
-This approach can be used even if you're using a 3rd-party service for
-transactional emails, where emails are sent via HTTP instead of SMTP. Whatever
-the `create_*_email` block returns will be passed to `send_email`, so you can
-be creative.
+The above configuration uses `#deliver_later`, which assumes Active Job is
+configured. It's generally recommended to send emails in a background job,
+for better throughput and ability to retry. However, if you want to send emails
+synchronously, you can modify the code to call `#deliver` instead.
+
+The `#send_email` method will receive whatever object is returned by the
+`#create_*_email` methods. But if that doesn't suit you, you can override
+`#send_*_email` methods instead, which are expected to send the email
+immediately. This might work better in scenarios such as using a 3rd-party
+service for transactional emails, where emails are sent via HTTP instead of
+SMTP.
 
 ### Migrations
 
