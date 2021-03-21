@@ -1,5 +1,7 @@
 ## HEAD
 
+* Improve Roda middleware inspect output (@janko)
+
 * Create `RodauthMailer` and email templates in `rodauth:install`, and remove `rodauth:mailer` (@janko)
 
 * Raise `KeyError` in `#rodauth` method when the Rodauth instance doesn't exist (@janko)
