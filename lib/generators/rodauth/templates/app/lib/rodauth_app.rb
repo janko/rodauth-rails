@@ -2,10 +2,10 @@ class RodauthApp < Rodauth::Rails::App
   configure do
     # List of authentication features that are loaded.
     enable :create_account, :verify_account, :verify_account_grace_period,
-      :login, :logout<%= ", :remember" unless jwt? %>,
+      :login, :logout<%= ", :remember" unless jwt? %><%= ", :json" if json? %><%= ", :jwt" if jwt? %>,
       :reset_password, :change_password, :change_password_notify,
       :change_login, :verify_login_change,
-      :close_account<%= ", :json" if json? %><%= ", :jwt" if jwt? %>
+      :close_account
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -23,6 +23,10 @@ class RodauthApp < Rodauth::Rails::App
 
     # Accept only JSON requests.
     only_json? true
+
+    # Handle login and password confirmation fields on the client side.
+    # require_password_confirmation? false
+    # require_login_confirmation? false
 <% end -%>
 
     # Specify the controller used for view rendering and CSRF verification.
@@ -151,7 +155,9 @@ class RodauthApp < Rodauth::Rails::App
     # verify_account_grace_period 3.days
     # reset_password_deadline_interval Hash[hours: 6]
     # verify_login_change_deadline_interval Hash[days: 2]
+<% unless jwt? -%>
     # remember_deadline_interval Hash[days: 30]
+<% end -%>
   end
 
   # ==> Multiple configurations

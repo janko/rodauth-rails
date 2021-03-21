@@ -25,13 +25,13 @@ class <%= options[:name].camelize %>Mailer < ApplicationMailer
 
   # def email_auth(recipient, email_link)
   #   @email_link = email_link
-
+  #
   #   mail to: recipient
   # end
 
   # def unlock_account(recipient, email_link)
   #   @email_link = email_link
-
+  #
   #   mail to: recipient
   # end
 end

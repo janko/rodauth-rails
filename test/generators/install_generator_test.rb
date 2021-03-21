@@ -57,16 +57,14 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "app with --json option" do
     run_generator %w[--json]
 
-    assert_file "app/lib/rodauth_app.rb", /:login, :logout, :remember,$/
-    assert_file "app/lib/rodauth_app.rb", /:close_account, :json$/
+    assert_file "app/lib/rodauth_app.rb", /:login, :logout, :remember, :json,$/
     assert_file "app/lib/rodauth_app.rb", /only_json\? true/
   end
 
   test "app with --jwt option" do
     run_generator %w[--jwt]
 
-    assert_file "app/lib/rodauth_app.rb", /:login, :logout,$/
-    assert_file "app/lib/rodauth_app.rb", /:close_account, :jwt$/
+    assert_file "app/lib/rodauth_app.rb", /:login, :logout, :jwt,$/
     assert_file "app/lib/rodauth_app.rb", /jwt_secret "[a-z0-9]{128}"/
   end
 

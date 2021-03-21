@@ -272,7 +272,7 @@ class ApplicationController < ActionController::Base
     rodauth.logout
     rodauth.login_required
   end
-  helper_method :current_account
+  helper_method :current_account # skip if inheriting from ActionController:API
 end
 ```
 
@@ -961,54 +961,130 @@ end
 
 ## Testing
 
-If you're writing system tests, it's generally better to go through the actual
-authentication flow with tools like Capybara, and to not use any stubbing.
-
-In functional and integration tests you can just make requests to Rodauth
-routes:
+System (browser) tests for Rodauth actions could look something like this:
 
 ```rb
-# test/controllers/posts_controller_test.rb
-class PostsControllerTest < ActionDispatch::IntegrationTest
-  test "should require authentication" do
-    get posts_url
-    assert_redirected_to "/login"
+# test/system/authentication_test.rb
+require "test_helper"
 
+class AuthenticationTest < ActionDispatch::SystemTestCase
+  include ActiveJob::TestHelper
+  driven_by :rack_test
+
+  test "creating and verifying an account" do
     create_account
-    get posts_url
-    assert_response :success
+    assert_match "An email has been sent to you with a link to verify your account", page.text
+
+    verify_account
+    assert_match "Your account has been verified", page.text
+  end
+
+  test "logging in and logging out" do
+    create_account(verify: true)
 
     logout
-    assert_redirected_to "/login"
+    assert_match "You have been logged out", page.text
+
+    login
+    assert_match "You have been logged in", page.text
   end
 
   private
 
-  def create_account(login: "user@example.com", password: "secret", verify: true)
-    post "/create-account", params: {
-      "login"            => login,
-      "password"         => password,
-      "password-confirm" => password,
-    }
-
-    if verify
-      email = ActionMailer::Base.deliveries.last
-      verify_account_key = email.body.to_s[/verify-account\?key=(\w+)/, 1]
-
-      post "/verify-account", params: { "key" => verify_account_key }
-    end
+  def create_account(email: "user@example.com", password: "secret", verify: false)
+    visit "/create-account"
+    fill_in "Login", with: email
+    fill_in "Password", with: password
+    fill_in "Confirm Password", with: password
+    click_on "Create Account"
+    verify_account if verify
   end
 
-  def login(login: "user@example.com", password: "secret")
-    post "/login", params: {
-      "login"    => login,
-      "password" => password,
-    }
+  def verify_account
+    perform_enqueued_jobs # run enqueued email deliveries
+    email = ActionMailer::Base.deliveries.last
+    verify_account_link = email.body.to_s[/\S+verify-account\S+/]
+    visit verify_account_link
+    click_on "Verify Account"
+  end
+
+  def login(email: "user@example.com", password: "secret")
+    visit "/login"
+    fill_in "Login", with: email
+    fill_in "Password", with: password
+    click_on "Login"
   end
 
   def logout
-    post "/logout"
+    visit "/logout"
+    click_on "Logout"
   end
+end
+```
+
+While request tests in JSON API mode with JWT tokens could look something like
+this:
+
+```rb
+# test/integration/authentication_test.rb
+require "test_helper"
+
+class AuthenticationTest < ActionDispatch::IntegrationTest
+  test "creating and verifying an account" do
+    create_account
+    assert_response :success
+    assert_match "An email has been sent to you with a link to verify your account", JSON.parse(body)["success"]
+
+    verify_account
+    assert_response :success
+    assert_match "Your account has been verified", JSON.parse(body)["success"]
+  end
+
+  test "logging in and logging out" do
+    create_account(verify: true)
+
+    logout
+    assert_response :success
+    assert_match "You have been logged out", JSON.parse(body)["success"]
+
+    login
+    assert_response :success
+    assert_match "You have been logged in", JSON.parse(body)["success"]
+  end
+
+  private
+
+  def create_account(email: "user@example.com", password: "secret", verify: false)
+    post "/create-account", as: :json, params: { login: email, password: password, "password-confirm": password }
+    verify_account if verify
+  end
+
+  def verify_account
+    perform_enqueued_jobs # run enqueued email deliveries
+    email = ActionMailer::Base.deliveries.last
+    verify_account_key = email.body.to_s[/verify-account\?key=(\S+)/, 1]
+    post "/verify-account", as: :json, params: { key: verify_account_key }
+  end
+
+  def login(email: "user@example.com", password: "secret")
+    post "/login", as: :json, params: { login: email, password: password }
+  end
+
+  def logout
+    post "/logout", as: :json, headers: { "Authorization" => headers["Authorization"] }
+  end
+end
+```
+
+If you're delivering emails in the background, make sure to set Active Job
+queue adapter to `:test`:
+
+```rb
+# config/environments/test.rb
+Rails.application.configure do |config|
+  # ...
+  config.active_job.queue_adapter = :test
+  # ...
 end
 ```
 
