@@ -187,6 +187,8 @@ class RodauthApp < Rodauth::Rails::App
     #   unless rodauth(:admin).logged_in?
     #     rodauth(:admin).require_http_basic_auth
     #   end
+    #
+    #   r.pass # allow the Rails app to handle other "/admin/*" requests
     # end
   end
 end

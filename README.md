@@ -579,7 +579,11 @@ class RodauthApp < Rodauth::Rails::App
 
   route do |r|
     r.rodauth
-    r.on("admin") { r.rodauth(:admin) }
+
+    r.on "admin" do
+      r.rodauth(:admin)
+      r.pass # allow the Rails app to handle other "/admin/*" requests
+    end
     # ...
   end
 end

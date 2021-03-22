@@ -1,5 +1,7 @@
 ## HEAD
 
+* Load the `pass` Roda plugin and recommend calling `r.pass` on prefixed routes (@janko)
+
 * Improve Roda middleware inspect output (@janko)
 
 * Create `RodauthMailer` and email templates in `rodauth:install`, and remove `rodauth:mailer` (@janko)
