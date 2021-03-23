@@ -83,7 +83,7 @@ documentation][hmac] for instructions on how to safely transition, or just set
 Add the gem to your Gemfile:
 
 ```rb
-gem "rodauth-rails", "~> 0.9"
+gem "rodauth-rails", "~> 0.10"
 
 # gem "jwt",      require: false # for JWT feature
 # gem "rotp",     require: false # for OTP feature

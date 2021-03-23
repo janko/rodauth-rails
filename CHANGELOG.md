@@ -1,4 +1,6 @@
-## HEAD
+## 0.10.0 (2021-03-23)
+
+* Add `Rodauth::Rails::Auth` superclass for moving configurations into separate files (@janko)
 
 * Load the `pass` Roda plugin and recommend calling `r.pass` on prefixed routes (@janko)
 
