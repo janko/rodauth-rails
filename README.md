@@ -2,6 +2,8 @@
 
 Provides Rails integration for the [Rodauth] authentication framework.
 
+It configures Sequel to reuse Active Record's database connection using the [sequel-activerecord_connection] gem.
+
 ## Resources
 
 Useful links:
@@ -1151,29 +1153,38 @@ end
 ```
 
 If you're delivering emails in the background, make sure to set Active Job
-queue adapter to `:test`:
+queue adapter to `:test` or `:inline`:
 
 ```rb
 # config/environments/test.rb
 Rails.application.configure do |config|
   # ...
-  config.active_job.queue_adapter = :test
+  config.active_job.queue_adapter = :test # or :inline
   # ...
 end
 ```
 
-If you need to create the account manually, you can do it as follows:
+If you need to create an account record with a password directly, you can do it
+as follows:
 
 ```rb
-account_id = DB[:accounts].insert(
-  email: "user@example.com",
-  status: "verified",
-)
+# app/models/account.rb
+class Account < ApplicationRecord
+  has_one :password_hash
+end
+```
+```rb
+# app/models/account/password_hash.rb
+class Account::PasswordHash < ApplicationRecord
+  belongs_to :account
+end
+```
+```rb
+require "bcrypt"
 
-DB[:account_password_hashes].insert(
-  account_id: account_id,
-  password_hash: BCrypt::Password.create("secret", cost: BCrpyt::Engine::MIN_COST),
-)
+account = Account.create!(email: "user@example.com", status: "verified")
+password_hash = BCrypt::Password.create("secret", cost: BCrpyt::Engine::MIN_COST)
+account.create_password_hash!(password_hash: password_hash)
 ```
 
 ## Rodauth defaults
