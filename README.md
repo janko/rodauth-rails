@@ -2,35 +2,6 @@
 
 Provides Rails integration for the [Rodauth] authentication framework.
 
-## Table of contents
-
-* [Resources](#resources)
-* [Why Rodauth?](#why-rodauth)
-* [Upgrading](#upgrading)
-* [Installation](#installation)
-* [Usage](#usage)
-  - [Routes](#routes)
-  - [Current account](#current-account)
-  - [Requiring authentication](#requiring-authentication)
-  - [Views](#views)
-  - [Mailer](#mailer)
-  - [Migrations](#migrations)
-  - [Multiple configurations](#multiple-configurations)
-  - [Calling controller methods](#calling-controller-methods)
-  - [Rodauth instance](#rodauth-instance)
-* [How it works](#how-it-works)
-  - [Middleware](#middleware)
-  - [App](#app)
-  - [Sequel](#sequel)
-* [JSON API](#json-api)
-* [OmniAuth](#omniauth)
-* [Configuring](#configuring)
-* [Custom extensions](#custom-extensions)
-* [Testing](#testing)
-* [Rodauth defaults](#rodauth-defaults)
-  - [Database functions](#database-functions)
-  - [Account statuses](#account-statuses)
-
 ## Resources
 
 Useful links:
@@ -491,7 +462,6 @@ end
 ```rb
 # app/lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
-  # ...
   configure do
     # ...
     create_reset_password_email do
@@ -586,6 +556,7 @@ class RodauthApp < Rodauth::Rails::App
       r.rodauth(:admin)
       r.pass # allow the Rails app to handle other "/admin/*" requests
     end
+
     # ...
   end
 end
