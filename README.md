@@ -1,8 +1,8 @@
 # rodauth-rails
 
-Provides Rails integration for the [Rodauth] authentication framework.
-
-It configures Sequel to reuse Active Record's database connection using the [sequel-activerecord_connection] gem.
+Provides Rails integration for the [Rodauth] authentication framework, and
+configures Sequel to [reuse][sequel-activerecord_connection] Active Record's
+database connection.
 
 ## Resources
 
