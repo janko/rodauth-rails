@@ -612,7 +612,7 @@ common settings:
 
 ```rb
 # app/lib/rodauth_base.rb
-class RodauthBase < Rodauth::Rails::App
+class RodauthBase < Rodauth::Rails::Auth
   # common settings that can be shared between multiple configurations
   configure do
     enable :login, :logout
