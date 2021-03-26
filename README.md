@@ -1170,20 +1170,20 @@ as follows:
 ```rb
 # app/models/account.rb
 class Account < ApplicationRecord
-  has_one :password_hash
+  has_one :password_hash, foreign_key: :id
 end
 ```
 ```rb
 # app/models/account/password_hash.rb
 class Account::PasswordHash < ApplicationRecord
-  belongs_to :account
+  belongs_to :account, foreign_key: :id
 end
 ```
 ```rb
 require "bcrypt"
 
 account = Account.create!(email: "user@example.com", status: "verified")
-password_hash = BCrypt::Password.create("secret", cost: BCrpyt::Engine::MIN_COST)
+password_hash = BCrypt::Password.create("secret", cost: BCrypt::Engine::MIN_COST)
 account.create_password_hash!(password_hash: password_hash)
 ```
 
