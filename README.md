@@ -494,17 +494,17 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
-The above configuration uses `#deliver_later`, which assumes Active Job is
-configured. It's generally recommended to send emails in a background job,
-for better throughput and ability to retry. However, if you want to send emails
-synchronously, you can modify the code to call `#deliver` instead.
+This configuration calls `#deliver_later`, which uses Active Job to deliver
+emails in a background job. It's generally recommended to send emails
+asynchronously for better request throughput and the ability to retry
+deliveries. However, if you want to send emails synchronously, modify the
+configuration to call `#deliver_now` instead.
 
-The `#send_email` method will receive whatever object is returned by the
-`#create_*_email` methods. But if that doesn't suit you, you can override
-`#send_*_email` methods instead, which are expected to send the email
-immediately. This might work better in scenarios such as using a 3rd-party
-service for transactional emails, where emails are sent via HTTP instead of
-SMTP.
+If you're using a background processing library without an Active Job adapter,
+or a 3rd-party service for sending transactional emails, this two-phase API
+might not be suitable. In this case, instead of overriding `#create_*_email`
+and `#send_email`, override the `#send_*_email` methods instead, which are
+required to send the email immediately.
 
 ### Migrations
 
