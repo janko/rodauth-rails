@@ -1,8 +1,6 @@
 # rodauth-rails
 
-Provides Rails integration for the [Rodauth] authentication framework, and
-configures Sequel to [reuse][sequel-activerecord_connection] Active Record's
-database connection.
+Provides Rails integration for the [Rodauth] authentication framework.
 
 ## Resources
 
@@ -34,6 +32,12 @@ of the advantages that stand out for me:
 * uniform configuration DSL (any setting can be static or dynamic)
 * consistent before/after hooks around everything
 * dedicated object encapsulating all authentication logic
+
+One commmon concern is the fact that, unlike most other authentication
+frameworks for Rails, Rodauth uses [Sequel] for database interaction instead of
+Active Record. There are good reasons for this, and to make Rodauth work
+smoothly alongside Active Record, rodauth-rails configures Sequel to [reuse
+Active Record's database connection][sequel-activerecord_connection].
 
 ## Upgrading
 
@@ -650,7 +654,7 @@ class RodauthAdmin < Rodauth::Rails::Auth
   end
 
   def superadmin?
-    Role.where(account_id: session_id).any? { |role| role.name == "superadmin" }
+    Role.where(account_id: session_id, type: "superadmin").any?
   end
 end
 ```
