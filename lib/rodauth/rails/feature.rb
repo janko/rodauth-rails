@@ -65,6 +65,8 @@ module Rodauth
 
     private
 
+    delegate :rails_request, to: :scope
+
     # Runs controller callbacks and rescue handlers around Rodauth actions.
     def _around_rodauth(&block)
       result = nil
@@ -168,11 +170,8 @@ module Rodauth
 
     # Instances of the configured controller with current request's env hash.
     def _rails_controller_instance
-      controller    = rails_controller.new
-      rails_request = ActionDispatch::Request.new(scope.env)
-
+      controller = rails_controller.new
       prepare_rails_controller(controller, rails_request)
-
       controller
     end
 

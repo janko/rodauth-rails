@@ -1,3 +1,7 @@
+## HEAD
+
+* Add `#rails_request` to Roda and Rodauth instance for retrieving an `ActionDispatch::Request` instance (@janko)
+
 ## 0.10.0 (2021-03-23)
 
 * Add `Rodauth::Rails::Auth` superclass for moving configurations into separate files (@janko)

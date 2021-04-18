@@ -35,6 +35,10 @@ module Rodauth
           env[["rodauth", *name].join(".")] = rodauth(name)
         end
       end
+
+      def rails_request
+        ActionDispatch::Request.new(env)
+      end
     end
   end
 end
