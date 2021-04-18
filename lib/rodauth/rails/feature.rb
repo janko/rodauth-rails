@@ -65,7 +65,7 @@ module Rodauth
 
     private
 
-    delegate :rails_request, to: :scope
+    delegate :rails_routes, :rails_request, to: :scope
 
     # Runs controller callbacks and rescue handlers around Rodauth actions.
     def _around_rodauth(&block)

@@ -36,6 +36,10 @@ module Rodauth
         end
       end
 
+      def rails_routes
+        ::Rails.application.routes.url_helpers
+      end
+
       def rails_request
         ActionDispatch::Request.new(env)
       end

@@ -31,7 +31,7 @@ class RodauthApp < Rodauth::Rails::App
 
     after_login { remember_login }
 
-    logout_redirect "/"
+    logout_redirect { rails_routes.root_path }
     verify_account_redirect { login_redirect }
     reset_password_redirect { login_path }
   end
@@ -53,7 +53,7 @@ class RodauthApp < Rodauth::Rails::App
     r.on("admin") { r.rodauth(:admin) }
     r.on("json")  { r.rodauth(:json) }
 
-    if r.path == "/auth1"
+    if r.path == rails_routes.auth1_path
       rodauth.require_authentication
     end
   end

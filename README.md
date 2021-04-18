@@ -249,6 +249,19 @@ These routes are fully functional, feel free to visit them and interact with the
 pages. The templates that ship with Rodauth aim to provide a complete
 authentication experience, and the forms use [Bootstrap] markup.
 
+Inside Rodauth configuration and the `route` block you can access Rails route
+helpers through `#rails_routes`:
+
+```rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    # ...
+    login_redirect { rails_routes.activity_path }
+    # ...
+  end
+end
+```
+
 ### Current account
 
 To be able to fetch currently authenticated account, let's define a
