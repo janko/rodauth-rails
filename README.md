@@ -1201,7 +1201,7 @@ require "bcrypt"
 
 account = Account.create!(email: "user@example.com", status: "verified")
 password_hash = BCrypt::Password.create("secret", cost: BCrypt::Engine::MIN_COST)
-account.create_password_hash!(password_hash: password_hash)
+account.create_password_hash!(id: account.id, password_hash: password_hash)
 ```
 
 ## Rodauth defaults
