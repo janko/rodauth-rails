@@ -1,5 +1,6 @@
 require "rodauth/rails/middleware"
 require "rodauth/rails/controller_methods"
+require "rodauth/rails/log_subscriber"
 
 require "rails"
 
@@ -14,6 +15,10 @@ module Rodauth
         ActiveSupport.on_load(:action_controller) do
           include Rodauth::Rails::ControllerMethods
         end
+      end
+
+      initializer "rodauth.log_subscriber" do
+        Rodauth::Rails::LogSubscriber.attach_to :rodauth
       end
 
       initializer "rodauth.test" do

@@ -63,26 +63,33 @@ module Rodauth
       super.html_safe
     end
 
-    private
-
     delegate :rails_routes, :rails_request, to: :scope
+
+    private
 
     # Runs controller callbacks and rescue handlers around Rodauth actions.
     def _around_rodauth(&block)
       result = nil
 
-      rails_controller_rescue do
-        rails_controller_callbacks do
-          result = catch(:halt) { super(&block) }
+      rails_instrument_request do
+        rails_controller_rescue do
+          rails_controller_callbacks do
+            result = catch(:halt) { super(&block) }
+          end
         end
+
+        result = handle_rails_controller_response(result)
       end
 
+      throw :halt, result if result
+    end
+
+    # Handles controller rendering a response or setting response headers.
+    def handle_rails_controller_response(result)
       if rails_controller_instance.performed?
         rails_controller_response
       elsif result
         result[1].merge!(rails_controller_instance.response.headers)
-        throw :halt, result
-      else
         result
       end
     end
@@ -111,6 +118,20 @@ module Rodauth
       end
     end
 
+    def rails_instrument_request
+      ActiveSupport::Notifications.instrument("start_processing.rodauth", rodauth: self)
+      ActiveSupport::Notifications.instrument("process_request.rodauth", rodauth: self) do |payload|
+        begin
+          status, headers, body = yield
+          payload[:status] = status || 404
+          payload[:headers] = headers
+          payload[:body] = body
+        ensure
+          rails_controller_instance.send(:append_info_to_payload, payload)
+        end
+      end
+    end
+
     # Returns Roda response from controller response if set.
     def rails_controller_response
       controller_response = rails_controller_instance.response
@@ -119,7 +140,7 @@ module Rodauth
       response.headers.merge! controller_response.headers
       response.write controller_response.body
 
-      request.halt
+      response.finish
     end
 
     # Create emails with ActionMailer which uses configured delivery method.
