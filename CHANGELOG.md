@@ -1,4 +1,4 @@
-## HEAD
+## 0.11.0 (2021-05-06)
 
 * Add controller-like logging for requests to Rodauth endpoints (@janko)
 
