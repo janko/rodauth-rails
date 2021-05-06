@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add controller-like logging for requests to Rodauth endpoints (@janko)
+
 * Add `#rails_routes` to Roda and Rodauth instance for accessing Rails route helpers (@janko)
 
 * Add `#rails_request` to Roda and Rodauth instance for retrieving an `ActionDispatch::Request` instance (@janko)
