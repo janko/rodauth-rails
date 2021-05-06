@@ -8,6 +8,7 @@ class LoggingTest < IntegrationTest
 
     assert_match /Started GET "\/login" for 127\.0\.0\.1/, logged
     assert_match /Processing by RodauthApp as HTML/, logged
+    refute_match /Parameters/, logged
     if ::Rails.gem_version >= Gem::Version.new("6.0")
       assert_match /Completed 200 OK in \d+ms \(ActiveRecord: \d+\.\d+ms | Allocations: \d+\)/, logged
     else
@@ -23,6 +24,7 @@ class LoggingTest < IntegrationTest
     end
 
     assert_match /Processing by RodauthApp as JSON/, logged
+    assert_match /\s{2}Parameters: {"login"=>"user@example\.com", "password"=>"secret"}/, logged
     assert_match /Completed 401 Unauthorized/, logged
   end
 

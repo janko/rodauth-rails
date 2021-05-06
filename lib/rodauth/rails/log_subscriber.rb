@@ -4,11 +4,14 @@ module Rodauth
       def start_processing(event)
         rodauth = event.payload[:rodauth]
         app_class = rodauth.scope.class.superclass
-        format = rodauth.rails_request.format.ref
+        rails_request = rodauth.rails_request
+        params = rails_request.filtered_parameters
+        format = rails_request.format.ref
         format = format.to_s.upcase if format.is_a?(Symbol)
         format = "*/*" if format.nil?
 
         info "Processing by #{app_class} as #{format}"
+        info "  Parameters: #{params.inspect}" unless params.empty?
       end
 
       def process_request(event)
