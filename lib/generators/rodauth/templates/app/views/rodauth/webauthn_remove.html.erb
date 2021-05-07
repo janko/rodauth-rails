@@ -1,6 +1,6 @@
 <%%= form_tag rodauth.webauthn_remove_path, method: :post, id: "webauthn-remove-form" do %>
   <%%= render "password_field" if rodauth.two_factor_modifications_require_password? %>
-  <fieldset class="form-group">
+  <fieldset class="form-group mb-3">
     <%% (usage = rodauth.account_webauthn_usage).each do |id, last_use| %>
       <div class="form-check">
         <%%= render "field", name: rodauth.webauthn_remove_param, id: "webauthn-remove-#{id}", type: :radio, class: "form-check-input", skip_error_message: true, value: id, required: false %>

@@ -1,5 +1,7 @@
 ## HEAD
 
+* Update templates for Boostratp 5 compatibility (@janko)
+
 * Log request parameters for Rodauth requests (@janko)
 
 ## 0.11.0 (2021-05-06)
