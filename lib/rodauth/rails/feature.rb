@@ -119,15 +119,32 @@ module Rodauth
     end
 
     def rails_instrument_request
-      ActiveSupport::Notifications.instrument("start_processing.rodauth", rodauth: self)
-      ActiveSupport::Notifications.instrument("process_request.rodauth", rodauth: self) do |payload|
+      request = rails_request
+
+      raw_payload = {
+        controller: scope.class.superclass.name,
+        action: "call",
+        request: request,
+        params: request.filtered_parameters,
+        headers: request.headers,
+        format: request.format.ref,
+        method: request.request_method,
+        path: request.fullpath
+      }
+
+      ActiveSupport::Notifications.instrument("start_processing.action_controller", raw_payload)
+
+      ActiveSupport::Notifications.instrument("process_action.action_controller", raw_payload) do |payload|
         begin
-          status, headers, body = yield
-          payload[:status] = status || 404
-          payload[:headers] = headers
-          payload[:body] = body
+          result = yield
+          response = ActionDispatch::Response.new *(result || [404, {}, []])
+          payload[:response] = response
+          payload[:status] = response.status
+        rescue => error
+          payload[:status] = ActionDispatch::ExceptionWrapper.status_code_for_exception(error.class.name)
+          raise
         ensure
-          rails_controller_instance.send(:append_info_to_payload, payload)
+          rails_controller_eval { append_info_to_payload(payload) }
         end
       end
     end
