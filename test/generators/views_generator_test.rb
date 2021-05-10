@@ -106,8 +106,8 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator %w[create_account]
 
     assert_file "app/views/rodauth/_password_field.html.erb", <<-ERB.strip_heredoc
-      <div class="form-group">
-        <%= label_tag "password", "Password" %>
+      <div class="form-group mb-3">
+        <%= label_tag "password", "Password", class: "form-label" %>
         <%= render "field", name: rodauth.password_param, id: "password", type: :password, value: "", autocomplete: rodauth.password_field_autocomplete_value %>
       </div>
     ERB
