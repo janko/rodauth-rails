@@ -1,5 +1,7 @@
 ## HEAD
 
+* Include total view render time in logs for Rodauth requests (@janko)
+
 * Instrument redirects (@janko)
 
 * Instrument Rodauth requests on `action_controller` namespace (@janko)

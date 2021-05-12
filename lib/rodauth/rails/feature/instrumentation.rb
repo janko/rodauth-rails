@@ -12,6 +12,14 @@ module Rodauth
           rails_instrument_redirection { super }
         end
 
+        def rails_render(*)
+          render_output = nil
+          rails_controller_instance.view_runtime = rails_controller_instance.send(:cleanup_view_runtime) do
+            Benchmark.ms { render_output = super }
+          end
+          render_output
+        end
+
         def rails_instrument_request
           request = rails_request
 

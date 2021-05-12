@@ -9,9 +9,9 @@ class InstrumentationTest < IntegrationTest
     assert_match /Processing by RodauthApp#call as HTML/, logged
     refute_match /Parameters/, logged
     if ::Rails.gem_version >= Gem::Version.new("6.0")
-      assert_match /Completed 200 OK in \d+ms \(ActiveRecord: \d+\.\d+ms | Allocations: \d+\)/, logged
+      assert_match /Completed 200 OK in \d+ms \(Views: \d+ms | ActiveRecord: \d+\.\d+ms | Allocations: \d+\)/, logged
     else
-      assert_match /Completed 200 OK in \d+ms \(ActiveRecord: \d+\.\d+ms\)/, logged
+      assert_match /Completed 200 OK in \d+ms \(Views: \d+ms | ActiveRecord: \d+\.\d+ms\)/, logged
     end
   end
 
