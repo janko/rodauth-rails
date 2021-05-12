@@ -6,7 +6,7 @@
 
 * Instrument Rodauth requests on `action_controller` namespace (@janko)
 
-* Update templates for Boostratp 5 compatibility (@janko)
+* Update templates for Boostrap 5 compatibility (@janko)
 
 * Log request parameters for Rodauth requests (@janko)
 
