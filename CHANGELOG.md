@@ -1,5 +1,7 @@
 ## HEAD
 
+* Instrument redirects (@janko)
+
 * Instrument Rodauth requests on `action_controller` namespace (@janko)
 
 * Update templates for Boostratp 5 compatibility (@janko)

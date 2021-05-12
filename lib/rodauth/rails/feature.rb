@@ -138,6 +138,9 @@ module Rodauth
         begin
           result = yield
           response = ActionDispatch::Response.new *(result || [404, {}, []])
+
+          rails_instrument_redirection(request, response) if [301, 302].include?(response.status)
+
           payload[:response] = response
           payload[:status] = response.status
         rescue => error
@@ -147,6 +150,11 @@ module Rodauth
           rails_controller_eval { append_info_to_payload(payload) }
         end
       end
+    end
+
+    def rails_instrument_redirection(request, response)
+      payload = { request: request, status: response.status, location: response.filtered_location }
+      ActiveSupport::Notifications.instrument("redirect_to.action_controller", payload)
     end
 
     # Returns Roda response from controller response if set.

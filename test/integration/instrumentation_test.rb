@@ -27,6 +27,16 @@ class InstrumentationTest < IntegrationTest
     assert_match /Completed 401 Unauthorized/, logged
   end
 
+  test "logs redirects" do
+    logged = capture_log do
+      visit "/change-password"
+    end
+
+    assert_match /Processing by RodauthApp#call as HTML/, logged
+    assert_match /Redirected to \/login/, logged
+    assert_match /Completed 302 Found/, logged
+  end
+
   test "handles early response via callback" do
     logged = capture_log do
       visit "/login?early_return=true"
