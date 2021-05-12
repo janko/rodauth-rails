@@ -2,11 +2,11 @@ module Rodauth
   module Rails
     module Feature
       module Instrumentation
+        private
+
         def _around_rodauth
           rails_instrument_request { super }
         end
-
-        private
 
         def redirect(*)
           rails_instrument_redirection { super }
