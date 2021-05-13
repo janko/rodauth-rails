@@ -101,7 +101,7 @@ $ rails db:migrate
 
 ### Routes
 
-We can see the list of routes our Rodauth middleware handles:
+You can see the list of routes our Rodauth middleware handles:
 
 ```sh
 $ rails rodauth:routes
@@ -123,7 +123,7 @@ Routes handled by RodauthApp:
   /close-account           rodauth.close_account_path
 ```
 
-Using this information, we could add some basic authentication links to our
+Using this information, you can add some basic authentication links to your
 navigation header:
 
 ```erb
@@ -154,7 +154,7 @@ end
 
 ### Current account
 
-To be able to fetch currently authenticated account, let's define a
+To be able to fetch currently authenticated account, you can define a
 `#current_account` method that fetches the account id from session and
 retrieves the corresponding account record:
 
@@ -171,11 +171,11 @@ class ApplicationController < ActionController::Base
     rodauth.logout
     rodauth.login_required
   end
-  helper_method :current_account # skip if inheriting from ActionController:API
+  helper_method :current_account # skip if inheriting from ActionController::API
 end
 ```
 
-This allows us to access the current account in controllers and views:
+This allows you to access the current account in controllers and views:
 
 ```erb
 <p>Authenticated as: <%= current_account.email %></p>
@@ -183,9 +183,9 @@ This allows us to access the current account in controllers and views:
 
 ### Requiring authentication
 
-We'll likely want to require authentication for certain parts of our app,
-redirecting the user to the login page if they're not logged in. We can do this
-in our Rodauth app's routing block, which helps keep the authentication logic
+You'll likely want to require authentication for certain parts of your app,
+redirecting the user to the login page if they're not logged in. You can do this
+in your Rodauth app's routing block, which helps keep the authentication logic
 encapsulated:
 
 ```rb
@@ -204,7 +204,7 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
-We can also require authentication at the controller layer:
+You can also require authentication at the controller layer:
 
 ```rb
 # app/controllers/application_controller.rb
@@ -231,8 +231,8 @@ end
 
 #### Routing constraints
 
-You can also require authentication at the Rails router level by
-using a built-in `authenticated` routing constraint:
+In some cases it makes sense to require authentication at the Rails router
+level. You can do this via the built-in `authenticated` routing constraint:
 
 ```rb
 # config/routes.rb
@@ -294,7 +294,7 @@ This will generate views for the default set of Rodauth features into the
 `RodauthController`.
 
 You can pass a list of Rodauth features to the generator to create views for
-these features (this will not remove any existing views):
+these features (this will not remove or overwrite any existing views):
 
 ```sh
 $ rails generate rodauth:views login create_account lockout otp
@@ -436,7 +436,7 @@ end
 ### Multiple configurations
 
 If you need to handle multiple types of accounts that require different
-authentication logic, you can create different configurations for them:
+authentication logic, you can create additional configurations for them:
 
 ```rb
 # app/lib/rodauth_app.rb
@@ -546,8 +546,8 @@ class RodauthAdmin < RodauthBase # inherit common settings
 end
 ```
 
-Another benefit is that you can define custom methods directly on the class
-instead of through `auth_class_eval`:
+Another benefit of explicit classes is that you can define custom methods
+directly at the class level instead of inside an `auth_class_eval`:
 
 ```rb
 # app/lib/rodauth_admin.rb
@@ -612,7 +612,7 @@ rodauth.setup_account_verification
 rodauth.close_account
 ```
 
-This Rodauth instance will be initialized with basic Rack env that allows is it
+This Rodauth instance will be initialized with basic Rack env that allows it
 to generate URLs, using `config.action_mailer.default_url_options` options.
 
 ## How it works
@@ -724,7 +724,7 @@ class RodauthApp < Rodauth::Rails::App
   configure do
     # ...
     enable :json
-    only_json? true # accept only JSON requests
+    only_json? true # accept only JSON requests (optional)
     # ...
   end
 end
@@ -745,7 +745,7 @@ class RodauthApp < Rodauth::Rails::App
     # ...
     enable :jwt
     jwt_secret "<YOUR_SECRET_KEY>" # store the JWT secret in a safe place
-    only_json? true # accept only JSON requests
+    only_json? true # accept only JSON requests (optional)
     # ...
   end
 end
@@ -825,7 +825,8 @@ end
 <%= link_to "Login via Facebook", "/auth/facebook" %>
 ```
 
-Let's implement the OmniAuth callback endpoint on our Rodauth controller:
+Finally, let's implement the OmniAuth callback endpoint on our Rodauth
+controller:
 
 ```rb
 # config/routes.rb
@@ -878,11 +879,8 @@ end
 
 ## Configuring
 
-For the list of configuration methods provided by Rodauth, see the [feature
-documentation].
-
-The `rails` feature rodauth-rails loads is customizable as well, here is the
-list of its configuration methods:
+The `rails` feature rodauth-rails loads provides the following configuration
+methods:
 
 | Name                        | Description                                                        |
 | :----                       | :----------                                                        |
@@ -909,12 +907,16 @@ Rodauth::Rails.configure do |config|
 end
 ```
 
+For the list of configuration methods provided by Rodauth, see the [feature
+documentation].
+
 ## Custom extensions
 
 When developing custom extensions for Rodauth inside your Rails project, it's
-better to use plain modules (at least in the beginning), because Rodauth
-feature design doesn't yet support Zeitwerk reloading well. Here is
-an example of an LDAP authentication extension that uses the
+probably better to use plain modules, at least in the beginning, as Rodauth
+feature design doesn't yet work well with Zeitwerk reloading.
+
+Here is an example of an LDAP authentication extension that uses the
 [simple_ldap_authenticator] gem.
 
 ```rb
