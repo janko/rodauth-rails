@@ -86,125 +86,15 @@ $ rails generate rodauth:install --jwt # token authentication via the "Authoriza
 $ bundle add jwt
 ```
 
-The generator will create the following files:
+This generator will create a Rodauth app with common authentication features
+enabled, a database migration with tables required by those features, a mailer
+with default templates, and a few other files.
 
-* Rodauth migration at `db/migrate/*_create_rodauth.rb`
-* Rodauth initializer at `config/initializers/rodauth.rb`
-* Sequel initializer at `config/initializers/sequel.rb` for ActiveRecord integration
-* Rodauth app at `app/lib/rodauth_app.rb`
-* Rodauth controller at `app/controllers/rodauth_controller.rb`
-* Account model at `app/models/account.rb`
-* Rodauth mailer at `app/mailers/rodauth_mailer.rb` with views
+Feel free to remove any features you don't need, along with their corresponding
+tables. Afterwards, run the migration:
 
-### Migration
-
-The migration file creates tables required by Rodauth. You're encouraged to
-review the migration, and modify it to only create tables for features you
-intend to use.
-
-```rb
-# db/migrate/*_create_rodauth.rb
-class CreateRodauth < ActiveRecord::Migration
-  def change
-    create_table :accounts do |t| ... end
-    create_table :account_password_hashes do |t| ... end
-    create_table :account_password_reset_keys do |t| ... end
-    create_table :account_verification_keys do |t| ... end
-    create_table :account_login_change_keys do |t| ... end
-    create_table :account_remember_keys do |t| ... end
-  end
-end
-```
-
-Once you're done, you can run the migration:
-
-```
+```sh
 $ rails db:migrate
-```
-
-### Rodauth initializer
-
-The Rodauth initializer assigns the constant for your Rodauth app, which will
-be called by the Rack middleware that's added in front of your Rails router.
-
-```rb
-# config/initializers/rodauth.rb
-Rodauth::Rails.configure do |config|
-  config.app = "RodauthApp"
-end
-```
-
-### Sequel initializer
-
-Rodauth uses [Sequel] for database interaction. If you're using ActiveRecord,
-an additional initializer will be created which configures Sequel to use the
-ActiveRecord connection.
-
-```rb
-# config/initializers/sequel.rb
-require "sequel/core"
-
-# initialize Sequel and have it reuse Active Record's database connection
-DB = Sequel.connect("postgresql://", extensions: :activerecord_connection)
-```
-
-### Rodauth app
-
-Your Rodauth app is created in the `app/lib/` directory, and comes with a
-default set of authentication features enabled, as well as extensive examples
-on ways you can configure authentication behaviour.
-
-```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure do
-    # authentication configuration
-  end
-
-  route do |r|
-    # request handling
-  end
-end
-```
-
-### Controller
-
-Your Rodauth app will by default use `RodauthController` for view rendering,
-CSRF protection, and running controller callbacks and rescue handlers around
-Rodauth actions.
-
-```rb
-# app/controllers/rodauth_controller.rb
-class RodauthController < ApplicationController
-end
-```
-
-### Account model
-
-Rodauth stores user accounts in the `accounts` table, so the generator will
-also create an `Account` model for custom use.
-
-```rb
-# app/models/account.rb
-class Account < ApplicationRecord
-end
-```
-
-### Rodauth mailer
-
-The default Rodauth app is configured to use `RodauthMailer` mailer
-for sending authentication emails.
-
-```rb
-# app/mailers/rodauth_mailer.rb
-class RodauthMailer < ApplicationMailer
-  def verify_account(recipient, email_link) ... end
-  def reset_password(recipient, email_link) ... end
-  def verify_login_change(recipient, old_login, new_login, email_link) ... end
-  def password_changed(recipient) ... end
-  # def email_auth(recipient, email_link) ... end
-  # def unlock_account(recipient, email_link) ... end
-end
 ```
 
 ## Usage
