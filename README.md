@@ -1176,6 +1176,18 @@ configure do
 end
 ```
 
+### Deadline values
+
+To simplify changes to the database schema, rodauth-rails configures Rodauth
+to set deadline values for various features in Ruby, instead of relying on
+the database to set default column values.
+
+You can easily change this back:
+
+```rb
+set_deadline_values? false
+```
+
 ## License
 
 The gem is available as open source under the terms of the [MIT
