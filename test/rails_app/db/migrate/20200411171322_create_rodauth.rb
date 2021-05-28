@@ -12,6 +12,7 @@ class CreateRodauth < superclass
     create_table :accounts do |t|
       t.string :email, null: false, index: { unique: true }
       t.string :status, null: false, default: "unverified"
+      t.string :password_hash
     end
 
     # Used if storing password hashes in a separate table (default)

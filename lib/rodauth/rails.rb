@@ -12,6 +12,7 @@ module Rodauth
     # This allows the developer to avoid loading Rodauth at boot time.
     autoload :App, "rodauth/rails/app"
     autoload :Auth, "rodauth/rails/auth"
+    autoload :Model, "rodauth/rails/model"
 
     @app = nil
     @middleware = true
@@ -49,6 +50,11 @@ module Rodauth
         end
 
         instance
+      end
+
+      def model(name = nil, **options)
+        rodauth_class = Rodauth::Rails.app.rodauth(name)
+        Rodauth::Rails::Model.new(rodauth_class, **options)
       end
 
       # routing constraint that requires authentication
