@@ -464,7 +464,7 @@ class RodauthApp < Rodauth::Rails::App
 
     r.on "admin" do
       r.rodauth(:admin)
-      r.pass # allow the Rails app to handle other "/admin/*" requests
+      break # allow routing of other /admin/* requests to continue to Rails
     end
 
     # ...
