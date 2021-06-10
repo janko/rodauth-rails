@@ -1,4 +1,4 @@
-## HEAD
+## 0.13.0 (2021-06-10)
 
 * Add `:query`, `:form`, `:session`, `:account`, and `:env` options to `Rodauth::Rails.rodauth` (@janko)
 
