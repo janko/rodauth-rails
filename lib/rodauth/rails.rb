@@ -1,6 +1,9 @@
 require "rodauth/rails/version"
 require "rodauth/rails/railtie"
 
+require "rack/utils"
+require "stringio"
+
 module Rodauth
   module Rails
     class Error < StandardError
@@ -14,7 +17,7 @@ module Rodauth
     @middleware = true
 
     class << self
-      def rodauth(name = nil)
+      def rodauth(name = nil, query: {}, form: {}, session: {}, account: nil, env: {})
         url_options = ActionMailer::Base.default_url_options
 
         scheme   = url_options[:protocol] || "http"
@@ -23,14 +26,29 @@ module Rodauth
         host     = url_options[:host]
         host    += ":#{port}" if port
 
+        content_type = "application/x-www-form-urlencoded" if form.any?
+
         rack_env = {
+          "QUERY_STRING"    => Rack::Utils.build_nested_query(query),
+          "rack.input"      => StringIO.new(Rack::Utils.build_nested_query(form)),
+          "CONTENT_TYPE"    => content_type,
+          "rack.session"    => {},
           "HTTP_HOST"       => host,
           "rack.url_scheme" => scheme,
-        }
+        }.merge(env)
 
-        scope = app.new(rack_env)
+        scope    = app.new(rack_env)
+        instance = scope.rodauth(name)
 
-        scope.rodauth(name)
+        # update session hash here to make it work with JWT session
+        instance.session.merge!(session)
+
+        if account
+          instance.instance_variable_set(:@account, account.attributes.symbolize_keys)
+          instance.session[instance.session_key] = instance.account_session_value
+        end
+
+        instance
       end
 
       # routing constraint that requires authentication

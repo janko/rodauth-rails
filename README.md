@@ -587,8 +587,8 @@ end
 ### Rodauth instance
 
 In some cases you might need to use Rodauth more programmatically, and perform
-Rodauth operations outside of the request context. rodauth-rails gives you the
-ability to retrieve the Rodauth instance:
+Rodauth operations outside of the request context. rodauth-rails gives you a
+helper method for building a Rodauth instance:
 
 ```rb
 rodauth = Rodauth::Rails.rodauth # or Rodauth::Rails.rodauth(:admin)
@@ -600,8 +600,22 @@ rodauth.setup_account_verification
 rodauth.close_account
 ```
 
-This Rodauth instance will be initialized with basic Rack env that allows it
-to generate URLs, using `config.action_mailer.default_url_options` options.
+The base URL is taken from Action Mailer's `default_url_options` setting if
+configured. The `Rodauth::Rails.rodauth` method accepts additional keyword
+arguments:
+
+* `:account` – Active Record model instance from which to set `account` and `session[:account_id]`
+* `:query` & `:form` – set specific query/form parameters
+* `:session` – set any session values
+* `:env` – set any additional Rack env values
+
+```rb
+Rodauth::Rails.rodauth(account: Account.find(account_id))
+Rodauth::Rails.rodauth(query: { "param" => "value" })
+Rodauth::Rails.rodauth(form: { "param" => "value" })
+Rodauth::Rails.rodauth(session: { two_factor_auth_setup: true })
+Rodauth::Rails.rodauth(env: { "HTTP_USER_AGENT" => "programmatic" })
+```
 
 ## How it works
 

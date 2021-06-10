@@ -8,6 +8,45 @@ class RodauthTest < UnitTest
     assert_equal "https://example.com/login", rodauth.login_url
   end
 
+  test "allows settings query and form params" do
+    rodauth = Rodauth::Rails.rodauth
+    assert_nil rodauth.param_or_nil("foo")
+
+    rodauth = Rodauth::Rails.rodauth(query: { "foo" => { "bar" => "baz" } })
+    assert_equal "baz", rodauth.request.GET["foo"]["bar"]
+    assert_equal "baz", rodauth.raw_param("foo")["bar"]
+
+    rodauth = Rodauth::Rails.rodauth(form: { "foo" => { "bar" => "baz" } })
+    assert_equal "baz", rodauth.request.POST["foo"]["bar"]
+    assert_equal "baz", rodauth.raw_param("foo")["bar"]
+  end
+
+  test "allows setting session" do
+    rodauth = Rodauth::Rails.rodauth
+    assert_equal Hash.new, rodauth.session
+
+    rodauth = Rodauth::Rails.rodauth(session: { account_id: 1 })
+    assert_equal Hash[account_id: 1], rodauth.session
+    assert rodauth.logged_in?
+
+    rodauth = Rodauth::Rails.rodauth(:json, session: { account_id: 1 })
+    assert_equal Hash[account_id: 1], rodauth.session
+    assert rodauth.logged_in?
+  end
+
+  test "allows setting account" do
+    account = Account.create!(email: "user@example.com")
+
+    rodauth = Rodauth::Rails.rodauth(account: account)
+    assert_equal "user@example.com", rodauth.send(:email_to)
+    assert_equal account.id, rodauth.session_value
+  end
+
+  test "allows setting additional env values" do
+    rodauth = Rodauth::Rails.rodauth(env: { "HTTP_USER_AGENT" => "API" })
+    assert_equal "API", rodauth.request.user_agent
+  end
+
   test "retrieves secret_key_base from env variable, credentials, or secrets" do
     Rails.env = "production"
 

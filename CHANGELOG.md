@@ -1,3 +1,7 @@
+## HEAD
+
+* Add `:query`, `:form`, `:session`, `:account`, and `:env` options to `Rodauth::Rails.rodauth` (@janko)
+
 ## 0.12.0 (2021-05-15)
 
 * Include total view render time in logs for Rodauth requests (@janko)
