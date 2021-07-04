@@ -392,14 +392,48 @@ end
 This configuration calls `#deliver_later`, which uses Active Job to deliver
 emails in a background job. It's generally recommended to send emails
 asynchronously for better request throughput and the ability to retry
-deliveries. However, if you want to send emails synchronously, modify the
-configuration to call `#deliver_now` instead.
+deliveries. However, if you want to send emails synchronously, you can modify
+the configuration to call `#deliver_now` instead.
 
 If you're using a background processing library without an Active Job adapter,
 or a 3rd-party service for sending transactional emails, this two-phase API
 might not be suitable. In this case, instead of overriding `#create_*_email`
 and `#send_email`, override the `#send_*_email` methods instead, which are
-required to send the email immediately.
+required to send the email immediately. For example:
+
+```rb
+# app/workers/rodauth_mailer_worker.rb
+class RodauthMailerWorker
+  include Sidekiq::Worker
+
+  def perform(name, *args)
+    email = RodauthMailer.public_send(name, *args)
+    email.deliver_now
+  end
+end
+```
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    # ...
+    # use `#send_*_email` method to be able to immediately enqueue email delivery
+    send_reset_password_email do
+      enqueue_email(:reset_password, email_to, reset_password_email_link)
+    end
+    # ...
+    auth_class_eval do
+      # custom method for enqueuing email delivery using our worker
+      def enqueue_email(name, *args)
+        db.after_commit do
+          RodauthMailerWorker.perform_async(name, *args)
+        end
+      end
+    end
+    # ...
+  end
+end
+```
 
 ### Migrations
 
