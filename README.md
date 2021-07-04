@@ -299,7 +299,7 @@ case make sure to rename the Rodauth controller accordingly):
 
 ```sh
 # generates views into app/views/authentication
-$ rails generate rodauth:views --name authentication
+$ rails generate rodauth:views --directory authentication
 ```
 
 #### Layout
