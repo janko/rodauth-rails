@@ -6,20 +6,17 @@ module Rodauth
     # Base auth class that applies some default configuration and supports
     # multi-level inheritance.
     class Auth < Rodauth::Auth
-      class << self
-        attr_writer :features
-        attr_writer :routes
-        attr_accessor :configuration
-      end
-
       def self.inherited(auth_class)
         super
-        auth_class.roda_class = Rodauth::Rails.app
-        auth_class.features = features.dup
-        auth_class.routes = routes.dup
-        auth_class.route_hash = route_hash.dup
-        auth_class.configuration = configuration.clone
-        auth_class.configuration.instance_variable_set(:@auth, auth_class)
+        superclass = self
+        auth_class.class_eval do
+          @roda_class = Rodauth::Rails.app
+          @features = superclass.features.clone
+          @routes = superclass.routes.clone
+          @route_hash = superclass.route_hash.clone
+          @configuration = superclass.instance_variable_get(:@configuration).clone
+          @configuration.instance_variable_set(:@auth, self)
+        end
       end
 
       # apply default configuration
