@@ -1,6 +1,6 @@
-<%%= form_tag rodauth.change_login_path, method: :post do %>
+<%%= form_tag <%= rodauth %>.change_login_path, method: :post do %>
   <%%= render "login_field" %>
-  <%%= render "login_confirm_field" if rodauth.require_login_confirmation? %>
-  <%%= render "password_field" if rodauth.change_login_requires_password? %>
+  <%%= render "login_confirm_field" if <%= rodauth %>.require_login_confirmation? %>
+  <%%= render "password_field" if <%= rodauth %>.change_login_requires_password? %>
   <%%= render "submit", value: "Change Login" %>
 <%% end %>

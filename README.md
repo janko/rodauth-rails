@@ -278,8 +278,8 @@ $ rails generate rodauth:views
 ```
 
 This will generate views for the default set of Rodauth features into the
-`app/views/rodauth` directory, which will be automatically picked up by the
-`RodauthController`.
+`app/views/rodauth` directory, provided that `RodauthController` is set for the
+main configuration.
 
 You can pass a list of Rodauth features to the generator to create views for
 these features (this will not remove or overwrite any existing views):
@@ -294,12 +294,10 @@ Or you can generate views for all features:
 $ rails generate rodauth:views --all
 ```
 
-You can also tell the generator to create views into another directory (in this
-case make sure to rename the Rodauth controller accordingly):
+Use `--name` to generate views for a different Rodauth configuration:
 
 ```sh
-# generates views into app/views/authentication
-$ rails generate rodauth:views --directory authentication
+$ rails generate rodauth:views --name admin
 ```
 
 #### Layout

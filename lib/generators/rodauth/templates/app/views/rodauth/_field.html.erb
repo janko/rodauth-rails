@@ -4,7 +4,7 @@
   autocomplete: local_assigns[:autocomplete],
   inputmode: local_assigns[:inputmode],
   required: local_assigns[:required] != false,
-  class: "#{local_assigns[:class] || "form-control"} #{"is-invalid" if rodauth.field_error(name)}",
-  aria: ({ invalid: "true", describedby: "#{name}_error_message" } if rodauth.field_error(name)) %>
+  class: "#{local_assigns[:class] || "form-control"} #{"is-invalid" if <%= rodauth %>.field_error(name)}",
+  aria: ({ invalid: "true", describedby: "#{name}_error_message" } if <%= rodauth %>.field_error(name)) %>
 
 <%%= render "field_error", name: name unless local_assigns[:skip_error_message] %>

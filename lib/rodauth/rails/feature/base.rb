@@ -22,6 +22,14 @@ module Rodauth
           rails_controller_instance.instance_exec(&block)
         end
 
+        def rails_controller
+          if only_json? && Rodauth::Rails.api_only?
+            ActionController::API
+          else
+            ActionController::Base
+          end
+        end
+
         delegate :rails_routes, :rails_request, to: :scope
 
         private
@@ -47,14 +55,6 @@ module Rodauth
 
         def rails_api_controller?
           defined?(ActionController::API) && rails_controller <= ActionController::API
-        end
-
-        def rails_controller
-          if only_json? && Rodauth::Rails.api_only?
-            ActionController::API
-          else
-            ActionController::Base
-          end
         end
       end
     end

@@ -18,9 +18,9 @@ module Rodauth
           desc: "Generates views for all Rodauth features",
           default: false
 
-        class_option :directory, aliases: "-d", type: :string,
-          desc: "The directory under app/views/* into which to create views",
-          default: "rodauth"
+        class_option :name, aliases: "-n", type: :string,
+          desc: "The configuration name for which to generate views",
+          default: nil
 
         VIEWS = {
           login: %w[
@@ -112,8 +112,29 @@ module Rodauth
 
           views.each do |view|
             template "app/views/rodauth/#{view}.html.erb",
-              "app/views/#{options[:directory].underscore}/#{view}.html.erb"
+              "app/views/#{directory}/#{view}.html.erb"
           end
+        end
+
+        def directory
+          if controller.abstract?
+            fail Error, "no controller configured for configuration: #{configuration_name.inspect}"
+          end
+
+          controller.controller_path
+        end
+
+        def rodauth
+          "rodauth#{"(:#{configuration_name})" if configuration_name}"
+        end
+
+        def controller
+          rodauth = Rodauth::Rails.rodauth(configuration_name)
+          rodauth.rails_controller
+        end
+
+        def configuration_name
+          options[:name]&.to_sym
         end
       end
     end

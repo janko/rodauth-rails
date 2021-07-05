@@ -1,13 +1,13 @@
-<%% cred = rodauth.new_webauthn_credential %>
+<%% cred = <%= rodauth %>.new_webauthn_credential %>
 
-<%%= form_tag rodauth.webauthn_setup_path, method: :post, id: "webauthn-setup-form", data: { credential_options: cred.as_json.to_json } do %>
-  <%%= hidden_field_tag rodauth.webauthn_setup_challenge_param, cred.challenge %>
-  <%%= hidden_field_tag rodauth.webauthn_setup_challenge_hmac_param, rodauth.compute_hmac(cred.challenge) %>
-  <%%= text_field_tag rodauth.webauthn_setup_param, "", id: "webauthn-setup", aria: { hidden: "true" } %>
-  <%%= render "password_field" if rodauth.two_factor_modifications_require_password? %>
+<%%= form_tag <%= rodauth %>.webauthn_setup_path, method: :post, id: "webauthn-setup-form", data: { credential_options: cred.as_json.to_json } do %>
+  <%%= hidden_field_tag <%= rodauth %>.webauthn_setup_challenge_param, cred.challenge %>
+  <%%= hidden_field_tag <%= rodauth %>.webauthn_setup_challenge_hmac_param, <%= rodauth %>.compute_hmac(cred.challenge) %>
+  <%%= text_field_tag <%= rodauth %>.webauthn_setup_param, "", id: "webauthn-setup", aria: { hidden: "true" } %>
+  <%%= render "password_field" if <%= rodauth %>.two_factor_modifications_require_password? %>
   <div id="webauthn-setup-button"> 
     <%%= render "submit", value: "Setup WebAuthn Authentication" %>
   </div>
 <%% end %>
 
-<%%= javascript_include_tag rodauth.webauthn_setup_js_path %>
+<%%= javascript_include_tag <%= rodauth %>.webauthn_setup_js_path %>

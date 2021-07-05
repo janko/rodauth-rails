@@ -18,6 +18,10 @@ module Rodauth
 
     class << self
       def rodauth(name = nil, query: {}, form: {}, session: {}, account: nil, env: {})
+        unless app.rodauth(name)
+          fail ArgumentError, "undefined rodauth configuration: #{name.inspect}"
+        end
+
         url_options = ActionMailer::Base.default_url_options
 
         scheme   = url_options[:protocol] || "http"

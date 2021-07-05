@@ -1,5 +1,5 @@
 <ul>
-  <%% rodauth.two_factor_auth_links.sort.each do |_, link, text| %>
+  <%% <%= rodauth %>.two_factor_auth_links.sort.each do |_, link, text| %>
     <li><%%= link_to text, link %></li>
   <%% end %>
 </ul>

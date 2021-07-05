@@ -58,11 +58,19 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/rodauth/webauthn_setup.html.erb"
   end
 
-  test "specifying directory" do
-    run_generator %w[--directory authentication]
+  test "specifying configuration" do
+    run_generator %w[--name admin]
 
-    assert_file "app/views/authentication/login.html.erb"
+    assert_file "app/views/admin/rodauth/login.html.erb"
     assert_no_directory "app/views/rodauth"
+
+    assert_raises Rodauth::Rails::Error do
+      run_generator %w[--name json]
+    end
+
+    assert_raises ArgumentError do
+      run_generator %w[--name unknown]
+    end
   end
 
   test "login_form_footer template" do

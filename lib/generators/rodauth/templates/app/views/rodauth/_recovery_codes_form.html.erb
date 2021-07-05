@@ -1,6 +1,6 @@
-<%%= form_tag rodauth.recovery_codes_path, method: :post do %>
-  <%%= render "password_field" if rodauth.two_factor_modifications_require_password? %>
+<%%= form_tag <%= rodauth %>.recovery_codes_path, method: :post do %>
+  <%%= render "password_field" if <%= rodauth %>.two_factor_modifications_require_password? %>
   <%%= render "submit",
-    value: rodauth.recovery_codes_button || "View Authentication Recovery Codes",
-    name: (rodauth.add_recovery_codes_param if rodauth.recovery_codes_button) %>
+    value: <%= rodauth %>.recovery_codes_button || "View Authentication Recovery Codes",
+    name: (<%= rodauth %>.add_recovery_codes_param if <%= rodauth %>.recovery_codes_button) %>
 <%% end %>

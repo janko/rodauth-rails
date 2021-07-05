@@ -1,4 +1,4 @@
-<%%= form_tag rodauth.sms_confirm_path, method: :post do %>
+<%%= form_tag <%= rodauth %>.sms_confirm_path, method: :post do %>
   <%%= render "sms_code_field" %>
   <%%= render "submit", value: "Confirm SMS Backup Number" %>
 <%% end %>

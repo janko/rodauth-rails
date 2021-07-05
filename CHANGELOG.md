@@ -1,5 +1,15 @@
 ## HEAD
 
+* Add `--name` option to `rodauth:views` generator for specifying different rodauth configuration (@janko)
+
+* Infer correct template path from configured controller in `rodauth:views` generator (@janko)
+
+* Raise `ArgumentError` if undefined rodauth configuration is passed to `Rodauth::Rails.app` (@janko)
+
+* Make `#rails_controller` method on the rodauth instance public (@janko)
+
+* Remove `--directory` option from `rodauth:views` generator (@janko)
+
 * Remove `#features` and `#routes` writer and `#configuration` reader from `Rodauth::Rails::Auth` (@janko)
 
 ## 0.13.0 (2021-06-10)

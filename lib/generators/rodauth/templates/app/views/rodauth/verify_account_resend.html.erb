@@ -1,6 +1,6 @@
-<%%= form_tag rodauth.verify_account_resend_path, method: :post do %>
+<%%= form_tag <%= rodauth %>.verify_account_resend_path, method: :post do %>
   <p>If you no longer have the email to verify the account, you can request that it be resent to you:</p>
-  <%% if params[rodauth.login_param] %>
+  <%% if params[<%= rodauth %>.login_param] %>
     <%%= render "login_hidden_field" %>
   <%% else %>
     <%%= render "login_field" %>
