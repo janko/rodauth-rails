@@ -156,9 +156,18 @@ class RodauthApp < Rodauth::Rails::App
 
   # ==> Multiple configurations
   # configure(:admin) do
-  #   enable :http_basic_auth # enable different set of features
+  #   # ... enable features ...
   #   prefix "/admin"
   #   session_key_prefix "admin_"
+  #   # remember_cookie_key "_admin_remember" # if using remember feature
+  #
+  #   # search views in `app/views/admin/rodauth` directory
+  #   rails_controller { Admin::RodauthController }
+  #
+  #   # use separate tables (requires creating the new tables)
+  #   methods.grep(/_table$/) do |table_method|
+  #     public_send(table_method) { :"admin_#{super()}" }
+  #   end
   # end
 
   route do |r|

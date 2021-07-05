@@ -474,10 +474,6 @@ class RodauthApp < Rodauth::Rails::App
     prefix "/admin"
     session_key_prefix "admin_"
     remember_cookie_key "_admin_remember" # if using remember feature
-
-    # if you want separate tables
-    accounts_table :admin_accounts
-    password_hash_table :admin_account_password_hashes
     # ...
   end
 
@@ -498,6 +494,67 @@ Then in your application you can reference the secondary Rodauth instance:
 
 ```rb
 rodauth(:admin).login_path #=> "/admin/login"
+```
+
+You'll likely want to somehow differentiate between the account types in the
+database. One way is to reuse the existing tables, and use a boolean column or
+a table to specify the account type. Here is an example of using an
+`accounts.admin` boolean column:
+
+```sh
+$ rails generate migration add_admin_to_accounts admin:boolean
+$ rails db:migrate
+```
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure(:admin) do
+    # ...
+    before_create_account do
+      account[:admin] = true # set `accounts.admin` column to true
+    end
+    auth_class_eval do
+      def account_ds(*)
+        super.where(admin: true) # retrieve only accounts for which `accounts.admin` column is true
+      end
+    end
+  end
+end
+```
+
+Another way is to use separate tables for the new account type:
+
+```sh
+$ rails generate migration create_admin_rodauth
+```
+```rb
+# db/migrate/*_create_admin_rodauth.rb
+class CreateAdminRodauth < ActiveRecord::Migration
+  def change
+    # creates new set of tables prefixed with `admin_*`
+    create_table :admin_accounts do |t|
+      t.string :email, null: false, index: { unique: true }
+      t.string :status, null: false, default: "unverified"
+    end
+    create_table :admin_account_password_hashes do |t|
+      t.foreign_key :admin_accounts, column: :id
+      t.string :password_hash, null: false
+    end
+    # ...
+  end
+end
+```
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure(:admin) do
+    # ...
+    # changes table configuration to reference the new `admin_*` tables
+    methods.grep(/_table$/) do |table_method|
+      public_send(table_method) { :"admin_#{super()}" }
+    end
+  end
+end
 ```
 
 #### Named auth classes
