@@ -496,63 +496,46 @@ Then in your application you can reference the secondary Rodauth instance:
 rodauth(:admin).login_path #=> "/admin/login"
 ```
 
-You'll likely want to somehow differentiate between the account types in the
-database. One way is to reuse the existing tables, and use a boolean column or
-a table to specify the account type. Here is an example of using an
-`accounts.admin` boolean column:
+You'll likely want to save the information of which account belongs to which
+configuration to the database. One way would be to have a separate table that
+stores account types:
 
 ```sh
-$ rails generate migration add_admin_to_accounts admin:boolean
+$ rails generate migration create_account_types
+```
+```rb
+# db/migrate/*_create_account_types.rb
+class CreateAccountTypes < ActiveRecord::Migration
+  def change
+    create_table :account_types do |t|
+      t.references :account, foreign_key: { on_delete: :cascade }, null: false
+      t.string :type, null: false
+    end
+  end
+end
+```
+```sh
 $ rails db:migrate
 ```
+
+Then an entry would be inserted after account creation, and optionally whenever
+Rodauth retrieves accounts you could filter only those belonging to the current
+configuration:
+
 ```rb
 # app/lib/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure(:admin) do
     # ...
-    before_create_account do
-      account[:admin] = true # set `accounts.admin` column to true
+    after_create_account do
+      db[:account_types].insert(account_id: account_id, type: "admin")
     end
     auth_class_eval do
       def account_ds(*)
-        super.where(admin: true) # retrieve only accounts for which `accounts.admin` column is true
+        super.join(:account_types, account_id: :id).where(type: "admin")
       end
     end
-  end
-end
-```
-
-Another way is to use separate tables for the new account type:
-
-```sh
-$ rails generate migration create_admin_rodauth
-```
-```rb
-# db/migrate/*_create_admin_rodauth.rb
-class CreateAdminRodauth < ActiveRecord::Migration
-  def change
-    # creates new set of tables prefixed with `admin_*`
-    create_table :admin_accounts do |t|
-      t.string :email, null: false, index: { unique: true }
-      t.string :status, null: false, default: "unverified"
-    end
-    create_table :admin_account_password_hashes do |t|
-      t.foreign_key :admin_accounts, column: :id
-      t.string :password_hash, null: false
-    end
     # ...
-  end
-end
-```
-```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure(:admin) do
-    # ...
-    # changes table configuration to reference the new `admin_*` tables
-    methods.grep(/_table$/) do |table_method|
-      public_send(table_method) { :"admin_#{super()}" }
-    end
   end
 end
 ```
