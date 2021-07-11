@@ -658,6 +658,9 @@ end
 
 ### Rodauth instance
 
+_NOTE: You should probably be using the [internal_request] feature added to
+Rodauth 2.15 instead of this API._
+
 In some cases you might need to use Rodauth more programmatically, and perform
 Rodauth operations outside of the request context. rodauth-rails gives you a
 helper method for building a Rodauth instance:
