@@ -825,21 +825,23 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
-If you need Cross-Origin Resource Sharing and/or JWT refresh tokens, enable the
-corresponding Rodauth features and create the necessary tables:
+The JWT token will be returned after each request to Rodauth routes. To also
+return the JWT token on requests to your app's routes, you can add the
+following code to your base controller:
 
-```sh
-$ rails generate rodauth:migration jwt_refresh
-$ rails db:migrate
-```
 ```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure do
-    # ...
-    enable :jwt, :jwt_cors, :jwt_refresh
-    # ...
+class ApplicationController < ActionController::Base
+  # ...
+  after_action :set_jwt_token
+
+  private
+
+  def set_jwt_token
+    if rodauth.use_jwt? && rodauth.valid_jwt?
+      response.headers["Authorization"] = rodauth.session_jwt
+    end
   end
+  # ...
 end
 ```
 
