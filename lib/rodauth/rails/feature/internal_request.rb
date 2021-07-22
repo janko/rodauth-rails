@@ -6,7 +6,7 @@ module Rodauth
           super
           return unless internal_request?
 
-          self.class.define_singleton_method(:internal_request) do |route, opts = {}|
+          self.class.define_singleton_method(:internal_request) do |route, opts = {}, &blk|
             url_options = ::Rails.application.config.action_mailer.default_url_options
 
             scheme = url_options[:protocol]
@@ -19,7 +19,7 @@ module Rodauth
             opts[:env]["HTTP_HOST"] ||= host if host
             opts[:env]["rack.url_scheme"] ||= scheme if scheme
 
-            super(route, opts)
+            super(route, opts, &blk)
           end
         end
 
