@@ -10,14 +10,19 @@ module Rodauth
             url_options = ::Rails.application.config.action_mailer.default_url_options
 
             scheme = url_options[:protocol]
-            port   = url_options[:port]
-            port ||= Rack::Request::DEFAULT_PORTS[scheme] if Rack.release < "2"
-            host   = url_options[:host]
-            host  += ":#{port}" if host && port
+            port = url_options[:port]
+            port||= Rack::Request::DEFAULT_PORTS[scheme] if Rack.release < "2"
+            host = url_options[:host]
+            host_with_port = host && port ? "#{host}:#{port}" : host
 
-            opts[:env] ||= {}
-            opts[:env]["HTTP_HOST"] ||= host if host
-            opts[:env]["rack.url_scheme"] ||= scheme if scheme
+            env = {
+              "HTTP_HOST" => host_with_port,
+              "rack.url_scheme" => scheme,
+              "SERVER_NAME" => host,
+              "SERVER_PORT" => port,
+            }.compact
+
+            opts = opts.merge(env: env) { |k, v1, v2| v2.merge(v1) }
 
             super(route, opts, &blk)
           end
