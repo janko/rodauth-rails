@@ -20,6 +20,11 @@ class InternalRequestTest < UnitTest
     assert_match %r{http://foobar\.com}, email.body.to_s
   end
 
+  test "internal request eval" do
+    path = rodauth.internal_request_eval { login_path }
+    assert_equal "/login", path
+  end
+
   test "skipping callbacks" do
     env = { "QUERY_STRING" => "early_return=true" }
     rodauth.create_account(login: "user@example.com", password: "secret", env: env)
