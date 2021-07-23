@@ -424,9 +424,8 @@ end
 ### Model
 
 The `Rodauth::Rails::Model` mixin can be included into the account model, which
-defines a password attribute with validations (similar to
-`has_secure_password`), login validations, and associations for tables used by
-enabled authentication features.
+defines a password attribute and associations for tables used by enabled
+authentication features.
 
 ```rb
 class Account < ApplicationRecord
@@ -454,57 +453,6 @@ account.password = nil # clears password hash
 account.password_hash #=> nil
 ```
 
-Note that password will be validated only if it has changed or if in case of a
-new record.
-
-#### Validations
-
-By default, validations for password presence, password requirements (as
-defined in the Rodauth configuration), and password confirmation are defined:
-
-```rb
-account = Account.new(email: "user@example.com")
-account.valid? #=> false
-account.errors[:password] = ["can't be blank"]
-
-account.password = "foo"
-account.valid? #=> false
-account.errors[:password] = ["invalid password, does not meet requirements (minimum 6 characters)"]
-
-account.password = "secret"
-account.password_confirmation = "bla"
-account.valid? #=> false
-account.errors[:password] = ["passwords do not match"]
-```
-
-Similiarly, validations for login presence and login requirements are also
-defined:
-
-```rb
-account = Account.new(password: "secret")
-account.valid? #=> false
-account.errors[:email] #=> ["can't be blank"]
-
-account.email = "foo"
-account.valid? #=> false
-account.errors[:email] #=> ["invalid login, not a valid email address"]
-```
-
-You can disable any of these validations:
-
-```rb
-class Account < ApplicationRecord
-  # disables all validations
-  include Rodauth::Rails.model(validate: {
-    login_presence: false,
-    login_requirements: false,
-    password_presence: false,
-    password_requirements: false,
-    password_confirmation: false
-  })
-end
-```
-
 #### Associations
 
 The `Rodauth::Rails::Model` mixin defines associations for Rodauth tables
@@ -513,20 +461,6 @@ associated to the accounts table:
 ```rb
 account.remember_key #=> #<Account::RememberKey> (record from `account_remember_keys` table)
 account.active_session_keys #=> [#<Account::ActiveSessionKey>,...] (records from `account_active_session_keys` table)
-```
-
-You can use this for defining convenience methods on the account model:
-
-```rb
-class Account < ApplicationRecord
-  include Rodauth::Rails.model
-
-  # Returns whether account has multifactor authentication enabled (assuming otp
-  # sms_codes, and recovery_codes features are enabled).
-  def mfa_enabled?
-    otp_key || (sms_code && sms_code.num_failures.nil?) || recovery_codes.any?
-  end
-end
 ```
 
 You can also reference the associated models directly:
@@ -542,7 +476,34 @@ The associated models define the inverse `belongs_to :account` association:
 Account::ActiveSessionKey.includes(:account).map(&:account)
 ```
 
-Below is a list of all associations defined depending on features loaded:
+Here is an example of using the association methods to create a method that
+returns whether the account has multifactor authentication enabled:
+
+```rb
+class Account < ApplicationRecord
+  include Rodauth::Rails.model
+
+  def mfa_enabled?
+    otp_key || (sms_code && sms_code.num_failures.nil?) || recovery_codes.any?
+  end
+end
+```
+
+Here is another example of creating a query scope that selects accounts with
+multifactor authentication enabled:
+
+```rb
+class Account < ApplicationRecord
+  include Rodauth::Rails.model
+
+  scope :otp_setup, -> { where(otp_key: OtpKey.all) }
+  scope :sms_codes_setup, -> { where(sms_code: SmsCode.where(num_failures: nil)) }
+  scope :recovery_codes_setup, -> { where(recovery_codes: RecoveryCode.all) }
+  scope :mfa_enabled, -> { merge(otp_setup.or(sms_codes_setup).or(recovery_codes_setup)) }
+end
+```
+
+Below is a list of all associations defined depending on the features loaded:
 
 | Feature                 | Association                  | Type       | Model                    | Table (default)                     |
 | :------                 | :----------                  | :---       | :----                    | :----                               |

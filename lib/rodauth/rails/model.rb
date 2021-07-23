@@ -3,19 +3,8 @@ module Rodauth
     class Model < Module
       require "rodauth/rails/model/associations"
 
-      VALIDATE_DEFAULTS = {
-        login_presence: true,
-        login_requirements: true,
-        password_presence: true,
-        password_requirements: true,
-        password_confirmation: true,
-      }
-
-      def initialize(rodauth_class, validate: {}, association_options: {})
-        validate.each_key { |key| VALIDATE_DEFAULTS.fetch(key) } # fail for invalid validate keys
-
-        @rodauth_class = rodauth_class
-        @validate = validate ? VALIDATE_DEFAULTS.merge(validate) : {}
+      def initialize(auth_class, association_options: {})
+        @auth_class = auth_class
         @association_options = association_options
 
         define_methods
@@ -25,17 +14,15 @@ module Rodauth
         fail Rodauth::Rails::Error, "must be an Active Record model" unless model < ActiveRecord::Base
 
         define_associations(model)
-        define_validations(model)
       end
 
       private
 
       def define_methods
-        rodauth_class = @rodauth_class
+        auth_class = @auth_class
 
         module_eval do
           attr_reader :password
-          attr_accessor :password_confirmation if validate?(:password_confirmation)
 
           def password=(password)
             @password = password
@@ -58,32 +45,9 @@ module Rodauth
 
           private
 
-          def validate_password_requirements
-            unless rodauth.password_meets_requirements?(password.to_s) || password.to_s.empty?
-              errors.add(:password, rodauth.send(:password_does_not_meet_requirements_message))
-            end
-          end if validate?(:password_requirements)
-
-          def validate_password_confirmation
-            if password_confirmation && password != password_confirmation
-              errors.add(:password, rodauth.passwords_do_not_match_message)
-            end
-          end if validate?(:password_confirmation)
-
-          def validate_login_requirements
-            login = public_send(rodauth.login_column)
-            unless rodauth.login_meets_requirements?(login.to_s) || login.to_s.empty?
-              errors.add(rodauth.login_column, rodauth.send(:login_does_not_meet_requirements_message))
-            end
-          end if validate?(:login_requirements)
-
-          def password_changed?
-            instance_variable_defined?(:@password) || new_record?
-          end
-
           define_method :rodauth do
             @rodauth ||= (
-              rodauth = rodauth_class.allocate
+              rodauth = auth_class.allocate
               rodauth.instance_variable_set(:@account, attributes.symbolize_keys)
               rodauth
             )
@@ -131,21 +95,8 @@ module Rodauth
           **association_options(name)
       end
 
-      def define_validations(model)
-        model.validates_presence_of rodauth.login_column if validate?(:login_presence)
-        model.validate :validate_login_requirements if validate?(:login_requirements)
-
-        model.validates_presence_of :password, if: :password_changed? if validate?(:password_presence)
-        model.validate :validate_password_requirements, if: :password_changed? if validate?(:password_requirements)
-        model.validate :validate_password_confirmation, if: :password_changed? if validate?(:password_confirmation)
-      end
-
       def feature_associations
         Rodauth::Rails::Model::Associations.call(rodauth)
-      end
-
-      def validate?(name)
-        @validate.fetch(name)
       end
 
       def association_options(name)
@@ -155,7 +106,7 @@ module Rodauth
       end
 
       def rodauth
-        @rodauth_class.allocate
+        @auth_class.allocate
       end
     end
   end

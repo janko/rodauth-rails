@@ -64,122 +64,6 @@ class ModelTest < UnitTest
     end
   end
 
-  test "password requirements validation" do
-    account = password_column_account
-
-    account.password = "foo"
-    refute account.valid?
-    assert_equal ["invalid password, does not meet requirements (minimum 6 characters)"], account.errors[:password]
-
-    account.password = "foobar"
-    assert account.valid?
-  end
-
-  test "per-account password requirements validation" do
-    account = build_account do
-      account_password_hash_column :password_hash
-      password_minimum_length { @account[:email].length }
-    end
-
-    account.password = "foobar"
-    refute account.valid?
-
-    account.password = "long enough password"
-    assert account.valid?
-  end
-
-  test "disabling password requirements validation" do
-    account = password_column_account(validate: { password_requirements: false })
-    account.password = "a"
-    assert account.valid?
-  end
-
-  test "password presence validation with password column" do
-    account = password_column_account(validate: { password_presence: true })
-
-    refute account.valid?
-    assert_equal ["can't be blank"], account.errors[:password]
-
-    account.password = ""
-    refute account.valid?
-    assert_equal ["can't be blank"], account.errors[:password]
-
-    account.password = "secret"
-    assert account.valid?
-  end
-
-  test "password presence validation with password table" do
-    account = password_table_account(validate: { password_presence: true })
-
-    refute account.valid?
-    assert_equal ["can't be blank"], account.errors[:password]
-
-    account.password = ""
-    refute account.valid?
-    assert_equal ["can't be blank"], account.errors[:password]
-
-    account.password = "secret"
-    assert account.valid?
-
-    account.save!
-    account.password = nil
-    refute account.valid?
-    assert_equal ["can't be blank"], account.errors[:password]
-  end
-
-  test "disabling password presence validation" do
-    account = password_column_account(validate: { password_presence: false })
-    assert account.valid?
-  end
-
-  test "password confirmation validation" do
-    account = password_column_account
-    account.password = "secret"
-    account.password_confirmation = ""
-    refute account.valid?
-    assert_equal ["passwords do not match"], account.errors[:password]
-    account.password_confirmation = "foobar"
-    refute account.valid?
-    assert_equal ["passwords do not match"], account.errors[:password]
-    account.password_confirmation = "secret"
-    assert account.valid?
-  end
-
-  test "disabling password confirmation validation" do
-    account = password_column_account(validate: { password_confirmation: false })
-    refute account.respond_to?(:password_confirmation)
-  end
-
-  test "login presence validation" do
-    account = build_account
-
-    account.email = nil
-    refute account.valid?
-    assert_equal ["can't be blank"], account.errors[:email]
-
-    account.email = ""
-    refute account.valid?
-    assert_equal ["can't be blank"], account.errors[:email]
-
-    account.email = "user@example.com"
-    assert account.valid?
-  end
-
-  test "login requirements validation" do
-    account = build_account
-
-    account.email = "f"
-    refute account.valid?
-    assert_equal ["invalid login, minimum 3 characters"], account.errors[:email]
-
-    account.email = "foo"
-    refute account.valid?
-    assert_equal ["invalid login, not a valid email address"], account.errors[:email]
-
-    account.email = "foo@bar.com"
-    assert account.valid?
-  end
-
   test "feature associations" do
     account = build_account do
       enable :jwt_refresh, :email_auth, :account_expiration, :audit_logging,
@@ -294,19 +178,17 @@ class ModelTest < UnitTest
 
   test "module builder method with default configuration" do
     account_class = define_account_class
-    account_class.include Rodauth::Rails.model(validate: { password_presence: false })
-    assert account_class.reflect_on_association(:password_reset_key)
-    account = account_class.new(email: "user@example.com")
-    assert account.valid?
+    account_class.include Rodauth::Rails.model(association_options: { dependent: nil })
+    reflection = account_class.reflect_on_association(:password_reset_key)
+    assert_nil reflection.options.fetch(:dependent)
   end
 
   test "module builder method with secondary configuration" do
     account_class = define_account_class
-    account_class.include Rodauth::Rails.model(:json, validate: { password_requirements: false })
-    assert account_class.reflect_on_association(:verification_key)
+    account_class.include Rodauth::Rails.model(:json, association_options: { dependent: nil })
+    reflection = account_class.reflect_on_association(:verification_key)
+    assert_nil reflection.options.fetch(:dependent)
     refute account_class.reflect_on_association(:password_reset_key)
-    account = account_class.new(email: "user@example.com", password: "a")
-    assert account.valid?
   end
 
   private
@@ -326,7 +208,7 @@ class ModelTest < UnitTest
     rodauth_class = Class.new(Rodauth::Rails.app.rodauth)
     rodauth_class.configure { instance_exec(&block) if block }
 
-    account_class.include Rodauth::Rails::Model.new(rodauth_class, validate: { password_presence: false }, **options)
+    account_class.include Rodauth::Rails::Model.new(rodauth_class, **options)
     account_class.new(email: "user@example.com")
   end
 

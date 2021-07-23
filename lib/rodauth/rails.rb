@@ -53,8 +53,7 @@ module Rodauth
       end
 
       def model(name = nil, **options)
-        rodauth_class = Rodauth::Rails.app.rodauth(name)
-        Rodauth::Rails::Model.new(rodauth_class, **options)
+        Rodauth::Rails::Model.new(app.rodauth(name), **options)
       end
 
       # routing constraint that requires authentication
