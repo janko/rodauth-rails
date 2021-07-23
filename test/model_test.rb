@@ -121,14 +121,18 @@ class ModelTest < UnitTest
     account.create_sms_code!(id: account.id, phone_number: "0123456789")
     assert_instance_of account.class::SmsCode, account.sms_code
 
-    capture_io { account.recovery_codes.create!(id: account.id, code: "foo") }
-    assert_instance_of account.class::RecoveryCode, account.recovery_codes.first
+    if Rails.gem_version >= Gem::Version.new("5.0")
+      capture_io { account.recovery_codes.create!(id: account.id, code: "foo") }
+      assert_instance_of account.class::RecoveryCode, account.recovery_codes.first
+    end
 
     account.create_webauthn_user_id!(id: account.id, webauthn_id: "id")
     assert_instance_of account.class::WebauthnUserId, account.webauthn_user_id
 
-    capture_io { account.webauthn_keys.create!(webauthn_id: "id", public_key: "key", sign_count: 1) }
-    assert_instance_of account.class::WebauthnKey, account.webauthn_keys.first
+    if Rails.gem_version >= Gem::Version.new("5.0")
+      capture_io { account.webauthn_keys.create!(webauthn_id: "id", public_key: "key", sign_count: 1) }
+      assert_instance_of account.class::WebauthnKey, account.webauthn_keys.first
+    end
   end
 
   test "automatically destroying associations" do
