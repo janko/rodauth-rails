@@ -144,27 +144,21 @@ class ModelTest < UnitTest
   end
 
   test "passing association options hash" do
-    account = build_account(association_options: { dependent: nil })
-    account.save!
-    account.create_remember_key!(id: account.id, key: "key", deadline: Time.now)
-
-    assert_raises(ActiveRecord::InvalidForeignKey) { account.destroy }
+    account = build_account(association_options: { dependent: :nullify })
+    association = account.class.reflect_on_association(:remember_key)
+    assert_equal :nullify, association.options[:dependent]
   end
 
   test "passing association options block" do
     account = build_account(association_options: -> (name) {
-      { dependent: nil } if name == :remember_key
+      { dependent: :nullify } if name == :remember_key
     })
 
-    account.save!
-    account.create_remember_key!(id: account.id, key: "key", deadline: Time.now)
+    remember_association = account.class.reflect_on_association(:remember_key)
+    assert_equal :nullify, remember_association.options[:dependent]
 
-    assert_raises(ActiveRecord::InvalidForeignKey) { account.destroy }
-
-    account.remember_key.destroy
-    account.create_verification_key(id: account.id, key: "key")
-
-    account.destroy
+    verification_association = account.class.reflect_on_association(:verification_key)
+    assert_equal :destroy, verification_association.options[:dependent]
   end
 
   test "inverse association" do
