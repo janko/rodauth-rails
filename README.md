@@ -453,6 +453,10 @@ account.password = nil # clears password hash
 account.password_hash #=> nil
 ```
 
+Note that the password attribute doesn't come with validations, making it
+unsuitable for forms. It was primarily intended to allow easily creating
+accounts in development console and in tests.
+
 #### Associations
 
 The `Rodauth::Rails::Model` mixin defines associations for Rodauth tables

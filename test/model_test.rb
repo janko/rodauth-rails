@@ -67,8 +67,10 @@ class ModelTest < UnitTest
   test "feature associations" do
     account = build_account do
       enable :jwt_refresh, :email_auth, :account_expiration, :audit_logging,
-        :disallow_password_reuse, :otp, :sms_codes, :webauthn,
-        :password_expiration, :single_session
+        :disallow_password_reuse, :otp, :sms_codes, :password_expiration,
+        :single_session
+
+      enable :webauthn unless RUBY_ENGINE == "jruby"
     end
 
     account.save!
@@ -126,12 +128,14 @@ class ModelTest < UnitTest
       assert_instance_of account.class::RecoveryCode, account.recovery_codes.first
     end
 
-    account.create_webauthn_user_id!(id: account.id, webauthn_id: "id")
-    assert_instance_of account.class::WebauthnUserId, account.webauthn_user_id
+    unless RUBY_ENGINE == "jruby"
+      account.create_webauthn_user_id!(id: account.id, webauthn_id: "id")
+      assert_instance_of account.class::WebauthnUserId, account.webauthn_user_id
 
-    if Rails.gem_version >= Gem::Version.new("5.0")
-      capture_io { account.webauthn_keys.create!(webauthn_id: "id", public_key: "key", sign_count: 1) }
-      assert_instance_of account.class::WebauthnKey, account.webauthn_keys.first
+      if Rails.gem_version >= Gem::Version.new("5.0")
+        capture_io { account.webauthn_keys.create!(webauthn_id: "id", public_key: "key", sign_count: 1) }
+        assert_instance_of account.class::WebauthnKey, account.webauthn_keys.first
+      end
     end
   end
 
