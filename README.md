@@ -472,7 +472,7 @@ accounts table, or in a separate table, the `#password` attribute can be used
 to set or clear the password hash.
 
 ```rb
-account = Account.new(email: "user@example.com", password: "secret")
+account = Account.create!(email: "user@example.com", password: "secret")
 
 # when password hash is stored in a column on the accounts table
 account.password_hash #=> "$2a$12$k/Ub1I2iomi84RacqY89Hu4.M0vK7klRnRtzorDyvOkVI.hKhkNw."
