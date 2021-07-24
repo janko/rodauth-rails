@@ -480,8 +480,8 @@ The associated models define the inverse `belongs_to :account` association:
 Account::ActiveSessionKey.includes(:account).map(&:account)
 ```
 
-Here is an example of using the association methods to create a method that
-returns whether the account has multifactor authentication enabled:
+Here is an example of using associations to create a method that returns
+whether the account has multifactor authentication enabled:
 
 ```rb
 class Account < ApplicationRecord
