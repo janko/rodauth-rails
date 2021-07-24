@@ -518,7 +518,7 @@ Below is a list of all associations defined depending on the features loaded:
 | email_auth              | `:email_auth_key`            | `has_one`  | `EmailAuthKey`           | `account_email_auth_keys`           |
 | jwt_refresh             | `:jwt_refresh_keys`          | `has_many` | `JwtRefreshKey`          | `account_jwt_refresh_keys`          |
 | lockout                 | `:lockout`                   | `has_one`  | `Lockout`                | `account_lockouts`                  |
-| lockout                 | `:lockout`                   | `has_one`  | `LoginFailure`           | `account_login_failures`            |
+| lockout                 | `:login_failure`             | `has_one`  | `LoginFailure`           | `account_login_failures`            |
 | otp                     | `:otp_key`                   | `has_one`  | `OtpKey`                 | `account_otp_keys`                  |
 | password_expiration     | `:password_change_time`      | `has_one`  | `PasswordChangeTime`     | `account_password_change_times`     |
 | recovery_codes          | `:recovery_codes`            | `has_many` | `RecoveryCode`           | `account_recovery_codes`            |
