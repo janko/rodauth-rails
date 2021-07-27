@@ -30,6 +30,7 @@ class UnitTest < ActiveSupport::TestCase
       ActiveRecord::Migrator.down(Rails.application.paths["db/migrate"].to_a)
     end
     ActiveRecord::Base.clear_cache! # clear schema cache
+    ActionMailer::Base.deliveries.clear
   end
 end
 
@@ -66,7 +67,6 @@ class IntegrationTest < UnitTest
 
   def teardown
     super
-    ActionMailer::Base.deliveries.clear
     Capybara.reset_sessions!
   end
 end
