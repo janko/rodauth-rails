@@ -13,25 +13,10 @@ class RodauthTest < UnitTest
     assert_nil rodauth.param_or_nil("foo")
 
     rodauth = Rodauth::Rails.rodauth(query: { "foo" => { "bar" => "baz" } })
-    assert_equal "baz", rodauth.request.GET["foo"]["bar"]
     assert_equal "baz", rodauth.raw_param("foo")["bar"]
 
     rodauth = Rodauth::Rails.rodauth(form: { "foo" => { "bar" => "baz" } })
-    assert_equal "baz", rodauth.request.POST["foo"]["bar"]
     assert_equal "baz", rodauth.raw_param("foo")["bar"]
-  end
-
-  test "allows setting session" do
-    rodauth = Rodauth::Rails.rodauth
-    assert_equal Hash.new, rodauth.session
-
-    rodauth = Rodauth::Rails.rodauth(session: { account_id: 1 })
-    assert_equal Hash[account_id: 1], rodauth.session
-    assert rodauth.logged_in?
-
-    rodauth = Rodauth::Rails.rodauth(:json, session: { account_id: 1 })
-    assert_equal Hash[account_id: 1], rodauth.session
-    assert rodauth.logged_in?
   end
 
   test "allows setting account" do
@@ -42,7 +27,7 @@ class RodauthTest < UnitTest
     assert_equal account.id, rodauth.session_value
   end
 
-  test "allows setting additional env values" do
+  test "allows setting additional internal request options" do
     rodauth = Rodauth::Rails.rodauth(env: { "HTTP_USER_AGENT" => "API" })
     assert_equal "API", rodauth.request.user_agent
   end
@@ -66,16 +51,13 @@ class RodauthTest < UnitTest
   end
 
   test "builds authenticated constraint" do
-    account_id = DB[:accounts].insert(email: "user@example.com")
-    DB[:account_password_hashes].insert(id: account_id, password_hash: BCrypt::Password.create("secret", cost: 1))
+    Account.create!(email: "user@example.com", password: "secret")
 
     rodauth = Rodauth::Rails.rodauth
     rodauth.scope.env["rodauth"] = rodauth
-    rodauth.scope.env["rack.session"] = {}
 
-    res = catch(:halt) { Rodauth::Rails.authenticated.call(rodauth.request) }
-    assert_equal 302,      res[0]
-    assert_equal "/login", res[1]["Location"]
+    error = assert_raises(Rodauth::InternalRequestError) { Rodauth::Rails.authenticated.call(rodauth.request) }
+    assert_equal :login_required, error.reason
 
     rodauth.account_from_login("user@example.com")
     rodauth.login_session("password")
@@ -83,9 +65,8 @@ class RodauthTest < UnitTest
 
     rodauth.add_recovery_code
     rodauth.session.delete(:two_factor_auth_setup)
-    res = catch(:halt) { Rodauth::Rails.authenticated.call(rodauth.request) }
-    assert_equal 302,                 res[0]
-    assert_equal "/multifactor-auth", res[1]["Location"]
+    error = assert_raises(Rodauth::InternalRequestError) { Rodauth::Rails.authenticated.call(rodauth.request) }
+    assert_equal :two_factor_need_authentication, error.reason
 
     rodauth.send(:two_factor_update_session, "recovery_codes")
     assert_equal true, Rodauth::Rails.authenticated.call(rodauth.request)

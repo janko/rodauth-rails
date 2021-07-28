@@ -7,7 +7,7 @@ module Rodauth
           return unless internal_request?
 
           self.class.define_singleton_method(:internal_request) do |route, opts = {}, &blk|
-            url_options = ::Rails.application.config.action_mailer.default_url_options
+            url_options = ::Rails.application.config.action_mailer.default_url_options || {}
 
             scheme = url_options[:protocol]
             port = url_options[:port]

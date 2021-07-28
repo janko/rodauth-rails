@@ -17,40 +17,35 @@ module Rodauth
     @app = nil
     @middleware = true
 
+    LOCK = Mutex.new
+
     class << self
-      def rodauth(name = nil, query: {}, form: {}, session: {}, account: nil, env: {})
-        unless app.rodauth(name)
+      def rodauth(name = nil, query: nil, form: nil, account: nil, **options)
+        auth_class = app.rodauth(name)
+
+        unless auth_class
           fail ArgumentError, "undefined rodauth configuration: #{name.inspect}"
         end
 
-        url_options = ActionMailer::Base.default_url_options
+        LOCK.synchronize do
+          unless auth_class.features.include?(:internal_request)
+            auth_class.configure { enable :internal_request }
+            warn "Rodauth::Rails.rodauth requires the internal_request feature to be enabled. For now it was enabled automatically, but this behaviour will be removed in version 1.0.", uplevel: 1, category: :deprecated
+          end
+        end
 
-        scheme   = url_options[:protocol] || "http"
-        port     = url_options[:port]
-        port   ||= Rack::Request::DEFAULT_PORTS[scheme] if Gem::Version.new(Rack.release) < Gem::Version.new("2.0")
-        host     = url_options[:host]
-        host    += ":#{port}" if port
-
-        content_type = "application/x-www-form-urlencoded" if form.any?
-
-        rack_env = {
-          "QUERY_STRING"    => Rack::Utils.build_nested_query(query),
-          "rack.input"      => StringIO.new(Rack::Utils.build_nested_query(form)),
-          "CONTENT_TYPE"    => content_type,
-          "rack.session"    => {},
-          "HTTP_HOST"       => host,
-          "rack.url_scheme" => scheme,
-        }.merge(env)
-
-        scope    = app.new(rack_env)
-        instance = scope.rodauth(name)
-
-        # update session hash here to make it work with JWT session
-        instance.session.merge!(session)
+        if query || form
+          warn "The :query and :form keyword argumentas for Rodauth::Rails.rodauth have been deprecated. Please use the :params argument supported by internal_request feature instead.", uplevel: 1, category: :deprecated
+          options[:params] = query || form
+        end
 
         if account
-          instance.instance_variable_set(:@account, account.attributes.symbolize_keys)
-          instance.session[instance.session_key] = instance.account_session_value
+          options[:account_id] = account.id
+        end
+
+        instance = auth_class.internal_request_eval(options) do
+          @account = account.attributes.symbolize_keys if account
+          self
         end
 
         instance

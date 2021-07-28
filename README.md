@@ -780,40 +780,53 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
-### Rodauth instance
+### Outside of a request
 
-_NOTE: You should probably be using the [internal_request] feature added to
-Rodauth 2.15 instead of this API._
+In some cases you might need to use Rodauth more programmatically. If you would
+like to perform Rodauth operations outside of request context, Rodauth ships
+with the [internal_request] feature just for that. The rodauth-rails gem
+additionally updates the internal rack env hash with your
+`config.action_mailer.default_url_options`, which is used for generating URLs.
 
-In some cases you might need to use Rodauth more programmatically, and perform
-Rodauth operations outside of the request context. rodauth-rails gives you a
-helper method for building a Rodauth instance:
+If you need to access Rodauth methods not exposed as internal requests, you can
+use `Rodauth::Rails.rodauth` to retrieve the Rodauth instance used by the
+internal_request feature:
 
 ```rb
-rodauth = Rodauth::Rails.rodauth # or Rodauth::Rails.rodauth(:admin)
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    enable :internal_request # this is required
+  end
+end
+```
+```rb
+account = Account.find_by!(email: "user@example.com")
+rodauth = Rodauth::Rails.rodauth(account: account)
 
-rodauth.login_url #=> "https://example.com/login"
-rodauth.account_from_login("user@example.com") # loads user by email
-rodauth.password_match?("secret") #=> true
-rodauth.setup_account_verification
-rodauth.close_account
+rodauth.compute_hmac("token") #=> "TpEJTKfKwqYvIDKWsuZhkhKlhaBXtR1aodskBAflD8U"
+rodauth.open_account? #=> true
+rodauth.two_factor_authentication_setup? #=> true
+rodauth.password_meets_requirements?("foo") #=> false
+rodauth.locked_out? #=> false
 ```
 
-The base URL is taken from Action Mailer's `default_url_options` setting if
-configured. The `Rodauth::Rails.rodauth` method accepts additional keyword
-arguments:
-
-* `:account` – Active Record model instance from which to set `account` and `session[:account_id]`
-* `:query` & `:form` – set specific query/form parameters
-* `:session` – set any session values
-* `:env` – set any additional Rack env values
+In addition to the `:account` option, the `Rodauth::Rails.rodauth`
+method accepts any options supported by the internal_request feature.
 
 ```rb
-Rodauth::Rails.rodauth(account: Account.find(account_id))
-Rodauth::Rails.rodauth(query: { "param" => "value" })
-Rodauth::Rails.rodauth(form: { "param" => "value" })
-Rodauth::Rails.rodauth(session: { two_factor_auth_setup: true })
-Rodauth::Rails.rodauth(env: { "HTTP_USER_AGENT" => "programmatic" })
+Rodauth::Rails.rodauth(
+  env: { "HTTP_USER_AGENT" => "programmatic" },
+  session: { two_factor_auth_setup: true },
+  params: { "param" => "value" }
+)
+```
+
+Secondary Rodauth configurations are specified by passing the configuration
+name:
+
+```rb
+Rodauth::Rails.rodauth(:admin)
 ```
 
 ## How it works
@@ -1409,3 +1422,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [single_session]: http://rodauth.jeremyevans.net/rdoc/files/doc/single_session_rdoc.html
 [account_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/account_expiration_rdoc.html
 [simple_ldap_authenticator]: https://github.com/jeremyevans/simple_ldap_authenticator
+[internal_request]: http://rodauth.jeremyevans.net/rdoc/files/doc/internal_request_rdoc.html
