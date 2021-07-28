@@ -30,12 +30,12 @@ module Rodauth
         LOCK.synchronize do
           unless auth_class.features.include?(:internal_request)
             auth_class.configure { enable :internal_request }
-            warn "Rodauth::Rails.rodauth requires the internal_request feature to be enabled. For now it was enabled automatically, but this behaviour will be removed in version 1.0.", uplevel: 1, category: :deprecated
+            warn "Rodauth::Rails.rodauth requires the internal_request feature to be enabled. For now it was enabled automatically, but this behaviour will be removed in version 1.0."
           end
         end
 
         if query || form
-          warn "The :query and :form keyword argumentas for Rodauth::Rails.rodauth have been deprecated. Please use the :params argument supported by internal_request feature instead.", uplevel: 1, category: :deprecated
+          warn "The :query and :form keyword argumentas for Rodauth::Rails.rodauth have been deprecated. Please use the :params argument supported by internal_request feature instead."
           options[:params] = query || form
         end
 
