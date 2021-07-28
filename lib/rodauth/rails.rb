@@ -35,7 +35,7 @@ module Rodauth
         end
 
         if query || form
-          warn "The :query and :form keyword argumentas for Rodauth::Rails.rodauth have been deprecated. Please use the :params argument supported by internal_request feature instead."
+          warn "The :query and :form keyword arguments for Rodauth::Rails.rodauth have been deprecated. Please use the :params argument supported by internal_request feature instead."
           options[:params] = query || form
         end
 
