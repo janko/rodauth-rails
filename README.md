@@ -49,7 +49,7 @@ For instructions on upgrading from previous rodauth-rails versions, see
 Add the gem to your Gemfile:
 
 ```rb
-gem "rodauth-rails", "~> 0.13"
+gem "rodauth-rails", "~> 0.14"
 
 # gem "jwt",      require: false # for JWT feature
 # gem "rotp",     require: false # for OTP feature
@@ -453,6 +453,130 @@ class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration
 end
 ```
 
+### Model
+
+The `Rodauth::Rails::Model` mixin can be included into the account model, which
+defines a password attribute and associations for tables used by enabled
+authentication features.
+
+```rb
+class Account < ApplicationRecord
+  include Rodauth::Rails.model # or `Rodauth::Rails.model(:admin)`
+end
+```
+
+#### Password attribute
+
+Regardless of whether you're storing the password hash in a column in the
+accounts table, or in a separate table, the `#password` attribute can be used
+to set or clear the password hash.
+
+```rb
+account = Account.create!(email: "user@example.com", password: "secret")
+
+# when password hash is stored in a column on the accounts table
+account.password_hash #=> "$2a$12$k/Ub1I2iomi84RacqY89Hu4.M0vK7klRnRtzorDyvOkVI.hKhkNw."
+
+# when password hash is stored in a separate table
+account.password_hash #=> #<Account::PasswordHash...> (record from `account_password_hashes` table)
+account.password_hash.password_hash #=> "$2a$12$k/Ub1..." (inaccessible when using database authentication functions)
+
+account.password = nil # clears password hash
+account.password_hash #=> nil
+```
+
+Note that the password attribute doesn't come with validations, making it
+unsuitable for forms. It was primarily intended to allow easily creating
+accounts in development console and in tests.
+
+#### Associations
+
+The `Rodauth::Rails::Model` mixin defines associations for Rodauth tables
+associated to the accounts table:
+
+```rb
+account.remember_key #=> #<Account::RememberKey> (record from `account_remember_keys` table)
+account.active_session_keys #=> [#<Account::ActiveSessionKey>,...] (records from `account_active_session_keys` table)
+```
+
+You can also reference the associated models directly:
+
+```rb
+# model referencing the `account_authentication_audit_logs` table
+Account::AuthenticationAuditLog.where(message: "login").group(:account_id)
+```
+
+The associated models define the inverse `belongs_to :account` association:
+
+```rb
+Account::ActiveSessionKey.includes(:account).map(&:account)
+```
+
+Here is an example of using associations to create a method that returns
+whether the account has multifactor authentication enabled:
+
+```rb
+class Account < ApplicationRecord
+  include Rodauth::Rails.model
+
+  def mfa_enabled?
+    otp_key || (sms_code && sms_code.num_failures.nil?) || recovery_codes.any?
+  end
+end
+```
+
+Here is another example of creating a query scope that selects accounts with
+multifactor authentication enabled:
+
+```rb
+class Account < ApplicationRecord
+  include Rodauth::Rails.model
+
+  scope :otp_setup, -> { where(otp_key: OtpKey.all) }
+  scope :sms_codes_setup, -> { where(sms_code: SmsCode.where(num_failures: nil)) }
+  scope :recovery_codes_setup, -> { where(recovery_codes: RecoveryCode.all) }
+  scope :mfa_enabled, -> { merge(otp_setup.or(sms_codes_setup).or(recovery_codes_setup)) }
+end
+```
+
+Below is a list of all associations defined depending on the features loaded:
+
+| Feature                 | Association                  | Type       | Model                    | Table (default)                     |
+| :------                 | :----------                  | :---       | :----                    | :----                               |
+| account_expiration      | `:activity_time`             | `has_one`  | `ActivityTime`           | `account_activity_times`            |
+| active_sessions         | `:active_session_keys`       | `has_many` | `ActiveSessionKey`       | `account_active_session_keys`       |
+| audit_logging           | `:authentication_audit_logs` | `has_many` | `AuthenticationAuditLog` | `account_authentication_audit_logs` |
+| disallow_password_reuse | `:previous_password_hashes`  | `has_many` | `PreviousPasswordHash`   | `account_previous_password_hashes`  |
+| email_auth              | `:email_auth_key`            | `has_one`  | `EmailAuthKey`           | `account_email_auth_keys`           |
+| jwt_refresh             | `:jwt_refresh_keys`          | `has_many` | `JwtRefreshKey`          | `account_jwt_refresh_keys`          |
+| lockout                 | `:lockout`                   | `has_one`  | `Lockout`                | `account_lockouts`                  |
+| lockout                 | `:login_failure`             | `has_one`  | `LoginFailure`           | `account_login_failures`            |
+| otp                     | `:otp_key`                   | `has_one`  | `OtpKey`                 | `account_otp_keys`                  |
+| password_expiration     | `:password_change_time`      | `has_one`  | `PasswordChangeTime`     | `account_password_change_times`     |
+| recovery_codes          | `:recovery_codes`            | `has_many` | `RecoveryCode`           | `account_recovery_codes`            |
+| remember                | `:remember_key`              | `has_one`  | `RememberKey`            | `account_remember_keys`             |
+| reset_password          | `:password_reset_key`        | `has_one`  | `PasswordResetKey`       | `account_password_reset_keys`       |
+| single_session          | `:session_key`               | `has_one`  | `SessionKey`             | `account_session_keys`              |
+| sms_codes               | `:sms_code`                  | `has_one`  | `SmsCode`                | `account_sms_codes`                 |
+| verify_account          | `:verification_key`          | `has_one`  | `VerificationKey`        | `account_verification_keys`         |
+| verify_login_change     | `:login_change_key`          | `has_one`  | `LoginChangeKey`         | `account_login_change_keys`         |
+| webauthn                | `:webauthn_keys`             | `has_many` | `WebauthnKey`            | `account_webauthn_keys`             |
+| webauthn                | `:webauthn_user_id`          | `has_one`  | `WebauthnUserId`         | `account_webauthn_user_ids`         |
+
+By default, all associations except for audit logs have `dependent: :destroy`
+set, to allow for easy deletion of account records in the console. You can use
+`:association_options` to modify global or per-association options:
+
+```rb
+# don't auto-delete associations when account model is deleted
+Rodauth::Rails.model(association_options: { dependent: nil })
+
+# require authentication audit logs to be eager loaded before retrieval
+Rodauth::Rails.model(association_options: -> (name) {
+  { strict_loading: true } if name == :authentication_audit_logs
+})
+```
+
 ### Multiple configurations
 
 If you need to handle multiple types of accounts that require different
@@ -828,21 +952,23 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
-If you need Cross-Origin Resource Sharing and/or JWT refresh tokens, enable the
-corresponding Rodauth features and create the necessary tables:
+The JWT token will be returned after each request to Rodauth routes. To also
+return the JWT token on requests to your app's routes, you can add the
+following code to your base controller:
 
-```sh
-$ rails generate rodauth:migration jwt_refresh
-$ rails db:migrate
-```
 ```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure do
-    # ...
-    enable :jwt, :jwt_cors, :jwt_refresh
-    # ...
+class ApplicationController < ActionController::Base
+  # ...
+  after_action :set_jwt_token
+
+  private
+
+  def set_jwt_token
+    if rodauth.use_jwt? && rodauth.valid_jwt?
+      response.headers["Authorization"] = rodauth.session_jwt
+    end
   end
+  # ...
 end
 ```
 
@@ -1148,29 +1274,6 @@ Rails.application.configure do |config|
   config.active_job.queue_adapter = :test # or :inline
   # ...
 end
-```
-
-If you need to create an account record with a password directly, you can do it
-as follows:
-
-```rb
-# app/models/account.rb
-class Account < ApplicationRecord
-  has_one :password_hash, foreign_key: :id
-end
-```
-```rb
-# app/models/account/password_hash.rb
-class Account::PasswordHash < ApplicationRecord
-  belongs_to :account, foreign_key: :id
-end
-```
-```rb
-require "bcrypt"
-
-account = Account.create!(email: "user@example.com", status: "verified")
-password_hash = BCrypt::Password.create("secret", cost: BCrypt::Engine::MIN_COST)
-account.create_password_hash!(id: account.id, password_hash: password_hash)
 ```
 
 ## Rodauth defaults

@@ -154,7 +154,7 @@ class RodauthApp < Rodauth::Rails::App
 <% end -%>
   end
 
-  # ==> Multiple configurations
+  # ==> Secondary configurations
   # configure(:admin) do
   #   # ... enable features ...
   #   prefix "/admin"
@@ -163,11 +163,6 @@ class RodauthApp < Rodauth::Rails::App
   #
   #   # search views in `app/views/admin/rodauth` directory
   #   rails_controller { Admin::RodauthController }
-  #
-  #   # use separate tables (requires creating the new tables)
-  #   methods.grep(/_table$/) do |table_method|
-  #     public_send(table_method) { :"admin_#{super()}" }
-  #   end
   # end
 
   route do |r|
@@ -189,7 +184,7 @@ class RodauthApp < Rodauth::Rails::App
     #   rodauth.require_authentication
     # end
 
-    # ==> Multiple configurations
+    # ==> Secondary configurations
     # r.on "admin" do
     #   r.rodauth(:admin)
     #
@@ -197,7 +192,7 @@ class RodauthApp < Rodauth::Rails::App
     #     rodauth(:admin).require_http_basic_auth
     #   end
     #
-    #   r.pass # allow the Rails app to handle other "/admin/*" requests
+    #   break # allow the Rails app to handle other "/admin/*" requests
     # end
   end
 end

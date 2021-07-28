@@ -35,6 +35,13 @@ module Rodauth
         rescue ActionView::MissingTemplate
           nil
         end
+
+        # Only look up template formats that the current request is accepting.
+        def _rails_controller_instance
+          controller = super
+          controller.formats = rails_request.formats.map(&:ref).compact
+          controller
+        end
       end
     end
   end

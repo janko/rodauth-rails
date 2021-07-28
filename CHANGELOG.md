@@ -1,4 +1,6 @@
-## HEAD
+## 0.14.0 (2021-07-10)
+
+* Speed up template rendering by only searching formats accepted by the request (@janko)
 
 * Add `--name` option to `rodauth:views` generator for specifying different rodauth configuration (@janko)
 
