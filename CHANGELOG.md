@@ -1,3 +1,11 @@
+## 0.15.0 (2021-07-29)
+
+* Add `Rodauth::Rails::Model` mixin that defines password attribute and associations on the model (@janko)
+
+* Add support for the new internal_request feature (@janko)
+
+* Implement `Rodauth::Rails.rodauth` in terms of the internal_request feature (@janko)
+
 ## 0.14.0 (2021-07-10)
 
 * Speed up template rendering by only searching formats accepted by the request (@janko)
