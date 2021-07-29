@@ -1,9 +1,6 @@
 require "rodauth/rails/version"
 require "rodauth/rails/railtie"
 
-require "rack/utils"
-require "stringio"
-
 module Rodauth
   module Rails
     class Error < StandardError
