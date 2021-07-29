@@ -4,7 +4,7 @@ class RodauthApp < Rodauth::Rails::App
       :login, :remember, :logout, :active_sessions,
       :reset_password, :change_password, :change_password_notify,
       :change_login, :verify_login_change,
-      :close_account, :lockout, :recovery_codes
+      :close_account, :lockout, :recovery_codes, :internal_request
 
     rails_controller { RodauthController }
 
@@ -40,7 +40,7 @@ class RodauthApp < Rodauth::Rails::App
 
   configure(:json) do
     enable :jwt, :create_account, :verify_account
-    only_json? true
+    only_json? { !internal_request? }
     prefix "/json"
     jwt_secret "secret"
     account_status_column :status

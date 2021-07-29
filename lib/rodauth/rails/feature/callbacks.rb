@@ -4,13 +4,17 @@ module Rodauth
       module Callbacks
         private
 
+        def _around_rodauth
+          rails_controller_around { super }
+        end
+
         # Runs controller callbacks and rescue handlers around Rodauth actions.
-        def _around_rodauth(&block)
+        def rails_controller_around
           result = nil
 
           rails_controller_rescue do
             rails_controller_callbacks do
-              result = catch(:halt) { super(&block) }
+              result = catch(:halt) { yield }
             end
           end
 
