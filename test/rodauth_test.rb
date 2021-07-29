@@ -12,10 +12,10 @@ class RodauthTest < UnitTest
     rodauth = Rodauth::Rails.rodauth
     assert_nil rodauth.param_or_nil("foo")
 
-    rodauth = Rodauth::Rails.rodauth(query: { "foo" => { "bar" => "baz" } })
+    capture_io { rodauth = Rodauth::Rails.rodauth(query: { "foo" => { "bar" => "baz" } }) }
     assert_equal "baz", rodauth.raw_param("foo")["bar"]
 
-    rodauth = Rodauth::Rails.rodauth(form: { "foo" => { "bar" => "baz" } })
+    capture_io { rodauth = Rodauth::Rails.rodauth(form: { "foo" => { "bar" => "baz" } }) }
     assert_equal "baz", rodauth.raw_param("foo")["bar"]
   end
 
