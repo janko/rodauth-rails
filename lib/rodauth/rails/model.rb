@@ -19,38 +19,26 @@ module Rodauth
       private
 
       def define_methods
-        auth_class = @auth_class
+        rodauth = @auth_class.allocate.freeze
 
-        module_eval do
-          attr_reader :password
+        attr_reader :password
 
-          def password=(password)
-            @password = password
-            password_hash = rodauth.send(:password_hash, password) if password
-            set_password_hash(password_hash)
-          end
+        define_method(:password=) do |password|
+          @password = password
+          password_hash = rodauth.send(:password_hash, password) if password
+          set_password_hash(password_hash)
+        end
 
-          def set_password_hash(password_hash)
-            if rodauth.account_password_hash_column
-              public_send(:"#{rodauth.account_password_hash_column}=", password_hash)
+        define_method(:set_password_hash) do |password_hash|
+          if rodauth.account_password_hash_column
+            public_send(:"#{rodauth.account_password_hash_column}=", password_hash)
+          else
+            if password_hash
+              record = self.password_hash || build_password_hash
+              record.public_send(:"#{rodauth.password_hash_column}=", password_hash)
             else
-              if password_hash
-                record = self.password_hash || build_password_hash
-                record.public_send(:"#{rodauth.password_hash_column}=", password_hash)
-              else
-                self.password_hash&.mark_for_destruction
-              end
+              self.password_hash&.mark_for_destruction
             end
-          end
-
-          private
-
-          define_method :rodauth do
-            @rodauth ||= (
-              rodauth = auth_class.allocate
-              rodauth.instance_variable_set(:@account, attributes.symbolize_keys)
-              rodauth
-            )
           end
         end
       end
