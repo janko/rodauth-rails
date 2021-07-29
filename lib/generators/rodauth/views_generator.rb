@@ -129,8 +129,9 @@ module Rodauth
         end
 
         def controller
-          rodauth = Rodauth::Rails.rodauth(configuration_name)
-          rodauth.rails_controller
+          rodauth = Rodauth::Rails.app.rodauth(configuration_name)
+          fail ArgumentError, "unknown rodauth configuration: #{configuration_name.inspect}" unless rodauth
+          rodauth.allocate.rails_controller
         end
 
         def configuration_name
