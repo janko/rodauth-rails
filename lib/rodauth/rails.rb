@@ -40,12 +40,10 @@ module Rodauth
           options[:account_id] = account.id
         end
 
-        instance = auth_class.internal_request_eval(options) do
+        auth_class.internal_request_eval(options) do
           @account = account.attributes.symbolize_keys if account
           self
         end
-
-        instance
       end
 
       def model(name = nil, **options)
