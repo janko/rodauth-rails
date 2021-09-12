@@ -818,7 +818,8 @@ method accepts any options supported by the internal_request feature.
 Rodauth::Rails.rodauth(
   env: { "HTTP_USER_AGENT" => "programmatic" },
   session: { two_factor_auth_setup: true },
-  params: { "param" => "value" }
+  params: { "param" => "value" },
+  # ...
 )
 ```
 
