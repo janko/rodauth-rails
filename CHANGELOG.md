@@ -1,3 +1,7 @@
+## HEAD
+
+* Add `#rodauth_response` controller method for converting rodauth responses into controller responses (@janko)
+
 ## 0.15.0 (2021-07-29)
 
 * Add `Rodauth::Rails::Model` mixin that defines password attribute and associations on the model (@janko)

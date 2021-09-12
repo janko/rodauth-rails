@@ -12,4 +12,15 @@ class ControllerTest < IntegrationTest
 
     assert_match "controller method", page.text
   end
+
+  test "rodauth response" do
+    register
+    logout
+
+    page.driver.browser.get "/sign_in"
+
+    assert_equal 302, page.status_code
+    assert_equal "/", page.response_headers["Location"]
+    assert_equal "true", page.response_headers["X-After"]
+  end
 end

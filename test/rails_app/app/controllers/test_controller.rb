@@ -18,4 +18,14 @@ class TestController < ApplicationController
 
     render :template
   end
+
+  def sign_in
+    rodauth.account_from_login(Account.first.email)
+
+    rodauth_response do
+      rodauth.login("test")
+    end
+
+    headers["X-After"] = "true"
+  end
 end

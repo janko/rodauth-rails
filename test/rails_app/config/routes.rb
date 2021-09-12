@@ -5,6 +5,7 @@ Rails.application.routes.draw do
     get :auth1
     get :auth2
     get :secondary
+    get :sign_in
   end
 
   constraints Rodauth::Rails.authenticated do

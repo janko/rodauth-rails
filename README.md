@@ -1087,9 +1087,13 @@ class RodauthController < ApplicationController
       account.identities.create!(provider: auth["provider"], uid: auth["uid"], info: auth["info"])
     end
 
-    # login with Rodauth
+    # load the account into the rodauth instance
     rodauth.account_from_login(account.email)
-    rodauth.login("omniauth")
+
+    rodauth_response do # ensures any `after_action` callbacks get called
+      # sign in the loaded account
+      rodauth.login("omniauth")
+    end
   end
 end
 ```

@@ -11,6 +11,18 @@ module Rodauth
       def rodauth(name = nil)
         request.env.fetch ["rodauth", *name].join(".")
       end
+
+      private
+
+      def rodauth_response
+        res = catch(:halt) { return yield }
+
+        self.status = res[0]
+        self.headers.merge! res[1]
+        self.response_body = res[2]
+
+        res
+      end
     end
   end
 end
