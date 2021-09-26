@@ -15,6 +15,6 @@ module RailsApp
     config.action_mailer.delivery_method = :test
     config.action_mailer.default_url_options = { host: "example.com", protocol: "https" }
     config.active_record.maintain_test_schema = false
-    config.active_record.legacy_connection_handling = false if config.active_record.respond_to?(:legacy_connection_handling)
+    config.active_record.legacy_connection_handling = false if ActiveRecord::VERSION::MAJOR >= 7
   end
 end
