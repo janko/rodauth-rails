@@ -8,9 +8,11 @@ class ControllerTest < IntegrationTest
   end
 
   test "current account" do
-    register(login: "user@example.com")
+    register(login: "user@example.com", verify: true)
     assert_text "Authenticated as user@example.com"
 
+    # work around errors and warnings regarding composite primary keys
+    capture_io { Account::ActiveSessionKey.delete_all }
     Account.last.destroy
 
     visit "/"

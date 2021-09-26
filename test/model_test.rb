@@ -148,7 +148,7 @@ class ModelTest < UnitTest
 
     assert account.password_hash.destroyed?
     assert account.remember_key.destroyed?
-    assert_equal 1, account.class::AuthenticationAuditLog.count
+    assert_equal 1, account.authentication_audit_logs.reload.count
   end
 
   test "passing association options hash" do
