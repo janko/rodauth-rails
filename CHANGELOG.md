@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add missing template for verify_login_change feature to `rodauth:views` generator (@janko)
+
 * Add `#rodauth_response` controller method for converting rodauth responses into controller responses (@janko)
 
 ## 0.15.0 (2021-07-29)

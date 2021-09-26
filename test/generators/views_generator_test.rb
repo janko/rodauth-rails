@@ -13,8 +13,9 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       _field _field_error _login_field _login_display _password_field _submit
       _login_form _login_form_footer _login_form_header login multi_phase_login
       logout _login_confirm_field _password_confirm_field create_account
-      _login_hidden_field reset_password_request reset_password change_login
-      change_password _new_password_field close_account
+      _login_hidden_field _new_password_field reset_password_request
+      verify_account reset_password change_login verify_login_change
+      change_password close_account
     ]
 
     templates.each do |template|

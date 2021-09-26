@@ -61,6 +61,9 @@ module Rodauth
             _field _field_error _login_hidden_field _login_field _submit
             verify_account_resend verify_account
           ],
+          verify_login_change: %w[
+            _submit verify_login_change
+          ],
           lockout: %w[
             _login_hidden_field _submit unlock_account_request unlock_account
           ],
