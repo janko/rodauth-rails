@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add `#current_account` to methods defined on `ActionController::Base` (@janko)
+
 * Add missing template for verify_login_change feature to `rodauth:views` generator (@janko)
 
 * Add `#rodauth_response` controller method for converting rodauth responses into controller responses (@janko)

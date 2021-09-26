@@ -7,6 +7,17 @@ class ControllerTest < IntegrationTest
     end
   end
 
+  test "current account" do
+    register(login: "user@example.com")
+    assert_text "Authenticated as user@example.com"
+
+    Account.last.destroy
+
+    visit "/"
+    assert_text "Please login to continue"
+    assert_equal "/login", page.current_path
+  end
+
   test "executing controller methods" do
     visit "/"
 

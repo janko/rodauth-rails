@@ -142,32 +142,23 @@ end
 
 ### Current account
 
-To be able to fetch currently authenticated account, you can define a
-`#current_account` method that fetches the account id from session and
-retrieves the corresponding account record:
+The `#current_account` method is defined in controllers and views, which
+returns the model instance of the currently logged in account.
 
 ```rb
-# app/controllers/application_controller.rb
-class ApplicationController < ActionController::Base
-  before_action :current_account, if: -> { rodauth.logged_in? }
-
-  private
-
-  def current_account
-    @current_account ||= Account.find(rodauth.session_value)
-  rescue ActiveRecord::RecordNotFound
-    rodauth.logout
-    rodauth.login_required
-  end
-  helper_method :current_account # skip if inheriting from ActionController::API
-end
+current_account #=> #<Account id=123 email="user@example.com">
+current_account.email #=> "user@example.com"
 ```
 
-This allows you to access the current account in controllers and views:
+Pass the configuration name to retrieve accounts belonging to other Rodauth
+configurations:
 
-```erb
-<p>Authenticated as: <%= current_account.email %></p>
+```rb
+current_account(:admin)
 ```
+
+If the account doesn't exist in the database, the session will be cleared and
+login required.
 
 ### Requiring authentication
 

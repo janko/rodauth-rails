@@ -4,7 +4,7 @@ module Rodauth
       def self.included(controller)
         # ActionController::API doesn't have helper methods
         if controller.respond_to?(:helper_method)
-          controller.helper_method :rodauth
+          controller.helper_method :rodauth, :current_account
         end
       end
 
@@ -12,7 +12,37 @@ module Rodauth
         request.env.fetch ["rodauth", *name].join(".")
       end
 
+      def current_account(name = nil)
+        table = rodauth(name).accounts_table
+        model = table.to_s.classify.constantize
+        id = rodauth(name).session_value
+
+        @current_account ||= {}
+        @current_account[name] ||= fetch_account(model, id) do
+          rodauth(name).clear_session
+          rodauth(name).login_required
+        end
+      end
+
       private
+
+      def fetch_account(model, id, &not_found)
+        if defined?(ActiveRecord::Base) && model < ActiveRecord::Base
+          begin
+            model.find(id)
+          rescue ActiveRecord::RecordNotFound
+            not_found.call
+          end
+        elsif model < Sequel::Model
+          begin
+            model.with_pk!(id)
+          rescue Sequel::NoMatchingRow
+            not_found.call
+          end
+        else
+          fail Error, "unsupported model type: #{model}"
+        end
+      end
 
       def rodauth_response
         res = catch(:halt) { return yield }
