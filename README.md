@@ -1423,3 +1423,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [account_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/account_expiration_rdoc.html
 [simple_ldap_authenticator]: https://github.com/jeremyevans/simple_ldap_authenticator
 [internal_request]: http://rodauth.jeremyevans.net/rdoc/files/doc/internal_request_rdoc.html
+[composite_primary_keys]: https://github.com/composite-primary-keys/composite_primary_keys
