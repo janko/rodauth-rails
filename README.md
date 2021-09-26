@@ -568,6 +568,10 @@ Rodauth::Rails.model(association_options: -> (name) {
 })
 ```
 
+Note that some Rodauth tables use composite primary keys, which Active Record
+doesn't support out of the box. For associations to work properly, you might
+need to add the [composite_primary_keys] gem to your Gemfile.
+
 ### Multiple configurations
 
 If you need to handle multiple types of accounts that require different
