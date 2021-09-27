@@ -1,3 +1,7 @@
+## HEAD
+
+* Add `rails_account_model` configuration method for when the account model cannot be inferred (@janko)
+
 ## 0.16.0 (2021-09-26)
 
 * Add `#current_account` to methods defined on `ActionController::Base` (@janko)

@@ -4,6 +4,7 @@ module Rodauth
       module Base
         def self.included(feature)
           feature.auth_methods :rails_controller
+          feature.auth_value_methods :rails_account_model
           feature.auth_cached_method :rails_controller_instance
         end
 
@@ -28,6 +29,14 @@ module Rodauth
           else
             ActionController::Base
           end
+        end
+
+        def rails_account_model
+          table = accounts_table
+          table = table.column if table.is_a?(Sequel::SQL::QualifiedIdentifier) # schema is specified
+          table.to_s.classify.constantize
+        rescue NameError
+          raise Error, "cannot infer account model, please set `rails_account_model` in your rodauth configuration"
         end
 
         delegate :rails_routes, :rails_request, to: :scope

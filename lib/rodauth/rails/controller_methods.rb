@@ -13,8 +13,7 @@ module Rodauth
       end
 
       def current_account(name = nil)
-        table = rodauth(name).accounts_table
-        model = table.to_s.classify.constantize
+        model = rodauth(name).rails_account_model
         id = rodauth(name).session_value
 
         @current_account ||= {}

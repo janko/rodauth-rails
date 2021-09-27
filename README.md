@@ -150,6 +150,9 @@ current_account #=> #<Account id=123 email="user@example.com">
 current_account.email #=> "user@example.com"
 ```
 
+If the account doesn't exist in the database, the session will be cleared and
+login required.
+
 Pass the configuration name to retrieve accounts belonging to other Rodauth
 configurations:
 
@@ -157,8 +160,19 @@ configurations:
 current_account(:admin)
 ```
 
-If the account doesn't exist in the database, the session will be cleared and
-login required.
+The `#current_account` method will try to infer the account model class from
+the configured table name. If that fails, you can set the account model
+manually:
+
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    # ...
+    rails_account_model Authentication::Account # custom model name
+  end
+end
+```
 
 ### Requiring authentication
 
@@ -1107,6 +1121,7 @@ methods:
 | `rails_check_csrf!`         | Verifies the authenticity token for the current request.           |
 | `rails_controller_instance` | Instance of the controller with the request env context.           |
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
+| `rails_account_model`       | Model class connected with the accounts table.                     |
 
 The `Rodauth::Rails` module has a few config settings available as well:
 
