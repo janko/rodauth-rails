@@ -143,11 +143,13 @@ class ModelTest < UnitTest
     account = build_account { enable :audit_logging }
     account.update!(password: "secret")
     account.create_remember_key!(id: account.id, key: "key", deadline: Time.now)
+    capture_io { account.active_session_keys.create!(account_id: account.id, session_id: "id") }
     account.authentication_audit_logs.create!(message: "Foo")
-    account.destroy
+    capture_io { account.destroy }
 
     assert account.password_hash.destroyed?
     assert account.remember_key.destroyed?
+    capture_io { assert_equal 0, account.active_session_keys.reload.count }
     assert_equal 1, account.authentication_audit_logs.reload.count
   end
 
@@ -166,7 +168,7 @@ class ModelTest < UnitTest
     assert_equal :nullify, remember_association.options[:dependent]
 
     verification_association = account.class.reflect_on_association(:verification_key)
-    assert_equal :destroy, verification_association.options[:dependent]
+    assert_equal :delete, verification_association.options[:dependent]
   end
 
   test "inverse association" do

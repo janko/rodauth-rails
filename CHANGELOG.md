@@ -1,5 +1,7 @@
 ## HEAD
 
+* Change default `:dependent` option for associations to `:delete`/`:delete_all` (@janko)
+
 * Add `rails_account_model` configuration method for when the account model cannot be inferred (@janko)
 
 ## 0.16.0 (2021-09-26)
