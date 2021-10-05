@@ -2,30 +2,20 @@ module Rodauth
   module Rails
     module Feature
       module InternalRequest
-        def post_configure
-          super
-          return unless internal_request?
+        def domain
+          return super unless missing_host?
 
-          self.class.define_singleton_method(:internal_request) do |route, opts = {}, &blk|
-            url_options = ::Rails.application.config.action_mailer.default_url_options || {}
+          Rodauth::Rails.url_options[:host]
+        end
 
-            scheme = url_options[:protocol]
-            port = url_options[:port]
-            port||= Rack::Request::DEFAULT_PORTS[scheme] if Rack.release < "2"
-            host = url_options[:host]
-            host_with_port = host && port ? "#{host}:#{port}" : host
+        def base_url
+          return super unless missing_host? && domain
 
-            env = {
-              "HTTP_HOST" => host_with_port,
-              "rack.url_scheme" => scheme,
-              "SERVER_NAME" => host,
-              "SERVER_PORT" => port,
-            }.compact
+          url_options = Rodauth::Rails.url_options
 
-            opts = opts.merge(env: env) { |k, v1, v2| v2.merge(v1) }
-
-            super(route, opts, &blk)
-          end
+          url = "#{url_options[:protocol]}://#{domain}"
+          url << ":#{url_options[:port]}" if url_options[:port]
+          url
         end
 
         private
@@ -43,6 +33,12 @@ module Rodauth
         def rails_instrument_redirection
           return yield if internal_request?
           super
+        end
+
+        # Checks whether we're in an internal request and host was not set,
+        # or the request doesn't exist such as with path_class_methods feature.
+        def missing_host?
+          internal_request? && request.host == INVALID_DOMAIN || scope.nil?
         end
       end
     end

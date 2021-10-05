@@ -79,6 +79,12 @@ module Rodauth
         end
       end
 
+      def url_options
+        options = ::Rails.application.config.action_mailer.default_url_options || {}
+        options[:protocol] ||= "http"
+        options
+      end
+
       def configure
         yield self
       end

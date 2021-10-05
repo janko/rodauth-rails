@@ -38,4 +38,8 @@ class InternalRequestTest < UnitTest
     RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
     assert_empty events
   end
+
+  test "path class methods" do
+    assert_equal "https://example.com/create-account", RodauthApp.rodauth.create_account_url
+  end
 end

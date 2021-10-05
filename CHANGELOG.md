@@ -1,3 +1,7 @@
+## HEAD
+
+* Use `config.action_mailer.default_url_options` in path_class_methods feature (@janko)
+
 ## 0.17.0 (2021-10-05)
 
 * Set `delete_account_on_close?` to `true` in generated `rodauth_app.rb` (@janko)
