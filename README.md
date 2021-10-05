@@ -791,11 +791,52 @@ end
 
 ### Outside of a request
 
-In some cases you might need to use Rodauth more programmatically. If you would
-like to perform Rodauth operations outside of request context, Rodauth ships
-with the [internal_request] feature just for that. The rodauth-rails gem
-additionally updates the internal rack env hash with your
-`config.action_mailer.default_url_options`, which is used for generating URLs.
+In some cases you might need to use Rodauth more programmatically. If you want
+to perform authentication operations outside of request context, Rodauth ships
+with the [internal_request] feature just for that.
+
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    enable :internal_request
+  end
+end
+```
+```rb
+# main configuration
+RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
+RodauthApp.rodauth.verify_account(account_login: "user@example.com")
+
+# secondary configuration
+RodauthApp.rodauth(:admin).close_account(account_login: "admin@example.com")
+```
+
+The rodauth-rails gem additionally updates the internal rack env hash with your
+`config.action_mailer.default_url_options`, which is used for generating email
+links.
+
+For generating authentication URLs outside of a request use the
+[path_class_methods] plugin:
+
+```rb
+# app/lib/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    enable :path_class_methods
+  end
+end
+```
+```rb
+# main configuration
+RodauthApp.rodauth.create_account_path
+RodauthApp.rodauth.verify_account_url(key: "abc123")
+
+# secondary configuration
+RodauthApp.rodauth(:admin).close_account_path
+```
+
+#### Calling instance methods
 
 If you need to access Rodauth methods not exposed as internal requests, you can
 use `Rodauth::Rails.rodauth` to retrieve the Rodauth instance used by the
@@ -824,19 +865,12 @@ In addition to the `:account` option, the `Rodauth::Rails.rodauth`
 method accepts any options supported by the internal_request feature.
 
 ```rb
-Rodauth::Rails.rodauth(
-  env: { "HTTP_USER_AGENT" => "programmatic" },
-  session: { two_factor_auth_setup: true },
-  params: { "param" => "value" },
-  # ...
-)
-```
+# main configuration
+Rodauth::Rails.rodauth(env: { "HTTP_USER_AGENT" => "programmatic" })
+Rodauth::Rails.rodauth(session: { two_factor_auth_setup: true })
 
-Secondary Rodauth configurations are specified by passing the configuration
-name:
-
-```rb
-Rodauth::Rails.rodauth(:admin)
+# secondary configuration
+Rodauth::Rails.rodauth(:admin, params: { "param" => "value" })
 ```
 
 ## How it works
@@ -1439,3 +1473,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [simple_ldap_authenticator]: https://github.com/jeremyevans/simple_ldap_authenticator
 [internal_request]: http://rodauth.jeremyevans.net/rdoc/files/doc/internal_request_rdoc.html
 [composite_primary_keys]: https://github.com/composite-primary-keys/composite_primary_keys
+[path_class_methods]: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html
