@@ -11,9 +11,7 @@ class ControllerTest < IntegrationTest
     register(login: "user@example.com", verify: true)
     assert_text "Authenticated as user@example.com"
 
-    # work around errors and warnings regarding composite primary keys
-    capture_io { Account::ActiveSessionKey.delete_all }
-    Account.last.destroy
+    capture_io { Account.last.destroy }
 
     visit "/"
     assert_text "Please login to continue"
