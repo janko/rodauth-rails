@@ -1473,4 +1473,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [simple_ldap_authenticator]: https://github.com/jeremyevans/simple_ldap_authenticator
 [internal_request]: http://rodauth.jeremyevans.net/rdoc/files/doc/internal_request_rdoc.html
 [composite_primary_keys]: https://github.com/composite-primary-keys/composite_primary_keys
-[path_class_methods]: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html
+[path_class_methods]: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html
