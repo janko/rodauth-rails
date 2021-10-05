@@ -1,5 +1,7 @@
 ## HEAD
 
+* Set `delete_account_on_close?` to `true` in generated `rodauth_app.rb` (@janko)
+
 * Change default `:dependent` option for associations to `:delete`/`:delete_all` (@janko)
 
 * Add `rails_account_model` configuration method for when the account model cannot be inferred (@janko)
