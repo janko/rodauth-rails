@@ -49,7 +49,7 @@ For instructions on upgrading from previous rodauth-rails versions, see
 Add the gem to your Gemfile:
 
 ```rb
-gem "rodauth-rails", "~> 0.16"
+gem "rodauth-rails", "~> 0.17"
 
 # gem "jwt",      require: false # for JWT feature
 # gem "rotp",     require: false # for OTP feature
