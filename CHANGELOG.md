@@ -1,5 +1,7 @@
 ## HEAD
 
+* Disable Turbo in `_recovery_codes_form.html.erb`, since viewing recovery codes isn't Turbo-compatible (@janko)
+
 * Generate JSON configuration on `rodauth:install` for API-only with sessions enabled (@janko)
 
 * Generate JWT configuration on `rodauth:install` only for API-only apps without sessions enabled (@janko)
