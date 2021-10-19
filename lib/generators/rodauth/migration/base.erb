@@ -5,12 +5,19 @@ enable_extension "citext"
 create_table :accounts<%= primary_key_type %> do |t|
 <% case activerecord_adapter -%>
 <% when "postgresql" -%>
-  t.citext :email, null: false, index: { unique: true, where: "status IN ('unverified', 'verified')" }
+  t.citext :email, null: false
 <% else -%>
-  t.string :email, null: false, index: { unique: true }
+  t.string :email, null: false
 <% end -%>
   t.string :status, null: false, default: "unverified"
 end
+
+<% case activerecord_adapter -%>
+<% when "postgresql", "sqlite3" -%>
+  add_index :accounts, :email, unique: true, where: "status IN ('unverified', 'verified')"
+<% else -%>
+  add_index :accounts, :email, unique: true
+<% end -%>
 
 # Used if storing password hashes in a separate table (default)
 create_table :account_password_hashes<%= primary_key_type %> do |t|

@@ -1,5 +1,7 @@
 ## HEAD
 
+* Create partial unique index for `accounts.email` column when using `sqlite3` adapter (@janko)
+
 * Revert setting `delete_account_on_close?` to `true` in generated `rodauth_app.rb` (@janko)
 
 * Disable Turbo in `_recovery_codes_form.html.erb`, since viewing recovery codes isn't Turbo-compatible (@janko)

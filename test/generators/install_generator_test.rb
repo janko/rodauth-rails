@@ -15,7 +15,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
     assert_migration "db/migrate/create_rodauth.rb", /class CreateRodauth < ActiveRecord::Migration#{migration_version}/
     assert_migration "db/migrate/create_rodauth.rb", /create_table :accounts do/
-    assert_migration "db/migrate/create_rodauth.rb", /t\.string :email, null: false, index: { unique: true }/
+    assert_migration "db/migrate/create_rodauth.rb", /t\.string :email, null: false/
+    assert_migration "db/migrate/create_rodauth.rb", /add_index :accounts, :email, unique: true, where: ".+"/
   end
 
   test "rodauth initializer" do
