@@ -10,14 +10,13 @@ create_table :accounts<%= primary_key_type %> do |t|
   t.string :email, null: false
 <% end -%>
   t.string :status, null: false, default: "unverified"
-end
-
 <% case activerecord_adapter -%>
 <% when "postgresql", "sqlite3" -%>
-  add_index :accounts, :email, unique: true, where: "status IN ('unverified', 'verified')"
+  t.index :email, unique: true, where: "status IN ('unverified', 'verified')"
 <% else -%>
-  add_index :accounts, :email, unique: true
+  t.index :email, unique: true
 <% end -%>
+end
 
 # Used if storing password hashes in a separate table (default)
 create_table :account_password_hashes<%= primary_key_type %> do |t|
