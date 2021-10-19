@@ -95,17 +95,25 @@ module Rodauth
         end
 
         def json?
-          options[:json]
+          options[:json] || api_only? && session_store? && !options[:jwt]
         end
 
         def jwt?
-          options[:jwt] || Rodauth::Rails.api_only?
+          options[:jwt] || api_only? && !session_store? && !options[:json]
         end
 
         def migration_features
           features = [:base, :reset_password, :verify_account, :verify_login_change]
           features << :remember unless jwt?
           features
+        end
+
+        def session_store?
+          !!::Rails.application.config.session_store
+        end
+
+        def api_only?
+          Rodauth::Rails.api_only?
         end
       end
     end

@@ -1,5 +1,11 @@
 ## HEAD
 
+* Generate JSON configuration on `rodauth:install` for API-only with sessions enabled (@janko)
+
+* Generate JWT configuration on `rodauth:install` only for API-only apps without sessions enabled (@janko)
+
+* Don't generate JWT configuration when `rodauth:install --json` was run in API-only app (@janko)
+
 * Use `config.action_mailer.default_url_options` in path_class_methods feature (@janko)
 
 ## 0.17.0 (2021-10-05)
