@@ -41,7 +41,12 @@ module Rodauth
         end
 
         auth_class.internal_request_eval(options) do
-          @account = account.attributes.symbolize_keys if account
+          if defined?(ActiveRecord::Base) && account.is_a?(ActiveRecord::Base)
+            @account = account.attributes.symbolize_keys
+          elsif defined?(Sequel::Model) && account.is_a?(Sequel::Model)
+            @account = account.values
+          end
+
           self
         end
       end

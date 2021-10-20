@@ -1,4 +1,5 @@
 require "test_helper"
+require "sequel/model"
 
 class RodauthTest < UnitTest
   test "allows retrieving a Rodauth instance" do
@@ -19,8 +20,18 @@ class RodauthTest < UnitTest
     assert_equal "baz", rodauth.raw_param("foo")["bar"]
   end
 
-  test "allows setting account" do
+  test "allows setting Active Record account" do
     account = Account.create!(email: "user@example.com")
+
+    rodauth = Rodauth::Rails.rodauth(account: account)
+    assert_equal "user@example.com", rodauth.send(:email_to)
+    assert_equal account.id, rodauth.session_value
+  end
+
+  test "allows setting Sequel account" do
+    account_class = Class.new(Sequel::Model)
+    account_class.dataset = :accounts
+    account = account_class.create(email: "user@example.com")
 
     rodauth = Rodauth::Rails.rodauth(account: account)
     assert_equal "user@example.com", rodauth.send(:email_to)
