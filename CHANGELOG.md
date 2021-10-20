@@ -1,4 +1,4 @@
-## HEAD
+## 0.17.1 (2021-10-20)
 
 * Skip checking CSRF when request forgery protection wasn't loaded on the controller (@janko)
 
