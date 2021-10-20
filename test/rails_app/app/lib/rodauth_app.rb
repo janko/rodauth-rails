@@ -41,7 +41,7 @@ class RodauthApp < Rodauth::Rails::App
 
   configure(:json) do
     enable :jwt, :create_account, :verify_account
-    only_json? { !internal_request? }
+    only_json? true
     prefix "/json"
     jwt_secret "secret"
     account_status_column :status
