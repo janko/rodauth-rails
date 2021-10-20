@@ -13,23 +13,23 @@ module Rodauth
 
         # Render Rails CSRF tags in Rodauth templates.
         def csrf_tag(*)
-          rails_csrf_tag
+          rails_csrf_tag if rails_controller_csrf?
         end
 
         # Verify Rails' authenticity token.
         def check_csrf
-          rails_check_csrf!
+          rails_check_csrf! if rails_controller_csrf?
         end
 
         # Have Rodauth call #check_csrf automatically.
         def check_csrf?
-          true
+          rails_check_csrf? if rails_controller_csrf?
         end
 
         private
 
         def rails_controller_callbacks
-          return super if rails_api_controller?
+          return super unless rails_controller_csrf?
 
           # don't verify CSRF token as part of callbacks, Rodauth will do that
           rails_controller_instance.allow_forgery_protection = false
@@ -38,6 +38,12 @@ module Rodauth
             rails_controller_instance.allow_forgery_protection = rails_controller.allow_forgery_protection
             yield
           end
+        end
+
+        # Checks whether ActionController::RequestForgeryProtection is included
+        # and that protect_from_forgery was called.
+        def rails_check_csrf?
+          !!rails_controller_instance.forgery_protection_strategy
         end
 
         # Calls the controller to verify the authenticity token.
@@ -58,6 +64,11 @@ module Rodauth
         # The Rails CSRF token value inserted into Rodauth templates.
         def rails_csrf_token
           rails_controller_instance.send(:form_authenticity_token)
+        end
+
+        # Checks whether ActionController::RequestForgeryProtection is included.
+        def rails_controller_csrf?
+          rails_controller.respond_to?(:protect_from_forgery)
         end
       end
     end

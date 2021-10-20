@@ -1,5 +1,7 @@
 ## HEAD
 
+* Skip checking CSRF when request forgery protection wasn't loaded on the controller (@janko)
+
 * Create partial unique index for `accounts.email` column when using `sqlite3` adapter (@janko)
 
 * Revert setting `delete_account_on_close?` to `true` in generated `rodauth_app.rb` (@janko)
