@@ -1,5 +1,7 @@
 ## HEAD
 
+* Remove `Rodauth::Rails.middleware` config, as it doesn't have any affect (@janko)
+
 * Allow setting passing a `Sequel::Model` to `:account` in `Rodauth::Rails.rodauth` (@janko)
 
 ## 0.17.1 (2021-10-20)

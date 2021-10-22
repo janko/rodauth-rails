@@ -1157,18 +1157,13 @@ methods:
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 | `rails_account_model`       | Model class connected with the accounts table.                     |
 
-The `Rodauth::Rails` module has a few config settings available as well:
-
-| Name         | Description                                                                                         |
-| :-----       | :----------                                                                                         |
-| `app`        | Constant name of your Rodauth app, which is called by the middleware.                               |
-| `middleware` | Whether to insert the middleware into the Rails application's middleware stack. Defaults to `true`. |
+The `Rodauth::Rails` module also has an `app` config available, for specifying the
+const name of your Rodauth app that gets called by the middleware.
 
 ```rb
 # config/initializers/rodauth.rb
 Rodauth::Rails.configure do |config|
   config.app = "RodauthApp"
-  config.middleware = true
 end
 ```
 

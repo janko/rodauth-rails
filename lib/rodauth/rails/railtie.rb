@@ -7,7 +7,7 @@ module Rodauth
   module Rails
     class Railtie < ::Rails::Railtie
       initializer "rodauth.middleware" do |app|
-        app.middleware.use Rodauth::Rails::Middleware if Rodauth::Rails.middleware?
+        app.middleware.use Rodauth::Rails::Middleware
       end
 
       initializer "rodauth.controller" do

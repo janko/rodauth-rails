@@ -11,9 +11,6 @@ module Rodauth
     autoload :Auth, "rodauth/rails/auth"
     autoload :Model, "rodauth/rails/model"
 
-    @app = nil
-    @middleware = true
-
     LOCK = Mutex.new
 
     class << self
@@ -95,16 +92,11 @@ module Rodauth
       end
 
       attr_writer :app
-      attr_writer :middleware
 
       def app
         fail Rodauth::Rails::Error, "app was not configured" unless @app
 
         @app.constantize
-      end
-
-      def middleware?
-        @middleware
       end
     end
   end
