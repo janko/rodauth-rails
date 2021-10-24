@@ -43,6 +43,10 @@ module Rodauth
       def rails_request
         ActionDispatch::Request.new(env)
       end
+
+      def self.rodauth!(name)
+        rodauth(name) or fail ArgumentError, "unknown rodauth configuration: #{name.inspect}"
+      end
     end
   end
 end

@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add `Rodauth::Rails::App.rodauth!` which raises an error for unknown configuration (@janko)
+
 * Remove deprecated `--features` option from `rodauth:views` generator (@janko)
 
 * Inline `_recovery_codes_form.html.erb` partial into `recovery_codes.html.erb` (@janko)
