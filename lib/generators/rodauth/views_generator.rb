@@ -11,9 +11,6 @@ module Rodauth
           desc: "Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)",
           default: %w[login logout create_account verify_account reset_password change_password change_login verify_login_change close_account]
 
-        class_option :features, type: :array,
-          desc: "[DEPRECATED] Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)"
-
         class_option :all, aliases: "-a", type: :boolean,
           desc: "Generates views for all Rodauth features",
           default: false
@@ -105,7 +102,7 @@ module Rodauth
           if options[:all]
             features = VIEWS.keys
           else
-            features = (options[:features] || self.features).map(&:to_sym)
+            features = self.features.map(&:to_sym)
           end
 
           views = features.inject([]) do |list, feature|

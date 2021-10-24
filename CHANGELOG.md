@@ -1,5 +1,7 @@
 ## HEAD
 
+* Remove deprecated `--features` option from `rodauth:views` generator (@janko)
+
 * Inline `_recovery_codes_form.html.erb` partial into `recovery_codes.html.erb` (@janko)
 
 * Use Rodauth helper methods for texts in generated views, for easier i18n (@janko)

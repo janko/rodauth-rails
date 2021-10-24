@@ -121,12 +121,4 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       </div>
     ERB
   end
-
-  test "deprecated --features option" do
-    run_generator %w[--features lockout]
-
-    %w[_login_hidden_field _submit unlock_account_request unlock_account].each do |template|
-      assert_file "app/views/rodauth/#{template}.html.erb"
-    end
-  end
 end
