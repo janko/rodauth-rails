@@ -1034,7 +1034,24 @@ end
 While Rodauth doesn't yet come with [OmniAuth] integration, we can build one
 ourselves using the existing Rodauth API.
 
-In order to allow the user to login via multiple external providers, let's
+Let's assume we're building Facebook login. We'll start by installing the
+necessary gems, and loading the Facebook OmniAuth strategy:
+
+```rb
+# Gemfile
+gem "omniauth", "~> 2.0"
+gem "omniauth-rails_csrf_protection" # https://github.com/omniauth/omniauth/wiki/Resolving-CVE-2015-9284
+gem "omniauth-facebook"
+```
+```rb
+# config/initializers/omniauth.rb
+Rails.application.config.middleware.use OmniAuth::Builder do
+  provider :facebook, ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_APP_SECRET"],
+    scope: "email", callback_path: "/auth/facebook/callback"
+end
+```
+
+Since users might potentially want to login with multiple external providers, let's
 create an `account_identities` table that will have a many-to-one relationship
 with the `accounts` table:
 
@@ -1071,18 +1088,11 @@ class Account < ApplicationRecord
 end
 ```
 
-Let's assume we want to implement Facebook login, and have added the
-corresponding OmniAuth strategy to the middleware stack, together with an
-authorization link on the login form:
+Next, let's add a POST button pointing to the request URL to our login form:
 
-```rb
-Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :facebook, ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_APP_SECRET"],
-    scope: "email", callback_path: "/auth/facebook/callback"
-end
-```
 ```erb
-<%= link_to "Login via Facebook", "/auth/facebook" %>
+<%= button_to "Login via Facebook", "/auth/facebook",
+  method: :post, data: { turbo: false }, class: "btn btn-link p-0" %>
 ```
 
 Finally, let's implement the OmniAuth callback endpoint on our Rodauth
