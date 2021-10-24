@@ -31,6 +31,8 @@ class RakeTest < ActiveSupport::TestCase
         /recovery-auth           rodauth.recovery_auth_path
         /recovery-codes          rodauth.recovery_codes_path
 
+        /admin/login  rodauth(:admin).login_path
+
         /jwt/login                  rodauth(:jwt).login_path
         /jwt/create-account         rodauth(:jwt).create_account_path
         /jwt/verify-account-resend  rodauth(:jwt).verify_account_resend_path

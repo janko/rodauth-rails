@@ -7,9 +7,8 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace "rodauth:views"
 
-        argument :features, optional: true, type: :array,
-          desc: "Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)",
-          default: %w[login logout create_account verify_account reset_password change_password change_login verify_login_change close_account]
+        argument :selected_features, optional: true, type: :array,
+          desc: "Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)"
 
         class_option :all, aliases: "-a", type: :boolean,
           desc: "Generates views for all Rodauth features",
@@ -99,12 +98,6 @@ module Rodauth
         }
 
         def create_views
-          if options[:all]
-            features = VIEWS.keys
-          else
-            features = self.features.map(&:to_sym)
-          end
-
           views = features.inject([]) do |list, feature|
             list |= VIEWS[feature] || []
             list |= VIEWS[DEPENDENCIES[feature]] || []
@@ -129,8 +122,21 @@ module Rodauth
         end
 
         def controller
-          rodauth = Rodauth::Rails.app.rodauth!(configuration_name)
-          rodauth.allocate.rails_controller
+          rodauth_configuration.allocate.rails_controller
+        end
+
+        def features
+          if options[:all]
+            VIEWS.keys
+          elsif selected_features
+            selected_features.map(&:to_sym)
+          else
+            rodauth_configuration.features
+          end
+        end
+
+        def rodauth_configuration
+          Rodauth::Rails.app.rodauth!(configuration_name)
         end
 
         def configuration_name

@@ -63,6 +63,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator %w[--name admin]
 
     assert_file "app/views/admin/rodauth/login.html.erb"
+    assert_no_file "app/views/admin/rodauth/logout.html.erb"
     assert_no_directory "app/views/rodauth"
 
     assert_raises Rodauth::Rails::Error do

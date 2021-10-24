@@ -1,5 +1,7 @@
 ## HEAD
 
+* Generate views for all enabled features by default in `rodauth:views` generator (@janko)
+
 * Add `Rodauth::Rails::App.rodauth!` which raises an error for unknown configuration (@janko)
 
 * Remove deprecated `--features` option from `rodauth:views` generator (@janko)
