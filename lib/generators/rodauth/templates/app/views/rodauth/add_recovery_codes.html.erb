@@ -2,5 +2,5 @@
 
 <%% if <%= rodauth %>.can_add_recovery_codes? %>
   <%%== <%= rodauth %>.add_recovery_codes_heading %>
-  <%%= render "recovery_codes_form" %>
+  <%%= render template: "<%= directory %>/recovery_codes", layout: false %>
 <%% end %>

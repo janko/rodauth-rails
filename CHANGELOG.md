@@ -1,5 +1,7 @@
 ## HEAD
 
+* Inline `_recovery_codes_form.html.erb` partial into `recovery_codes.html.erb` (@janko)
+
 * Use Rodauth helper methods for texts in generated views, for easier i18n (@janko)
 
 * Remove `Rodauth::Rails.middleware` config, as it doesn't have any affect (@janko)

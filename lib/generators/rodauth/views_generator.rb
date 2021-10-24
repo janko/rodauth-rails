@@ -84,7 +84,7 @@ module Rodauth
             sms_setup sms_confirm sms_auth sms_request sms_disable
           ],
           recovery_codes: %w[
-            _field _field_error _recovery_code_field _recovery_codes_form
+            _field _field_error _recovery_code_field
             recovery_codes add_recovery_codes recovery_auth
           ],
           webauthn: %w[
