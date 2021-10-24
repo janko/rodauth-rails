@@ -1,5 +1,7 @@
 ## HEAD
 
+* Raise error for unknown configuration in `Rodauth::Rails.model` (@janko)
+
 * Generate views for all enabled features by default in `rodauth:views` generator (@janko)
 
 * Add `Rodauth::Rails::App.rodauth!` which raises an error for unknown configuration (@janko)

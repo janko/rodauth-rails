@@ -195,6 +195,12 @@ class ModelTest < UnitTest
     refute account_class.reflect_on_association(:password_reset_key)
   end
 
+  test "unknown configuration" do
+    assert_raises ArgumentError do
+      Rodauth::Rails.model(:unknown)
+    end
+  end
+
   private
 
   def password_column_account(**options)
