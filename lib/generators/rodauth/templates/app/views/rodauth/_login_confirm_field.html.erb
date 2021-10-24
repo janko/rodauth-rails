@@ -1,4 +1,4 @@
 <div class="form-group mb-3">
-  <%%= label_tag "login-confirm", "Confirm Login", class: "form-label" %>
+  <%%= label_tag "login-confirm", <%= rodauth %>.login_confirm_label, class: "form-label" %>
   <%%= render "field", name: <%= rodauth %>.login_confirm_param, id: "login-confirm", type: :email, autocomplete: "email" %>
 </div>

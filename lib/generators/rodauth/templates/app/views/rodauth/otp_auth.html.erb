@@ -1,4 +1,4 @@
 <%%= form_tag <%= rodauth %>.otp_auth_path, method: :post do %>
   <%%= render "otp_auth_code_field" %>
-  <%%= render "submit", value: "Authenticate Using TOTP" %>
+  <%%= render "submit", value: <%= rodauth %>.otp_auth_button %>
 <%% end %>

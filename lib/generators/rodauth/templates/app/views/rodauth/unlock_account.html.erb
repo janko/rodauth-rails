@@ -1,5 +1,5 @@
 <%%= form_tag <%= rodauth %>.unlock_account_path, method: :post do %>
-  <p>This account is currently locked out.  You can unlock the account:</p>
+  <%%== <%= rodauth %>.unlock_account_explanatory_text %>
   <%%= render "password_field" if <%= rodauth %>.unlock_account_requires_password? %>
-  <%%= render "submit", value: "Unlock Account" %>
+  <%%= render "submit", value: <%= rodauth %>.unlock_account_button %>
 <%% end %>

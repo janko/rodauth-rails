@@ -2,18 +2,18 @@
   <fieldset class="form-group mb-3">
     <div class="form-check">
       <%%= radio_button_tag <%= rodauth %>.remember_param, <%= rodauth %>.remember_remember_param_value, false, id: "remember-remember", class: "form-check-input" %>
-      <%%= label_tag "remember-remember", "Remember Me", class: "form-check-label" %>
+      <%%= label_tag "remember-remember", <%= rodauth %>.remember_remember_label, class: "form-check-label" %>
     </div>
 
     <div class="form-check">
       <%%= radio_button_tag <%= rodauth %>.remember_param, <%= rodauth %>.remember_forget_param_value, false, id: "remember-forget", class: "form-check-input" %>
-      <%%= label_tag "remember-forget", "Forget Me", class: "form-check-label" %>
+      <%%= label_tag "remember-forget", <%= rodauth %>.remember_forget_label, class: "form-check-label" %>
     </div>
 
     <div class="form-check">
       <%%= radio_button_tag <%= rodauth %>.remember_param, <%= rodauth %>.remember_disable_param_value, false, id: "remember-disable", class: "form-check-input" %>
-      <%%= label_tag "remember-disable", "Disable Remember Me", class: "form-check-label" %>
+      <%%= label_tag "remember-disable", <%= rodauth %>.remember_disable_label, class: "form-check-label" %>
     </div>
   </fieldset>
-  <%%= render "submit", value: "Change Remember Setting" %>
+  <%%= render "submit", value: <%= rodauth %>.remember_button %>
 <%% end %>

@@ -6,7 +6,7 @@
   <%%= text_field_tag <%= rodauth %>.webauthn_setup_param, "", id: "webauthn-setup", aria: { hidden: "true" } %>
   <%%= render "password_field" if <%= rodauth %>.two_factor_modifications_require_password? %>
   <div id="webauthn-setup-button"> 
-    <%%= render "submit", value: "Setup WebAuthn Authentication" %>
+    <%%= render "submit", value: <%= rodauth %>.webauthn_setup_button %>
   </div>
 <%% end %>
 

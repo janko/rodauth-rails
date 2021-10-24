@@ -6,7 +6,7 @@
   <%%= hidden_field_tag <%= rodauth %>.webauthn_auth_challenge_hmac_param, <%= rodauth %>.compute_hmac(cred.challenge) %>
   <%%= text_field_tag <%= rodauth %>.webauthn_auth_param, "", id: "webauthn-auth", aria: { hidden: "true" } %>
   <div id="webauthn-auth-button">
-    <%%= render "submit", value: "Authenticate Using WebAuthn" %>
+    <%%= render "submit", value: <%= rodauth %>.webauthn_auth_button %>
   </div>
 <%% end %>
 

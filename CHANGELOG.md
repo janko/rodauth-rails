@@ -1,5 +1,7 @@
 ## HEAD
 
+* Use Rodauth helper methods for texts in generated views, for easier i18n (@janko)
+
 * Remove `Rodauth::Rails.middleware` config, as it doesn't have any affect (@janko)
 
 * Allow setting passing a `Sequel::Model` to `:account` in `Rodauth::Rails.rodauth` (@janko)

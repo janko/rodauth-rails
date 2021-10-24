@@ -1,5 +1,5 @@
 <%%= form_tag <%= rodauth %>.sms_setup_path, method: :post do %>
   <%%= render "password_field" if <%= rodauth %>.two_factor_modifications_require_password? %>
   <%%= render "sms_phone_field" %>
-  <%%= render "submit", value: "Setup SMS Backup Number" %>
+  <%%= render "submit", value: <%= rodauth %>.sms_setup_button %>
 <%% end %>

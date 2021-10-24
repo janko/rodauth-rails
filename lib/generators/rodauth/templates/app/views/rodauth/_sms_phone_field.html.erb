@@ -1,5 +1,5 @@
 <div class="form-group mb-3">
-  <%%= label_tag "sms-phone", "Phone Number", class: "form-label" %>
+  <%%= label_tag "sms-phone", <%= rodauth %>.sms_phone_label, class: "form-label" %>
   <div class="row">
     <div class="col-sm-3">
       <%%= render "field", name: <%= rodauth %>.sms_phone_param, id: "sms-phone", type: :tel, autocomplete: "tel" %>

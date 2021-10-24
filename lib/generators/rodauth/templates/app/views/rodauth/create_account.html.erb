@@ -3,5 +3,5 @@
   <%%= render "login_confirm_field" if <%= rodauth %>.require_login_confirmation? %>
   <%%= render "password_field" if <%= rodauth %>.create_account_set_password? %>
   <%%= render "password_confirm_field" if <%= rodauth %>.create_account_set_password? && <%= rodauth %>.require_password_confirmation? %>
-  <%%= render "submit", value: "Create Account" %>
+  <%%= render "submit", value: <%= rodauth %>.create_account_button %>
 <%% end %>

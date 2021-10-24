@@ -79,7 +79,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/views/rodauth/_login_form_footer.html.erb", <<-ERB.strip_heredoc
       <% unless rodauth.login_form_footer_links.empty? %>
-        <h2>Other Options</h2>
+        <%== rodauth.login_form_footer_links_heading %>
         <ul>
           <% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
             <li><%= link_to text, link %></li>
@@ -95,7 +95,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
       <%= form_tag rodauth.logout_path, method: :post do %>
         <%= render "global_logout_field" if rodauth.features.include?(:active_sessions) %>
-        <%= render "submit", value: "Logout", class: "btn btn-warning" %>
+        <%= render "submit", value: rodauth.logout_button, class: "btn btn-warning" %>
       <% end %>
     ERB
   end
@@ -106,7 +106,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/rodauth/otp_auth.html.erb", <<-ERB.strip_heredoc
       <%= form_tag rodauth.otp_auth_path, method: :post do %>
         <%= render "otp_auth_code_field" %>
-        <%= render "submit", value: "Authenticate Using TOTP" %>
+        <%= render "submit", value: rodauth.otp_auth_button %>
       <% end %>
     ERB
   end
@@ -116,7 +116,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/views/rodauth/_password_field.html.erb", <<-ERB.strip_heredoc
       <div class="form-group mb-3">
-        <%= label_tag "password", "Password", class: "form-label" %>
+        <%= label_tag "password", rodauth.password_label, class: "form-label" %>
         <%= render "field", name: rodauth.password_param, id: "password", type: :password, value: "", autocomplete: rodauth.password_field_autocomplete_value %>
       </div>
     ERB

@@ -1,4 +1,4 @@
 <%%= form_tag <%= rodauth %>.logout_path, method: :post do %>
   <%%= render "global_logout_field" if <%= rodauth %>.features.include?(:active_sessions) %>
-  <%%= render "submit", value: "Logout", class: "btn btn-warning" %>
+  <%%= render "submit", value: <%= rodauth %>.logout_button, class: "btn btn-warning" %>
 <%% end %>
