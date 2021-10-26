@@ -15,5 +15,8 @@
       <%%= label_tag "remember-disable", <%= rodauth %>.remember_disable_label, class: "form-check-label" %>
     </div>
   </fieldset>
-  <%%= render "submit", value: <%= rodauth %>.remember_button %>
+
+  <div class="form-group mb-3">
+    <%%= submit_tag <%= rodauth %>.remember_button, class: "btn btn-primary" %>
+  </div>
 <%% end %>

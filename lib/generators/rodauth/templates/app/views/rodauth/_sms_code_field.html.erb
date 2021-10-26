@@ -1,8 +1,0 @@
-<div class="form-group mb-3">
-  <%%= label_tag "sms-code", <%= rodauth %>.sms_code_label, class: "form-label" %>
-  <div class="row">
-    <div class="col-sm-3">
-      <%%= render "field", name: <%= rodauth %>.sms_code_param, id: "sms-code", value: "", autocomplete: "one-time-code", inputmode: "numeric" %>
-    </div>
-  </div>
-</div>

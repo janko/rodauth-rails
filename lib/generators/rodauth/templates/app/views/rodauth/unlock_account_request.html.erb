@@ -1,5 +1,9 @@
 <%%= form_tag <%= rodauth %>.unlock_account_request_path, method: :post do %>
-  <%%= render "login_hidden_field" %>
+  <%%= hidden_field_tag <%= rodauth %>.login_param, params[<%= rodauth %>.login_param] %>
+
   <%%== <%= rodauth %>.unlock_account_request_explanatory_text %>
-  <%%= render "submit", value: <%= rodauth %>.unlock_account_request_button %>
+
+  <div class="form-group mb-3">
+    <%%= submit_tag <%= rodauth %>.unlock_account_request_button, class: "btn btn-primary" %>
+  </div>
 <%% end %>

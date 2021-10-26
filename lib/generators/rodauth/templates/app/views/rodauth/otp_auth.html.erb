@@ -1,4 +1,15 @@
 <%%= form_tag <%= rodauth %>.otp_auth_path, method: :post do %>
-  <%%= render "otp_auth_code_field" %>
-  <%%= render "submit", value: <%= rodauth %>.otp_auth_button %>
+  <div class="form-group mb-3">
+    <%%= label_tag "otp-auth-code", <%= rodauth %>.otp_auth_label, class: "form-label" %>
+    <div class="row">
+      <div class="col-sm-3">
+        <%%= text_field_tag <%= rodauth %>.otp_auth_param, "", id: "otp-auth-code", autocomplete: "off", inputmode: "numeric", required: true, class: "form-control #{"is-invalid" if <%= rodauth %>.field_error(<%= rodauth %>.otp_auth_param)}", aria: ({ invalid: true, describedby: "otp-auth-code_error_message" } if <%= rodauth %>.field_error(<%= rodauth %>.otp_auth_param)) %>
+        <%%= content_tag(:span, <%= rodauth %>.field_error(<%= rodauth %>.otp_auth_param), class: "invalid-feedback", id: "otp-auth-code_error_message") if <%= rodauth %>.field_error(<%= rodauth %>.otp_auth_param) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group mb-3">
+    <%%= submit_tag <%= rodauth %>.otp_auth_button, class: "btn btn-primary" %>
+  </div>
 <%% end %>

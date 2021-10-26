@@ -1,12 +1,14 @@
 <%% cred = <%= rodauth %>.webauth_credential_options_for_get %>
 
 <%%= form_tag <%= rodauth %>.webauthn_auth_form_path, method: :post, id: "webauthn-auth-form", data: { credential_options: cred.as_json.to_json } do %>
-  <%%= render "login_hidden_field" if params[<%= rodauth %>.login_param] %>
+  <%%= hidden_field_tag <%= rodauth %>.login_param, params[<%= rodauth %>.login_param] %>
   <%%= hidden_field_tag <%= rodauth %>.webauthn_auth_challenge_param, cred.challenge %>
   <%%= hidden_field_tag <%= rodauth %>.webauthn_auth_challenge_hmac_param, <%= rodauth %>.compute_hmac(cred.challenge) %>
   <%%= text_field_tag <%= rodauth %>.webauthn_auth_param, "", id: "webauthn-auth", aria: { hidden: "true" } %>
   <div id="webauthn-auth-button">
-    <%%= render "submit", value: <%= rodauth %>.webauthn_auth_button %>
+    <div class="form-group mb-3">
+      <%%= submit_tag <%= rodauth %>.webauthn_auth_button, class: "btn btn-primary" %>
+    </div>
   </div>
 <%% end %>
 

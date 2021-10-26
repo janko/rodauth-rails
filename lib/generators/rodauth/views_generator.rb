@@ -19,82 +19,30 @@ module Rodauth
           default: nil
 
         VIEWS = {
-          login: %w[
-            _field _field_error _login_field _login_display _password_field
-            _submit _login_form _login_form_footer _login_form_header login
-            multi_phase_login
-          ],
-          create_account: %w[
-            _field _field_error _login_field _login_confirm_field
-            _password_field _password_confirm_field _submit create_account
-          ],
-          logout: %w[
-            _submit logout
-          ],
-          reset_password: %w[
-            _field _field_error _login_field _login_hidden_field
-            _password_field _password_confirm_field _submit
-            reset_password_request reset_password
-          ],
-          remember: %w[
-            _submit remember
-          ],
-          change_login: %w[
-            _field _field_error _login_field _login_confirm_field
-            _password_field _submit change_login
-          ],
-          change_password: %w[
-            _field _field_error _password_field _new_password_field
-            _password_confirm_field _submit change_password
-          ],
-          close_account: %w[
-            _field _field_error _password_field _submit close_account
-          ],
-          email_auth: %w[
-            _login_hidden_field _submit _email_auth_request_form email_auth
-          ],
-          verify_account: %w[
-            _field _field_error _login_hidden_field _login_field _submit
-            verify_account_resend verify_account
-          ],
-          verify_login_change: %w[
-            _submit verify_login_change
-          ],
-          lockout: %w[
-            _login_hidden_field _submit unlock_account_request unlock_account
-          ],
-          active_sessions: %w[
-            _global_logout_field
-          ],
-          two_factor_base: %w[
-            _field _field_error _password_field _submit
-            two_factor_manage two_factor_auth two_factor_disable
-          ],
-          otp: %w[
-            _field _field_error _otp_auth_code_field _password_field _submit
-            otp_setup otp_auth otp_disable
-          ],
-          sms_codes: %w[
-            _field _field_error _sms_code_field _sms_phone_field
-            _password_field _submit
-            sms_setup sms_confirm sms_auth sms_request sms_disable
-          ],
-          recovery_codes: %w[
-            _field _field_error _recovery_code_field
-            recovery_codes add_recovery_codes recovery_auth
-          ],
-          webauthn: %w[
-            _field _field_error _login_hidden_field _password_field _submit
-            webauthn_setup webauthn_auth webauthn_remove
-          ]
+          login:               %w[_login_form _login_form_footer _login_form_header login multi_phase_login],
+          create_account:      %w[create_account],
+          logout:              %w[logout],
+          reset_password:      %w[reset_password_request reset_password],
+          remember:            %w[remember],
+          change_login:        %w[change_login],
+          change_password:     %w[change_password],
+          close_account:       %w[close_account],
+          email_auth:          %w[_email_auth_request_form email_auth],
+          verify_account:      %w[verify_account_resend verify_account],
+          verify_login_change: %w[verify_login_change],
+          lockout:             %w[unlock_account_request unlock_account],
+          two_factor_base:     %w[two_factor_manage two_factor_auth two_factor_disable],
+          otp:                 %w[otp_setup otp_auth otp_disable],
+          sms_codes:           %w[sms_setup sms_confirm sms_auth sms_request sms_disable],
+          recovery_codes:      %w[recovery_codes add_recovery_codes recovery_auth],
+          webauthn:            %w[webauthn_setup webauthn_auth webauthn_remove],
         }
 
         DEPENDENCIES = {
-          active_sessions: :logout,
-          otp:             :two_factor_base,
-          sms_codes:       :two_factor_base,
-          recovery_codes:  :two_factor_base,
-          webauthn:        :two_factor_base,
+          otp:            :two_factor_base,
+          sms_codes:      :two_factor_base,
+          recovery_codes: :two_factor_base,
+          webauthn:       :two_factor_base,
         }
 
         def create_views
@@ -109,21 +57,7 @@ module Rodauth
           end
         end
 
-        def directory
-          if controller.abstract?
-            fail Error, "no controller configured for configuration: #{configuration_name.inspect}"
-          end
-
-          controller.controller_path
-        end
-
-        def rodauth
-          "rodauth#{"(:#{configuration_name})" if configuration_name}"
-        end
-
-        def controller
-          rodauth_configuration.allocate.rails_controller
-        end
+        private
 
         def features
           if options[:all]
@@ -133,6 +67,22 @@ module Rodauth
           else
             rodauth_configuration.features
           end
+        end
+
+        def directory
+          if controller.abstract?
+            fail Error, "no controller configured for configuration: #{configuration_name.inspect}"
+          end
+
+          controller.controller_path
+        end
+
+        def controller
+          rodauth_configuration.allocate.rails_controller
+        end
+
+        def rodauth
+          "rodauth#{"(:#{configuration_name})" if configuration_name}"
         end
 
         def rodauth_configuration

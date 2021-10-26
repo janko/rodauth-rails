@@ -10,12 +10,10 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     templates = %w[
-      _field _field_error _login_field _login_display _password_field _submit
       _login_form _login_form_footer _login_form_header login multi_phase_login
-      logout _login_confirm_field _password_confirm_field create_account
-      _login_hidden_field _new_password_field reset_password_request
-      verify_account reset_password change_login verify_login_change
-      change_password close_account
+      logout create_account reset_password_request verify_account
+      reset_password change_login verify_login_change change_password
+      close_account
     ]
 
     templates.each do |template|
@@ -23,26 +21,23 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     end
 
     assert_no_file "app/views/rodauth/otp_auth.html.erb"
-    assert_no_file "app/views/rodauth/_sms_code_field.html.erb"
   end
 
   test "choosing features" do
-    run_generator ["lockout"]
+    run_generator %w[lockout]
 
-    %w[_login_hidden_field _submit unlock_account_request unlock_account].each do |template|
-      assert_file "app/views/rodauth/#{template}.html.erb"
-    end
+    assert_file "app/views/rodauth/unlock_account_request.html.erb"
+    assert_file "app/views/rodauth/unlock_account.html.erb"
 
+    assert_no_file "app/views/rodauth/login.html.erb"
     assert_no_file "app/views/rodauth/create_account.html.erb"
-    assert_no_file "app/views/rodauth/_login_confirm_field.html.erb"
   end
 
   test "dependencies" do
-    run_generator ["sms_codes"]
+    run_generator %w[sms_codes]
 
     templates = %w[
-      _field _field_error _password_field _submit two_factor_manage
-      _sms_code_field _sms_phone_field two_factor_auth two_factor_disable
+      two_factor_manage two_factor_auth two_factor_disable
       sms_setup sms_confirm sms_auth sms_request sms_disable
     ]
 
@@ -52,7 +47,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   end
 
   test "all features" do
-    run_generator ["--all"]
+    run_generator %w[--all]
 
     assert_file "app/views/rodauth/login.html.erb"
     assert_file "app/views/rodauth/otp_auth.html.erb"
@@ -65,61 +60,39 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/admin/rodauth/login.html.erb"
     assert_no_file "app/views/admin/rodauth/logout.html.erb"
     assert_no_directory "app/views/rodauth"
+  end
 
+  test "ERB evaluation" do
+    run_generator %w[verify_login_change]
+
+    assert_file "app/views/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
+      <%= form_tag rodauth.verify_login_change_path, method: :post do %>
+        <div class="form-group mb-3">
+          <%= submit_tag rodauth.verify_login_change_button, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    ERB
+
+    run_generator %w[verify_login_change --name admin]
+
+    assert_file "app/views/admin/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
+      <%= form_tag rodauth(:admin).verify_login_change_path, method: :post do %>
+        <div class="form-group mb-3">
+          <%= submit_tag rodauth(:admin).verify_login_change_button, class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    ERB
+  end
+
+  test "specifying configuration with no controller" do
     assert_raises Rodauth::Rails::Error do
       run_generator %w[--name json]
     end
+  end
 
+  test "specifying unknown configuration" do
     assert_raises ArgumentError do
       run_generator %w[--name unknown]
     end
-  end
-
-  test "login_form_footer template" do
-    run_generator
-
-    assert_file "app/views/rodauth/_login_form_footer.html.erb", <<-ERB.strip_heredoc
-      <% unless rodauth.login_form_footer_links.empty? %>
-        <%== rodauth.login_form_footer_links_heading %>
-        <ul>
-          <% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
-            <li><%= link_to text, link %></li>
-          <% end %>
-        </ul>
-      <% end %>
-    ERB
-  end
-
-  test "logout template" do
-    run_generator
-
-    assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
-      <%= form_tag rodauth.logout_path, method: :post do %>
-        <%= render "global_logout_field" if rodauth.features.include?(:active_sessions) %>
-        <%= render "submit", value: rodauth.logout_button, class: "btn btn-warning" %>
-      <% end %>
-    ERB
-  end
-
-  test "otp_auth template" do
-    run_generator %w[otp]
-
-    assert_file "app/views/rodauth/otp_auth.html.erb", <<-ERB.strip_heredoc
-      <%= form_tag rodauth.otp_auth_path, method: :post do %>
-        <%= render "otp_auth_code_field" %>
-        <%= render "submit", value: rodauth.otp_auth_button %>
-      <% end %>
-    ERB
-  end
-
-  test "password_field partial" do
-    run_generator %w[create_account]
-
-    assert_file "app/views/rodauth/_password_field.html.erb", <<-ERB.strip_heredoc
-      <div class="form-group mb-3">
-        <%= label_tag "password", rodauth.password_label, class: "form-label" %>
-        <%= render "field", name: rodauth.password_param, id: "password", type: :password, value: "", autocomplete: rodauth.password_field_autocomplete_value %>
-      </div>
-    ERB
   end
 end

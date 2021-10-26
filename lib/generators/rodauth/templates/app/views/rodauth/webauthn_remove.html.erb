@@ -1,13 +1,23 @@
 <%%= form_tag <%= rodauth %>.webauthn_remove_path, method: :post, id: "webauthn-remove-form" do %>
-  <%%= render "password_field" if <%= rodauth %>.two_factor_modifications_require_password? %>
+  <%% if <%= rodauth %>.two_factor_modifications_require_password? %>
+    <div class="form-group mb-3">
+      <%%= label_tag "password", <%= rodauth %>.password_label, class: "form-label" %>
+      <%%= password_field_tag <%= rodauth %>.password_param, "", id: "password", autocomplete: <%= rodauth %>.password_field_autocomplete_value, required: true, class: "form-control #{"is-invalid" if <%= rodauth %>.field_error(<%= rodauth %>.password_param)}", aria: ({ invalid: true, describedby: "password_error_message" } if <%= rodauth %>.field_error(<%= rodauth %>.password_param)) %>
+      <%%= content_tag(:span, <%= rodauth %>.field_error(<%= rodauth %>.password_param), class: "invalid-feedback", id: "password_error_message") if <%= rodauth %>.field_error(<%= rodauth %>.password_param) %>
+    </div>
+  <%% end %>
+
   <fieldset class="form-group mb-3">
     <%% (usage = <%= rodauth %>.account_webauthn_usage).each do |id, last_use| %>
       <div class="form-check">
-        <%%= render "field", name: <%= rodauth %>.webauthn_remove_param, id: "webauthn-remove-#{id}", type: :radio, class: "form-check-input", skip_error_message: true, value: id, required: false %>
+        <%%= radio_button_tag <%= rodauth %>.webauthn_remove_param, id, id: "webauthn-remove-#{id}", class: "form-check-input #{"is-invalid" if <%= rodauth %>.field_error(<%= rodauth %>.webauthn_remove_param)}", aria: ({ invalid: true, describedby: "webauthn_remove_error_message" } if <%= rodauth %>.field_error(<%= rodauth %>.webauthn_remove_param)) %>
         <%%= label_tag "webauthn-remove-#{id}", "Last use: #{last_use}", class: "form-check-label" %>
-        <%%= render "field_error", name: <%= rodauth %>.webauthn_remove_param if id == usage.keys.last %>
+        <%%= content_tag(:span, <%= rodauth %>.field_error(<%= rodauth %>.webauthn_remove_param), class: "invalid-feedback", id: "webauthn_remove_error_message") if <%= rodauth %>.field_error(<%= rodauth %>.webauthn_remove_param) && id == usage.keys.last %>
       </div>
     <%% end %>
   </fieldset>
-  <%%= render "submit", value: <%= rodauth %>.webauthn_remove_button %>
+
+  <div class="form-group mb-3">
+    <%%= submit_tag <%= rodauth %>.webauthn_remove_button, class: "btn btn-primary" %>
+  </div>
 <%% end %>

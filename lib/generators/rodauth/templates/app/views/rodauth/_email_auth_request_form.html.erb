@@ -1,4 +1,7 @@
 <%%= form_tag <%= rodauth %>.email_auth_request_path, method: :post do %>
-  <%%= render "login_hidden_field" %>
-  <%%= render "submit", value: <%= rodauth %>.email_auth_request_button %>
+  <%%= hidden_field_tag <%= rodauth %>.login_param, params[<%= rodauth %>.login_param] %>
+
+  <div class="form-group mb-3">
+    <%%= submit_tag <%= rodauth %>.email_auth_request_button, class: "btn btn-primary" %>
+  </div>
 <%% end %>

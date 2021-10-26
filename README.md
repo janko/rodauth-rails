@@ -282,12 +282,12 @@ copy Rodauth templates into your Rails app:
 $ rails generate rodauth:views
 ```
 
-This will generate views for the default set of Rodauth features into the
-`app/views/rodauth` directory, provided that `RodauthController` is set for the
-main configuration.
+This will generate views for Rodauth features you have currently enabled into
+the `app/views/rodauth` directory, provided that `RodauthController` is set for
+the main configuration.
 
 You can pass a list of Rodauth features to the generator to create views for
-these features (this will not remove or overwrite any existing views):
+these features (this will not remove any existing views):
 
 ```sh
 $ rails generate rodauth:views login create_account lockout otp
@@ -302,7 +302,7 @@ $ rails generate rodauth:views --all
 Use `--name` to generate views for a different Rodauth configuration:
 
 ```sh
-$ rails generate rodauth:views --name admin
+$ rails generate rodauth:views webauthn --name admin
 ```
 
 #### Layout

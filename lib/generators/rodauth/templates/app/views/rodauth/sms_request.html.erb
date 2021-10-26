@@ -1,3 +1,5 @@
 <%%= form_tag <%= rodauth %>.sms_request_path, method: :post do %>
-  <%%= render "submit", value: <%= rodauth %>.sms_request_button %>
+  <div class="form-group mb-3">
+    <%%= submit_tag <%= rodauth %>.sms_request_button, class: "btn btn-primary" %>
+  </div>
 <%% end %>

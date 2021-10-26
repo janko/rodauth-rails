@@ -1,5 +1,7 @@
 ## HEAD
 
+* Merge field and button partials into view templates (@janko)
+
 * Raise error for unknown configuration in `Rodauth::Rails.model` (@janko)
 
 * Generate views for all enabled features by default in `rodauth:views` generator (@janko)

@@ -1,4 +1,15 @@
 <%%= form_tag <%= rodauth %>.sms_confirm_path, method: :post do %>
-  <%%= render "sms_code_field" %>
-  <%%= render "submit", value: <%= rodauth %>.sms_confirm_button %>
+  <div class="form-group mb-3">
+    <%%= label_tag "sms-code", <%= rodauth %>.sms_code_label, class: "form-label" %>
+    <div class="row">
+      <div class="col-sm-3">
+        <%%= text_field_tag <%= rodauth %>.sms_code_param, "", id: "sms-code", autocomplete: "one-time-code", inputmode: "numeric", required: true, class: "form-control #{"is-invalid" if <%= rodauth %>.field_error(<%= rodauth %>.sms_code_param)}", aria: ({ invalid: true, describedby: "sms-code_error_message" } if <%= rodauth %>.field_error(<%= rodauth %>.sms_code_param)) %>
+        <%%= content_tag(:span, <%= rodauth %>.field_error(<%= rodauth %>.sms_code_param), class: "invalid-feedback", id: "sms-code_error_message") if <%= rodauth %>.field_error(<%= rodauth %>.sms_code_param) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group mb-3">
+    <%%= submit_tag <%= rodauth %>.sms_confirm_button, class: "btn btn-primary" %>
+  </div>
 <%% end %>
