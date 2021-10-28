@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.close_account_page_title %>
+
 <%%= form_tag <%= rodauth %>.close_account_path, method: :post do %>
   <%% if <%= rodauth %>.close_account_requires_password? %>
     <div class="form-group mb-3">

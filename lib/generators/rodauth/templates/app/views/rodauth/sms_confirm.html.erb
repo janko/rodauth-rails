@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.sms_confirm_page_title %>
+
 <%%= form_tag <%= rodauth %>.sms_confirm_path, method: :post do %>
   <div class="form-group mb-3">
     <%%= label_tag "sms-code", <%= rodauth %>.sms_code_label, class: "form-label" %>

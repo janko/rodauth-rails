@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.two_factor_disable_page_title %>
+
 <%%= form_tag <%= rodauth %>.two_factor_disable_path, method: :post do %>
   <%% if <%= rodauth %>.two_factor_modifications_require_password? %>
     <div class="form-group mb-3">

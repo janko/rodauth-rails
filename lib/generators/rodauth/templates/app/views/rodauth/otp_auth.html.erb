@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.otp_auth_page_title %>
+
 <%%= form_tag <%= rodauth %>.otp_auth_path, method: :post do %>
   <div class="form-group mb-3">
     <%%= label_tag "otp-auth-code", <%= rodauth %>.otp_auth_label, class: "form-label" %>

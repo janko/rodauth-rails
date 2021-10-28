@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.verify_account_page_title %>
+
 <%%= form_tag <%= rodauth %>.verify_account_path, method: :post do %>
   <%% if <%= rodauth %>.verify_account_set_password? %>
     <div class="form-group mb-3">

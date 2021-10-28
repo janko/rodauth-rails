@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.recovery_auth_page_title %>
+
 <%%= form_tag <%= rodauth %>.recovery_auth_path, method: :post do %>
   <div class="form-group mb-3">
     <%%= label_tag "recovery-code", <%= rodauth %>.recovery_codes_label, class: "form-label" %>

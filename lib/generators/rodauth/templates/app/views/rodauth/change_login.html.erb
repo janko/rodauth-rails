@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.change_login_page_title %>
+
 <%%= form_tag <%= rodauth %>.change_login_path, method: :post do %>
   <div class="form-group mb-3">
     <%%= label_tag "login", <%= rodauth %>.login_label, class: "form-label" %>

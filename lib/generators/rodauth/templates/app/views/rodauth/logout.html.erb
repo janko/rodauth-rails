@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.logout_page_title %>
+
 <%%= form_tag <%= rodauth %>.logout_path, method: :post do %>
   <%% if <%= rodauth %>.features.include?(:active_sessions) %>
     <div class="form-group mb-3">

@@ -1,5 +1,7 @@
 ## HEAD
 
+* Set page titles in generated view templates (@janko)
+
 * Merge field and button partials into view templates (@janko)
 
 * Raise error for unknown configuration in `Rodauth::Rails.model` (@janko)

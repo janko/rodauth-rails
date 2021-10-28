@@ -66,6 +66,8 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator %w[verify_login_change]
 
     assert_file "app/views/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
+      <% content_for :title, rodauth.verify_login_change_page_title %>
+
       <%= form_tag rodauth.verify_login_change_path, method: :post do %>
         <div class="form-group mb-3">
           <%= submit_tag rodauth.verify_login_change_button, class: "btn btn-primary" %>
@@ -76,6 +78,8 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator %w[verify_login_change --name admin]
 
     assert_file "app/views/admin/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
+      <% content_for :title, rodauth(:admin).verify_login_change_page_title %>
+
       <%= form_tag rodauth(:admin).verify_login_change_path, method: :post do %>
         <div class="form-group mb-3">
           <%= submit_tag rodauth(:admin).verify_login_change_button, class: "btn btn-primary" %>

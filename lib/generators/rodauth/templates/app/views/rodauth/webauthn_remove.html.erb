@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.webauthn_remove_page_title %>
+
 <%%= form_tag <%= rodauth %>.webauthn_remove_path, method: :post, id: "webauthn-remove-form" do %>
   <%% if <%= rodauth %>.two_factor_modifications_require_password? %>
     <div class="form-group mb-3">

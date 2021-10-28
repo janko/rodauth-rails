@@ -1,3 +1,5 @@
+<%% content_for :title, <%= rodauth %>.webauthn_setup_page_title %>
+
 <%% cred = <%= rodauth %>.new_webauthn_credential %>
 
 <%%= form_tag <%= rodauth %>.webauthn_setup_path, method: :post, id: "webauthn-setup-form", data: { credential_options: cred.as_json.to_json } do %>
