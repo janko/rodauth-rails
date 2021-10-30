@@ -1,5 +1,7 @@
 ## HEAD
 
+* Fix `Rodauth::Rails.middleware` config not actually affecting middleware insertion (@janko)
+
 * Set page titles in generated view templates (@janko)
 
 * Merge field and button partials into view templates (@janko)
@@ -15,8 +17,6 @@
 * Inline `_recovery_codes_form.html.erb` partial into `recovery_codes.html.erb` (@janko)
 
 * Use Rodauth helper methods for texts in generated views, for easier i18n (@janko)
-
-* Remove `Rodauth::Rails.middleware` config, as it doesn't have any affect (@janko)
 
 * Allow setting passing a `Sequel::Model` to `:account` in `Rodauth::Rails.rodauth` (@janko)
 
