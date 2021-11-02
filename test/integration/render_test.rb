@@ -73,5 +73,5 @@ class RenderTest < IntegrationTest
     page.driver.browser.get "/login", {}, { "HTTP_ACCEPT" => "text/vnd.turbo-stream.html, text/html" }
 
     assert_includes page.html, "Login"
-  end
+  end if ActionView.version >= Gem::Version.new("6.0")
 end
