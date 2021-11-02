@@ -66,4 +66,12 @@ class RenderTest < IntegrationTest
 
     assert_equal 1, page.html.scan(%(<title>Rodauth::Rails Test</title>)).count
   end
+
+  test "rendering built-in templates with alternative formats" do
+    Mime::Type.register "text/vnd.turbo-stream.html", :turbo_stream
+
+    page.driver.browser.get "/login", {}, { "HTTP_ACCEPT" => "text/vnd.turbo-stream.html, text/html" }
+
+    assert_includes page.html, "Login"
+  end
 end

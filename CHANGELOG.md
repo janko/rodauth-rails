@@ -1,5 +1,7 @@
 ## HEAD
 
+* Fix missing layout error when rendering Rodauth's built-in templates when using Turbo (@janko)
+
 * Fix `Rodauth::Rails.middleware` config not actually affecting middleware insertion (@janko)
 
 * Set page titles in generated view templates (@janko)

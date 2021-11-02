@@ -10,7 +10,7 @@ module Rodauth
         # template, otherwise falls back to Rodauth's template.
         def view(page, *)
           rails_render(action: page.tr("-", "_"), layout: true) ||
-            rails_render(html: super.html_safe, layout: true)
+            rails_render(html: super.html_safe, layout: true, formats: :html)
         end
 
         # Renders templates without layout. First tries to render a user-defined
