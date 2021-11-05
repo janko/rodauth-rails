@@ -1,11 +1,11 @@
-<%% content_for :title, <%= rodauth %>.unlock_account_request_page_title %>
+<%% content_for :title, rodauth.unlock_account_request_page_title %>
 
-<%%= form_tag <%= rodauth %>.unlock_account_request_path, method: :post do %>
-  <%%= hidden_field_tag <%= rodauth %>.login_param, params[<%= rodauth %>.login_param] %>
+<%%= form_tag rodauth.unlock_account_request_path, method: :post do %>
+  <%%= hidden_field_tag rodauth.login_param, params[rodauth.login_param] %>
 
-  <%%== <%= rodauth %>.unlock_account_request_explanatory_text %>
+  <%%== rodauth.unlock_account_request_explanatory_text %>
 
   <div class="form-group mb-3">
-    <%%= submit_tag <%= rodauth %>.unlock_account_request_button, class: "btn btn-primary" %>
+    <%%= submit_tag rodauth.unlock_account_request_button, class: "btn btn-primary" %>
   </div>
 <%% end %>

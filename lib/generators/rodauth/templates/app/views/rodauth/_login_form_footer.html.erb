@@ -1,8 +1,8 @@
-<%% unless <%= rodauth %>.login_form_footer_links.empty? %>
-  <%%== <%= rodauth %>.login_form_footer_links_heading %>
+<%% unless rodauth.login_form_footer_links.empty? %>
+  <%%== rodauth.login_form_footer_links_heading %>
 
   <ul>
-    <%% <%= rodauth %>.login_form_footer_links.sort.each do |_, link, text| %>
+    <%% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
       <li><%%= link_to text, link %></li>
     <%% end %>
   </ul>

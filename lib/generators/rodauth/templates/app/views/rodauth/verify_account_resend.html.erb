@@ -1,19 +1,19 @@
-<%% content_for :title, <%= rodauth %>.verify_account_resend_page_title %>
+<%% content_for :title, rodauth.verify_account_resend_page_title %>
 
-<%%= form_tag <%= rodauth %>.verify_account_resend_path, method: :post do %>
-  <%%== <%= rodauth %>.verify_account_resend_explanatory_text %>
+<%%= form_tag rodauth.verify_account_resend_path, method: :post do %>
+  <%%== rodauth.verify_account_resend_explanatory_text %>
 
-  <%% if params[<%= rodauth %>.login_param] %>
-    <%%= hidden_field_tag <%= rodauth %>.login_param, params[<%= rodauth %>.login_param] %>
+  <%% if params[rodauth.login_param] %>
+    <%%= hidden_field_tag rodauth.login_param, params[rodauth.login_param] %>
   <%% else %>
     <div class="form-group mb-3">
-      <%%= label_tag "login", <%= rodauth %>.login_label, class: "form-label" %>
-      <%%= email_field_tag <%= rodauth %>.login_param, params[<%= rodauth %>.login_param], id: "login", autocomplete: "email", required: true, class: "form-control #{"is-invalid" if <%= rodauth %>.field_error(<%= rodauth %>.login_param)}", aria: ({ invalid: true, describedby: "login_error_message" } if <%= rodauth %>.field_error(<%= rodauth %>.login_param)) %>
-      <%%= content_tag(:span, <%= rodauth %>.field_error(<%= rodauth %>.login_param), class: "invalid-feedback", id: "login_error_message") if <%= rodauth %>.field_error(<%= rodauth %>.login_param) %>
+      <%%= label_tag "login", rodauth.login_label, class: "form-label" %>
+      <%%= email_field_tag rodauth.login_param, params[rodauth.login_param], id: "login", autocomplete: "email", required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.login_param)}", aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>
+      <%%= content_tag(:span, rodauth.field_error(rodauth.login_param), class: "invalid-feedback", id: "login_error_message") if rodauth.field_error(rodauth.login_param) %>
     </div>
   <%% end %>
 
   <div class="form-group mb-3">
-    <%%= submit_tag <%= rodauth %>.verify_account_resend_button, class: "btn btn-primary" %>
+    <%%= submit_tag rodauth.verify_account_resend_button, class: "btn btn-primary" %>
   </div>
 <%% end %>

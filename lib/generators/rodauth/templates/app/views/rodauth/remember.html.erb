@@ -1,24 +1,24 @@
-<%% content_for :title, <%= rodauth %>.remember_page_title %>
+<%% content_for :title, rodauth.remember_page_title %>
 
-<%%= form_tag <%= rodauth %>.remember_path, method: :post do %>
+<%%= form_tag rodauth.remember_path, method: :post do %>
   <fieldset class="form-group mb-3">
     <div class="form-check">
-      <%%= radio_button_tag <%= rodauth %>.remember_param, <%= rodauth %>.remember_remember_param_value, false, id: "remember-remember", class: "form-check-input" %>
-      <%%= label_tag "remember-remember", <%= rodauth %>.remember_remember_label, class: "form-check-label" %>
+      <%%= radio_button_tag rodauth.remember_param, rodauth.remember_remember_param_value, false, id: "remember-remember", class: "form-check-input" %>
+      <%%= label_tag "remember-remember", rodauth.remember_remember_label, class: "form-check-label" %>
     </div>
 
     <div class="form-check">
-      <%%= radio_button_tag <%= rodauth %>.remember_param, <%= rodauth %>.remember_forget_param_value, false, id: "remember-forget", class: "form-check-input" %>
-      <%%= label_tag "remember-forget", <%= rodauth %>.remember_forget_label, class: "form-check-label" %>
+      <%%= radio_button_tag rodauth.remember_param, rodauth.remember_forget_param_value, false, id: "remember-forget", class: "form-check-input" %>
+      <%%= label_tag "remember-forget", rodauth.remember_forget_label, class: "form-check-label" %>
     </div>
 
     <div class="form-check">
-      <%%= radio_button_tag <%= rodauth %>.remember_param, <%= rodauth %>.remember_disable_param_value, false, id: "remember-disable", class: "form-check-input" %>
-      <%%= label_tag "remember-disable", <%= rodauth %>.remember_disable_label, class: "form-check-label" %>
+      <%%= radio_button_tag rodauth.remember_param, rodauth.remember_disable_param_value, false, id: "remember-disable", class: "form-check-input" %>
+      <%%= label_tag "remember-disable", rodauth.remember_disable_label, class: "form-check-label" %>
     </div>
   </fieldset>
 
   <div class="form-group mb-3">
-    <%%= submit_tag <%= rodauth %>.remember_button, class: "btn btn-primary" %>
+    <%%= submit_tag rodauth.remember_button, class: "btn btn-primary" %>
   </div>
 <%% end %>

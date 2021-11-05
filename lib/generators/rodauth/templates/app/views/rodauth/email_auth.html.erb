@@ -1,7 +1,7 @@
-<%% content_for :title, <%= rodauth %>.email_auth_page_title %>
+<%% content_for :title, rodauth.email_auth_page_title %>
 
-<%%= form_tag <%= rodauth %>.email_auth_path, method: :post do %>
+<%%= form_tag rodauth.email_auth_path, method: :post do %>
   <div class="form-group mb-3">
-    <%%= submit_tag <%= rodauth %>.login_button, class: "btn btn-primary" %>
+    <%%= submit_tag rodauth.login_button, class: "btn btn-primary" %>
   </div>
 <%% end %>
