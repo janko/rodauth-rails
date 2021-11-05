@@ -1,24 +1,24 @@
-<%% content_for :title, rodauth.two_factor_manage_page_title %>
+<% content_for :title, rodauth.two_factor_manage_page_title %>
 
-<%% if rodauth.two_factor_setup_links.any? %>
-  <%%== rodauth.two_factor_setup_heading %>
-
-  <ul>
-    <%% rodauth.two_factor_setup_links.sort.each do |_, link, text| %>
-      <li><%%= link_to text, link %></li>
-    <%% end %>
-  </ul>
-<%% end %>
-
-<%% if rodauth.two_factor_remove_links.any? %>
-  <%%== rodauth.two_factor_remove_heading %>
+<% if rodauth.two_factor_setup_links.any? %>
+  <%== rodauth.two_factor_setup_heading %>
 
   <ul>
-    <%% rodauth.two_factor_remove_links.sort.each do |_, link, text| %>
-      <li><%%= link_to text, link %></li>
-    <%% end %>
-    <%% if rodauth.two_factor_remove_links.length > 1 %>
-      <li><%%= link_to rodauth.two_factor_disable_link_text, rodauth.two_factor_disable_path %></li>
-    <%% end %>
+    <% rodauth.two_factor_setup_links.sort.each do |_, link, text| %>
+      <li><%= link_to text, link %></li>
+    <% end %>
   </ul>
-<%% end %>
+<% end %>
+
+<% if rodauth.two_factor_remove_links.any? %>
+  <%== rodauth.two_factor_remove_heading %>
+
+  <ul>
+    <% rodauth.two_factor_remove_links.sort.each do |_, link, text| %>
+      <li><%= link_to text, link %></li>
+    <% end %>
+    <% if rodauth.two_factor_remove_links.length > 1 %>
+      <li><%= link_to rodauth.two_factor_disable_link_text, rodauth.two_factor_disable_path %></li>
+    <% end %>
+  </ul>
+<% end %>

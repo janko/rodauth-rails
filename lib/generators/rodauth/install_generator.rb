@@ -60,7 +60,7 @@ module Rodauth
           template "app/mailers/rodauth_mailer.rb"
 
           MAILER_VIEWS.each do |view|
-            template "app/views/rodauth_mailer/#{view}.text.erb"
+            copy_file "app/views/rodauth_mailer/#{view}.text.erb"
           end
         end
 

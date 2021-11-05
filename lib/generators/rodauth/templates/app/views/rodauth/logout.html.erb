@@ -1,16 +1,16 @@
-<%% content_for :title, rodauth.logout_page_title %>
+<% content_for :title, rodauth.logout_page_title %>
 
-<%%= form_tag rodauth.logout_path, method: :post do %>
-  <%% if rodauth.features.include?(:active_sessions) %>
+<%= form_tag rodauth.logout_path, method: :post do %>
+  <% if rodauth.features.include?(:active_sessions) %>
     <div class="form-group mb-3">
       <div class="form-check">
-        <%%= check_box_tag rodauth.global_logout_param, "t", false, id: "global-logout", class: "form-check-input" %>
-        <%%= label_tag "global-logout", rodauth.global_logout_label, class: "form-check-label" %>
+        <%= check_box_tag rodauth.global_logout_param, "t", false, id: "global-logout", class: "form-check-input" %>
+        <%= label_tag "global-logout", rodauth.global_logout_label, class: "form-check-label" %>
       </div>
     </div>
-  <%% end %>
+  <% end %>
 
   <div class="form-group mb-3">
-    <%%= submit_tag rodauth.logout_button, class: "btn btn-warning" %>
+    <%= submit_tag rodauth.logout_button, class: "btn btn-warning" %>
   </div>
-<%% end %>
+<% end %>

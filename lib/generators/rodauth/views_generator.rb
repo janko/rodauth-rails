@@ -52,7 +52,7 @@ module Rodauth
           end
 
           views.each do |view|
-            template "app/views/rodauth/#{view}.html.erb", "app/views/#{directory}/#{view}.html.erb" do |content|
+            copy_file "app/views/rodauth/#{view}.html.erb", "app/views/#{directory}/#{view}.html.erb" do |content|
               content = content.gsub("rodauth.", "rodauth(:#{configuration_name}).") if configuration_name
               content = content.gsub("rodauth/", "#{directory}/")
               content

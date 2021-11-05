@@ -1,43 +1,43 @@
-<%% content_for :title, rodauth.otp_setup_page_title %>
+<% content_for :title, rodauth.otp_setup_page_title %>
 
-<%%= form_tag rodauth.otp_setup_path, method: :post do %>
-  <%%= hidden_field_tag rodauth.otp_setup_param, rodauth.otp_user_key, id: "otp-key" %>
-  <%%= hidden_field_tag rodauth.otp_setup_raw_param, rodauth.otp_key, id: "otp-hmac-secret" if rodauth.otp_keys_use_hmac? %>
+<%= form_tag rodauth.otp_setup_path, method: :post do %>
+  <%= hidden_field_tag rodauth.otp_setup_param, rodauth.otp_user_key, id: "otp-key" %>
+  <%= hidden_field_tag rodauth.otp_setup_raw_param, rodauth.otp_key, id: "otp-hmac-secret" if rodauth.otp_keys_use_hmac? %>
 
   <div class="form-group mb-3">
-    <p><%%= rodauth.otp_secret_label %>: <%%= rodauth.otp_user_key %></p>
-    <p><%%= rodauth.otp_provisioning_uri_label %>: <%%= rodauth.otp_provisioning_uri %></p>
+    <p><%= rodauth.otp_secret_label %>: <%= rodauth.otp_user_key %></p>
+    <p><%= rodauth.otp_provisioning_uri_label %>: <%= rodauth.otp_provisioning_uri %></p>
   </div>
 
   <div class="row">
     <div class="col-lg-6 col-lg">
       <div class="form-group mb-3">
-        <p><%%== rodauth.otp_qr_code %></p>
+        <p><%== rodauth.otp_qr_code %></p>
       </div>
     </div>
 
     <div class="col-lg-6 col-lg">
-      <%% if rodauth.two_factor_modifications_require_password? %>
+      <% if rodauth.two_factor_modifications_require_password? %>
         <div class="form-group mb-3">
-          <%%= label_tag "password", rodauth.password_label, class: "form-label" %>
-          <%%= password_field_tag rodauth.password_param, "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.password_param)}", aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
-          <%%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "invalid-feedback", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
+          <%= label_tag "password", rodauth.password_label, class: "form-label" %>
+          <%= password_field_tag rodauth.password_param, "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.password_param)}", aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
+          <%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "invalid-feedback", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
         </div>
-      <%% end %>
+      <% end %>
 
       <div class="form-group mb-3">
-        <%%= label_tag "otp-auth-code", rodauth.otp_auth_label, class: "form-label" %>
+        <%= label_tag "otp-auth-code", rodauth.otp_auth_label, class: "form-label" %>
         <div class="row">
           <div class="col-sm-3">
-            <%%= text_field_tag rodauth.otp_auth_param, "", id: "otp-auth-code", autocomplete: "off", inputmode: "numeric", required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.otp_auth_param)}", aria: ({ invalid: true, describedby: "otp-auth-code_error_message" } if rodauth.field_error(rodauth.otp_auth_param)) %>
-            <%%= content_tag(:span, rodauth.field_error(rodauth.otp_auth_param), class: "invalid-feedback", id: "otp-auth-code_error_message") if rodauth.field_error(rodauth.otp_auth_param) %>
+            <%= text_field_tag rodauth.otp_auth_param, "", id: "otp-auth-code", autocomplete: "off", inputmode: "numeric", required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.otp_auth_param)}", aria: ({ invalid: true, describedby: "otp-auth-code_error_message" } if rodauth.field_error(rodauth.otp_auth_param)) %>
+            <%= content_tag(:span, rodauth.field_error(rodauth.otp_auth_param), class: "invalid-feedback", id: "otp-auth-code_error_message") if rodauth.field_error(rodauth.otp_auth_param) %>
           </div>
         </div>
       </div>
 
       <div class="form-group mb-3">
-        <%%= submit_tag rodauth.otp_setup_button, class: "btn btn-primary" %>
+        <%= submit_tag rodauth.otp_setup_button, class: "btn btn-primary" %>
       </div>
     </div>
   </div>
-<%% end %>
+<% end %>

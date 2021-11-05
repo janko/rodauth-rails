@@ -1,15 +1,15 @@
-<%% content_for :title, rodauth.sms_disable_page_title %>
+<% content_for :title, rodauth.sms_disable_page_title %>
 
-<%%= form_tag rodauth.sms_disable_path, method: :post do %>
-  <%% if rodauth.two_factor_modifications_require_password? %>
+<%= form_tag rodauth.sms_disable_path, method: :post do %>
+  <% if rodauth.two_factor_modifications_require_password? %>
     <div class="form-group mb-3">
-      <%%= label_tag "password", rodauth.password_label, class: "form-label" %>
-      <%%= password_field_tag rodauth.password_param, "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.password_param)}", aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
-      <%%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "invalid-feedback", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
+      <%= label_tag "password", rodauth.password_label, class: "form-label" %>
+      <%= password_field_tag rodauth.password_param, "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.password_param)}", aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
+      <%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "invalid-feedback", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
     </div>
-  <%% end %>
+  <% end %>
 
   <div class="form-group mb-3">
-    <%%= submit_tag rodauth.sms_disable_button, class: "btn btn-primary" %>
+    <%= submit_tag rodauth.sms_disable_button, class: "btn btn-primary" %>
   </div>
-<%% end %>
+<% end %>
