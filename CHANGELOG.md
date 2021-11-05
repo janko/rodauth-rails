@@ -1,5 +1,7 @@
 ## HEAD
 
+* Generate controller views with `form_with` helper on Rails 5.1+ (@janko)
+
 * Fix missing layout error when rendering Rodauth's built-in templates when using Turbo on Rails 6.0+ (@janko)
 
 * Fix `Rodauth::Rails.middleware` config not actually affecting middleware insertion (@janko)

@@ -62,15 +62,15 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     assert_no_directory "app/views/rodauth"
   end
 
-  test "ERB evaluation" do
+  test "interpolating named configuration" do
     run_generator %w[verify_login_change]
 
     assert_file "app/views/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
       <% content_for :title, rodauth.verify_login_change_page_title %>
 
-      <%= form_tag rodauth.verify_login_change_path, method: :post do %>
+      <%= form_with url: rodauth.verify_login_change_path, method: :post do |form| %>
         <div class="form-group mb-3">
-          <%= submit_tag rodauth.verify_login_change_button, class: "btn btn-primary" %>
+          <%= form.submit rodauth.verify_login_change_button, class: "btn btn-primary" %>
         </div>
       <% end %>
     ERB
@@ -80,12 +80,100 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     assert_file "app/views/admin/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
       <% content_for :title, rodauth(:admin).verify_login_change_page_title %>
 
-      <%= form_tag rodauth(:admin).verify_login_change_path, method: :post do %>
+      <%= form_with url: rodauth(:admin).verify_login_change_path, method: :post do |form| %>
         <div class="form-group mb-3">
-          <%= submit_tag rodauth(:admin).verify_login_change_button, class: "btn btn-primary" %>
+          <%= form.submit rodauth(:admin).verify_login_change_button, class: "btn btn-primary" %>
         </div>
       <% end %>
     ERB
+  end if ActionView.version >= Gem::Version.new("5.1")
+
+  test "interpolating directory name" do
+    run_generator %w[login]
+
+    assert_file "app/views/rodauth/_login_form_header.html.erb", <<-ERB.strip_heredoc
+      <% if rodauth.field_error(rodauth.password_param) && rodauth.features.include?(:reset_password) %>
+        <%= render template: "rodauth/reset_password_request", layout: false %>
+      <% end %>
+    ERB
+
+    run_generator %w[login --name admin]
+
+    assert_file "app/views/admin/rodauth/_login_form_header.html.erb", <<-ERB.strip_heredoc
+      <% if rodauth(:admin).field_error(rodauth(:admin).password_param) && rodauth(:admin).features.include?(:reset_password) %>
+        <%= render template: "admin/rodauth/reset_password_request", layout: false %>
+      <% end %>
+    ERB
+  end if ActionView.version >= Gem::Version.new("5.1")
+
+  if ActionView.version < Gem::Version.new("5.1")
+    test "form helpers compatibility" do
+      run_generator %w[close_account remember logout]
+
+      assert_file "app/views/rodauth/close_account.html.erb", <<-ERB.strip_heredoc
+        <% content_for :title, rodauth.close_account_page_title %>
+
+        <%= form_tag rodauth.close_account_path, method: :post do %>
+          <% if rodauth.close_account_requires_password? %>
+            <div class="form-group mb-3">
+              <%= label_tag "password", rodauth.password_label, class: "form-label" %>
+              <%= password_field_tag rodauth.password_param, "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: "form-control \#{"is-invalid" if rodauth.field_error(rodauth.password_param)}", aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
+              <%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "invalid-feedback", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
+            </div>
+          <% end %>
+
+          <div class="form-group mb-3">
+            <%= submit_tag rodauth.close_account_button, class: "btn btn-danger" %>
+          </div>
+        <% end %>
+      ERB
+
+      assert_file "app/views/rodauth/remember.html.erb", <<-ERB.strip_heredoc
+        <% content_for :title, rodauth.remember_page_title %>
+
+        <%= form_tag rodauth.remember_path, method: :post do %>
+          <fieldset class="form-group mb-3">
+            <div class="form-check">
+              <%= radio_button_tag rodauth.remember_param, rodauth.remember_remember_param_value, false, id: "remember-remember", class: "form-check-input" %>
+              <%= label_tag "remember-remember", rodauth.remember_remember_label, class: "form-check-label" %>
+            </div>
+
+            <div class="form-check">
+              <%= radio_button_tag rodauth.remember_param, rodauth.remember_forget_param_value, false, id: "remember-forget", class: "form-check-input" %>
+              <%= label_tag "remember-forget", rodauth.remember_forget_label, class: "form-check-label" %>
+            </div>
+
+            <div class="form-check">
+              <%= radio_button_tag rodauth.remember_param, rodauth.remember_disable_param_value, false, id: "remember-disable", class: "form-check-input" %>
+              <%= label_tag "remember-disable", rodauth.remember_disable_label, class: "form-check-label" %>
+            </div>
+          </fieldset>
+
+          <div class="form-group mb-3">
+            <%= submit_tag rodauth.remember_button, class: "btn btn-primary" %>
+          </div>
+        <% end %>
+      ERB
+
+      assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
+        <% content_for :title, rodauth.logout_page_title %>
+
+        <%= form_tag rodauth.logout_path, method: :post do %>
+          <% if rodauth.features.include?(:active_sessions) %>
+            <div class="form-group mb-3">
+              <div class="form-check">
+                <%= check_box_tag rodauth.global_logout_param, "t", false, id: "global-logout", class: "form-check-input" %>
+                <%= label_tag "global-logout", rodauth.global_logout_label, class: "form-check-label" %>
+              </div>
+            </div>
+          <% end %>
+
+          <div class="form-group mb-3">
+            <%= submit_tag rodauth.logout_button, class: "btn btn-warning" %>
+          </div>
+        <% end %>
+      ERB
+    end
   end
 
   test "specifying configuration with no controller" do

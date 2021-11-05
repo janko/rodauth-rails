@@ -1,7 +1,7 @@
 <% content_for :title, rodauth.sms_request_page_title %>
 
-<%= form_tag rodauth.sms_request_path, method: :post do %>
+<%= form_with url: rodauth.sms_request_path, method: :post do |form| %>
   <div class="form-group mb-3">
-    <%= submit_tag rodauth.sms_request_button, class: "btn btn-primary" %>
+    <%= form.submit rodauth.sms_request_button, class: "btn btn-primary" %>
   </div>
 <% end %>

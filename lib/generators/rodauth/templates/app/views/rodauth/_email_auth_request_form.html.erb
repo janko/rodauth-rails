@@ -1,7 +1,7 @@
-<%= form_tag rodauth.email_auth_request_path, method: :post do %>
-  <%= hidden_field_tag rodauth.login_param, params[rodauth.login_param] %>
+<%= form_with url: rodauth.email_auth_request_path, method: :post do |form| %>
+  <%= form.hidden_field rodauth.login_param, value: params[rodauth.login_param] %>
 
   <div class="form-group mb-3">
-    <%= submit_tag rodauth.email_auth_request_button, class: "btn btn-primary" %>
+    <%= form.submit rodauth.email_auth_request_button, class: "btn btn-primary" %>
   </div>
 <% end %>
