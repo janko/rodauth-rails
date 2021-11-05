@@ -1,4 +1,4 @@
-<%= form_with url: rodauth.login_path, method: :post do |form| %>
+<%= form_with url: rodauth.login_path, method: :post, data: { turbo: false } do |form| %>
   <% if rodauth.skip_login_field_on_login? %>
     <div class="form-group mb-3">
       <%= form.label "login", rodauth.login_label, class: "form-label" %>
