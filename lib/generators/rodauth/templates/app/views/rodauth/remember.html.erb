@@ -3,17 +3,17 @@
 <%= form_with url: rodauth.remember_path, method: :post do |form| %>
   <fieldset class="form-group mb-3">
     <div class="form-check">
-      <%= form.radio_button rodauth.remember_param, rodauth.remember_remember_param_value, false, id: "remember-remember", class: "form-check-input" %>
+      <%= form.radio_button rodauth.remember_param, rodauth.remember_remember_param_value, id: "remember-remember", class: "form-check-input" %>
       <%= form.label "remember-remember", rodauth.remember_remember_label, class: "form-check-label" %>
     </div>
 
     <div class="form-check">
-      <%= form.radio_button rodauth.remember_param, rodauth.remember_forget_param_value, false, id: "remember-forget", class: "form-check-input" %>
+      <%= form.radio_button rodauth.remember_param, rodauth.remember_forget_param_value, id: "remember-forget", class: "form-check-input" %>
       <%= form.label "remember-forget", rodauth.remember_forget_label, class: "form-check-label" %>
     </div>
 
     <div class="form-check">
-      <%= form.radio_button rodauth.remember_param, rodauth.remember_disable_param_value, false, id: "remember-disable", class: "form-check-input" %>
+      <%= form.radio_button rodauth.remember_param, rodauth.remember_disable_param_value, id: "remember-disable", class: "form-check-input" %>
       <%= form.label "remember-disable", rodauth.remember_disable_label, class: "form-check-label" %>
     </div>
   </fieldset>
