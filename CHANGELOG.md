@@ -1,4 +1,4 @@
-## HEAD
+## 0.18.0 (2021-11-05)
 
 * Disable Turbo on the generated login form (@janko)
 
