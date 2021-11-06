@@ -14,17 +14,12 @@ module Rodauth
     @app = nil
     @middleware = true
 
-    LOCK = Mutex.new
-
     class << self
       def rodauth(name = nil, query: nil, form: nil, account: nil, **options)
         auth_class = app.rodauth!(name)
 
-        LOCK.synchronize do
-          unless auth_class.features.include?(:internal_request)
-            auth_class.configure { enable :internal_request }
-            warn "Rodauth::Rails.rodauth requires the internal_request feature to be enabled. For now it was enabled automatically, but this behaviour will be removed in version 1.0."
-          end
+        unless auth_class.features.include?(:internal_request)
+          fail Rodauth::Rails::Error, "Rodauth::Rails.rodauth requires internal_request feature to be enabled"
         end
 
         if query || form

@@ -1,3 +1,7 @@
+## HEAD
+
+* Require internal_request feature to be enabled in `Rodauth::Rails.rodauth` (@janko)
+
 ## 0.18.0 (2021-11-05)
 
 * Disable Turbo on the generated login form (@janko)
