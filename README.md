@@ -632,48 +632,8 @@ rodauth(:admin).login_path #=> "/admin/login"
 ```
 
 You'll likely want to save the information of which account belongs to which
-configuration to the database. One way would be to have a separate table that
-stores account types:
-
-```sh
-$ rails generate migration create_account_types
-```
-```rb
-# db/migrate/*_create_account_types.rb
-class CreateAccountTypes < ActiveRecord::Migration
-  def change
-    create_table :account_types do |t|
-      t.references :account, foreign_key: { on_delete: :cascade }, null: false
-      t.string :type, null: false
-    end
-  end
-end
-```
-```sh
-$ rails db:migrate
-```
-
-Then an entry would be inserted after account creation, and optionally whenever
-Rodauth retrieves accounts you could filter only those belonging to the current
-configuration:
-
-```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure(:admin) do
-    # ...
-    after_create_account do
-      db[:account_types].insert(account_id: account_id, type: "admin")
-    end
-    auth_class_eval do
-      def account_ds(*)
-        super.join(:account_types, account_id: :id).where(type: "admin")
-      end
-    end
-    # ...
-  end
-end
-```
+configuration to the database. See [this guide][account types] on how you can do
+that.
 
 #### Named auth classes
 
@@ -1143,3 +1103,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [internal_request]: http://rodauth.jeremyevans.net/rdoc/files/doc/internal_request_rdoc.html
 [composite_primary_keys]: https://github.com/composite-primary-keys/composite_primary_keys
 [path_class_methods]: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html
+[account types]: https://github.com/janko/rodauth-rails/wiki/Account-Types
