@@ -11,6 +11,7 @@ Useful links:
 * [JSON API guide](https://github.com/janko/rodauth-rails/wiki/JSON-API)
 * [OmniAuth guide](https://github.com/janko/rodauth-rails/wiki/OmniAuth)
 * [Testing guide](https://github.com/janko/rodauth-rails/wiki/Testing)
+* [Custom extensions guide](https://github.com/janko/rodauth-rails/wiki/Custom-Extensions)
 
 Articles:
 
@@ -1007,40 +1008,6 @@ end
 
 For the list of configuration methods provided by Rodauth, see the [feature
 documentation].
-
-## Custom extensions
-
-When developing custom extensions for Rodauth inside your Rails project, it's
-probably better to use plain modules, at least in the beginning, as Rodauth
-feature design doesn't yet work well with Zeitwerk reloading.
-
-Here is an example of an LDAP authentication extension that uses the
-[simple_ldap_authenticator] gem.
-
-```rb
-# app/lib/rodauth_ldap.rb
-module RodauthLdap
-  def require_bcrypt?
-    false
-  end
-
-  def password_match?(password)
-    SimpleLdapAuthenticator.valid?(account[:email], password)
-  end
-end
-```
-```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure do
-    # ...
-    auth_class_eval do
-      include RodauthLdap
-    end
-    # ...
-  end
-end
-```
 
 ## Rodauth defaults
 
