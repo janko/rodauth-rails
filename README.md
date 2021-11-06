@@ -8,9 +8,9 @@ Useful links:
 
 * [Rodauth documentation](http://rodauth.jeremyevans.net/documentation.html)
 * [Rails demo](https://github.com/janko/rodauth-demo-rails)
-* [JSON API guide]: https://github.com/janko/rodauth-rails/wiki/JSON-API
-* [OmniAuth guide]: https://github.com/janko/rodauth-rails/wiki/OmniAuth
-* [Testing guide]: https://github.com/janko/rodauth-rails/wiki/Testing
+* [JSON API guide](https://github.com/janko/rodauth-rails/wiki/JSON-API)
+* [OmniAuth guide](https://github.com/janko/rodauth-rails/wiki/OmniAuth)
+* [Testing guide](https://github.com/janko/rodauth-rails/wiki/Testing)
 
 Articles:
 
