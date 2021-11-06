@@ -1,5 +1,7 @@
 ## HEAD
 
+* Stop loading `pass` plugin in `Rodauth::Rails::App` (@janko)
+
 * Remove deprecated `:query` and `:form` options in `Rodauth::Rails.rodauth` (@janko)
 
 * Require internal_request feature to be enabled in `Rodauth::Rails.rodauth` (@janko)

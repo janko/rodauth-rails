@@ -10,7 +10,6 @@ module Rodauth
 
       plugin :hooks
       plugin :render, layout: false
-      plugin :pass
 
       unless Rodauth::Rails.api_only?
         require "rodauth/rails/app/flash"
