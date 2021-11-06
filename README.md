@@ -8,6 +8,9 @@ Useful links:
 
 * [Rodauth documentation](http://rodauth.jeremyevans.net/documentation.html)
 * [Rails demo](https://github.com/janko/rodauth-demo-rails)
+* [JSON API guide]: https://github.com/janko/rodauth-rails/wiki/JSON-API
+* [OmniAuth guide]: https://github.com/janko/rodauth-rails/wiki/OmniAuth
+* [Testing guide]: https://github.com/janko/rodauth-rails/wiki/Testing
 
 Articles:
 
@@ -971,186 +974,6 @@ connection, using the [sequel-activerecord_connection] gem.
 This means that, from the usage perspective, Sequel can be considered just
 as an implementation detail of Rodauth.
 
-## JSON API
-
-To make Rodauth endpoints accessible via JSON API, enable the [`json`][json]
-feature:
-
-```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure do
-    # ...
-    enable :json
-    only_json? true # accept only JSON requests (optional)
-    # ...
-  end
-end
-```
-
-This will store account session data into the Rails session. If you rather want
-stateless token-based authentication via the `Authorization` header, enable the
-[`jwt`][jwt] feature (which builds on top of the `json` feature) and add the
-[JWT gem] to the Gemfile:
-
-```sh
-$ bundle add jwt
-```
-```rb
-# app/lib/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure do
-    # ...
-    enable :jwt
-    jwt_secret "<YOUR_SECRET_KEY>" # store the JWT secret in a safe place
-    only_json? true # accept only JSON requests (optional)
-    # ...
-  end
-end
-```
-
-The JWT token will be returned after each request to Rodauth routes. To also
-return the JWT token on requests to your app's routes, you can add the
-following code to your base controller:
-
-```rb
-class ApplicationController < ActionController::Base
-  # ...
-  after_action :set_jwt_token
-
-  private
-
-  def set_jwt_token
-    if rodauth.use_jwt? && rodauth.valid_jwt?
-      response.headers["Authorization"] = rodauth.session_jwt
-    end
-  end
-  # ...
-end
-```
-
-## OmniAuth
-
-While Rodauth doesn't yet come with [OmniAuth] integration, we can build one
-ourselves using the existing Rodauth API.
-
-Let's assume we're building Facebook login. We'll start by installing the
-necessary gems, and loading the Facebook OmniAuth strategy:
-
-```rb
-# Gemfile
-gem "omniauth", "~> 2.0"
-gem "omniauth-rails_csrf_protection" # https://github.com/omniauth/omniauth/wiki/Resolving-CVE-2015-9284
-gem "omniauth-facebook"
-```
-```rb
-# config/initializers/omniauth.rb
-Rails.application.config.middleware.use OmniAuth::Builder do
-  provider :facebook, ENV["FACEBOOK_APP_ID"], ENV["FACEBOOK_APP_SECRET"],
-    scope: "email", callback_path: "/auth/facebook/callback"
-end
-```
-
-Since users might potentially want to login with multiple external providers, let's
-create an `account_identities` table that will have a many-to-one relationship
-with the `accounts` table:
-
-```sh
-$ rails generate model AccountIdentity
-```
-```rb
-# db/migrate/*_create_account_identities.rb
-class CreateAccountIdentities < ActiveRecord::Migration
-  def change
-    create_table :account_identities do |t|
-      t.references :account, null: false, foreign_key: { on_delete: :cascade }
-      t.string :provider, null: false
-      t.string :uid, null: false
-      t.jsonb :info, null: false, default: {} # adjust JSON column type for your database
-
-      t.timestamps
-
-      t.index [:provider, :uid], unique: true
-    end
-  end
-end
-```
-```rb
-# app/models/account_identity.rb
-class AcccountIdentity < ApplicationRecord
-  belongs_to :account
-end
-```
-```rb
-# app/models/account.rb
-class Account < ApplicationRecord
-  has_many :identities, class_name: "AccountIdentity"
-end
-```
-
-Next, let's add a POST button pointing to the request URL to our login form:
-
-```erb
-<%= button_to "Login via Facebook", "/auth/facebook",
-  method: :post, data: { turbo: false }, class: "btn btn-link p-0" %>
-```
-
-Finally, let's implement the OmniAuth callback endpoint on our Rodauth
-controller:
-
-```rb
-# config/routes.rb
-Rails.application.routes.draw do
-  # ...
-  get "/auth/:provider/callback", to: "rodauth#omniauth"
-end
-```
-```rb
-# app/controllres/rodauth_controller.rb
-class RodauthController < ApplicationController
-  def omniauth
-    auth = request.env["omniauth.auth"]
-
-    # attempt to find existing identity directly
-    identity = AccountIdentity.find_by(provider: auth["provider"], uid: auth["uid"])
-
-    if identity
-      # update any external info changes
-      identity.update!(info: auth["info"])
-      # set account from identity
-      account = identity.account
-    end
-
-    # attempt to find an existing account by email
-    account ||= Account.find_by(email: auth["info"]["email"])
-
-    # disallow login if account is not verified
-    if account && account.status != rodauth.account_open_status_value
-      redirect_to rodauth.login_path, alert: rodauth.unverified_account_message
-      return
-    end
-
-    # create new account if it doesn't exist
-    unless account
-      account = Account.create!(email: auth["info"]["email"], status: rodauth.account_open_status_value)
-    end
-
-    # create new identity if it doesn't exist
-    unless identity
-      account.identities.create!(provider: auth["provider"], uid: auth["uid"], info: auth["info"])
-    end
-
-    # load the account into the rodauth instance
-    rodauth.account_from_login(account.email)
-
-    rodauth_response do # ensures any `after_action` callbacks get called
-      # sign in the loaded account
-      rodauth.login("omniauth")
-    end
-  end
-end
-```
-
 ## Configuring
 
 The `rails` feature rodauth-rails loads provides the following configuration
@@ -1216,135 +1039,6 @@ class RodauthApp < Rodauth::Rails::App
     end
     # ...
   end
-end
-```
-
-## Testing
-
-System (browser) tests for Rodauth actions could look something like this:
-
-```rb
-# test/system/authentication_test.rb
-require "test_helper"
-
-class AuthenticationTest < ActionDispatch::SystemTestCase
-  include ActiveJob::TestHelper
-  driven_by :rack_test
-
-  test "creating and verifying an account" do
-    create_account
-    assert_match "An email has been sent to you with a link to verify your account", page.text
-
-    verify_account
-    assert_match "Your account has been verified", page.text
-  end
-
-  test "logging in and logging out" do
-    create_account(verify: true)
-
-    logout
-    assert_match "You have been logged out", page.text
-
-    login
-    assert_match "You have been logged in", page.text
-  end
-
-  private
-
-  def create_account(email: "user@example.com", password: "secret", verify: false)
-    visit "/create-account"
-    fill_in "Login", with: email
-    fill_in "Password", with: password
-    fill_in "Confirm Password", with: password
-    click_on "Create Account"
-    verify_account if verify
-  end
-
-  def verify_account
-    perform_enqueued_jobs # run enqueued email deliveries
-    email = ActionMailer::Base.deliveries.last
-    verify_account_link = email.body.to_s[/\S+verify-account\S+/]
-    visit verify_account_link
-    click_on "Verify Account"
-  end
-
-  def login(email: "user@example.com", password: "secret")
-    visit "/login"
-    fill_in "Login", with: email
-    fill_in "Password", with: password
-    click_on "Login"
-  end
-
-  def logout
-    visit "/logout"
-    click_on "Logout"
-  end
-end
-```
-
-While request tests in JSON API mode with JWT tokens could look something like
-this:
-
-```rb
-# test/integration/authentication_test.rb
-require "test_helper"
-
-class AuthenticationTest < ActionDispatch::IntegrationTest
-  test "creating and verifying an account" do
-    create_account
-    assert_response :success
-    assert_match "An email has been sent to you with a link to verify your account", JSON.parse(body)["success"]
-
-    verify_account
-    assert_response :success
-    assert_match "Your account has been verified", JSON.parse(body)["success"]
-  end
-
-  test "logging in and logging out" do
-    create_account(verify: true)
-
-    logout
-    assert_response :success
-    assert_match "You have been logged out", JSON.parse(body)["success"]
-
-    login
-    assert_response :success
-    assert_match "You have been logged in", JSON.parse(body)["success"]
-  end
-
-  private
-
-  def create_account(email: "user@example.com", password: "secret", verify: false)
-    post "/create-account", as: :json, params: { login: email, password: password, "password-confirm": password }
-    verify_account if verify
-  end
-
-  def verify_account
-    perform_enqueued_jobs # run enqueued email deliveries
-    email = ActionMailer::Base.deliveries.last
-    verify_account_key = email.body.to_s[/verify-account\?key=(\S+)/, 1]
-    post "/verify-account", as: :json, params: { key: verify_account_key }
-  end
-
-  def login(email: "user@example.com", password: "secret")
-    post "/login", as: :json, params: { login: email, password: password }
-  end
-
-  def logout
-    post "/logout", as: :json, headers: { "Authorization" => headers["Authorization"] }
-  end
-end
-```
-
-If you're delivering emails in the background, make sure to set Active Job
-queue adapter to `:test` or `:inline`:
-
-```rb
-# config/environments/test.rb
-Rails.application.configure do |config|
-  # ...
-  config.active_job.queue_adapter = :test # or :inline
-  # ...
 end
 ```
 
@@ -1454,7 +1148,6 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [Rodauth]: https://github.com/jeremyevans/rodauth
 [Sequel]: https://github.com/jeremyevans/sequel
 [feature documentation]: http://rodauth.jeremyevans.net/documentation.html
-[JWT gem]: https://github.com/jwt/ruby-jwt
 [Bootstrap]: https://getbootstrap.com/
 [Roda]: http://roda.jeremyevans.net/
 [HMAC]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-HMAC
@@ -1463,7 +1156,6 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [sequel-activerecord_connection]: https://github.com/janko/sequel-activerecord_connection
 [plugin options]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-Plugin+Options
 [hmac]: http://rodauth.jeremyevans.net/rdoc/files/README_rdoc.html#label-HMAC
-[OmniAuth]: https://github.com/omniauth/omniauth
 [otp]: http://rodauth.jeremyevans.net/rdoc/files/doc/otp_rdoc.html
 [sms_codes]: http://rodauth.jeremyevans.net/rdoc/files/doc/sms_codes_rdoc.html
 [recovery_codes]: http://rodauth.jeremyevans.net/rdoc/files/doc/recovery_codes_rdoc.html
