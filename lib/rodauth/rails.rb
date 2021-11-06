@@ -22,11 +22,6 @@ module Rodauth
           fail Rodauth::Rails::Error, "Rodauth::Rails.rodauth requires internal_request feature to be enabled"
         end
 
-        if query || form
-          warn "The :query and :form keyword arguments for Rodauth::Rails.rodauth have been deprecated. Please use the :params argument supported by internal_request feature instead."
-          options[:params] = query || form
-        end
-
         if account
           options[:account_id] = account.id
         end

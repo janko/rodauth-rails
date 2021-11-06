@@ -9,17 +9,6 @@ class RodauthTest < UnitTest
     assert_equal "https://example.com/login", rodauth.login_url
   end
 
-  test "allows settings query and form params" do
-    rodauth = Rodauth::Rails.rodauth
-    assert_nil rodauth.param_or_nil("foo")
-
-    capture_io { rodauth = Rodauth::Rails.rodauth(query: { "foo" => { "bar" => "baz" } }) }
-    assert_equal "baz", rodauth.raw_param("foo")["bar"]
-
-    capture_io { rodauth = Rodauth::Rails.rodauth(form: { "foo" => { "bar" => "baz" } }) }
-    assert_equal "baz", rodauth.raw_param("foo")["bar"]
-  end
-
   test "allows setting Active Record account" do
     account = Account.create!(email: "user@example.com")
 

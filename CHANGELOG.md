@@ -1,5 +1,7 @@
 ## HEAD
 
+* Remove deprecated `:query` and `:form` options in `Rodauth::Rails.rodauth` (@janko)
+
 * Require internal_request feature to be enabled in `Rodauth::Rails.rodauth` (@janko)
 
 ## 0.18.0 (2021-11-05)
