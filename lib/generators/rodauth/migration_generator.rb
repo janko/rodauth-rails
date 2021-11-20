@@ -17,7 +17,7 @@ module Rodauth
           default: %w[]
 
         def create_rodauth_migration
-          return unless defined?(ActiveRecord::Base)
+          return unless defined?(ActiveRecord::Railtie)
           return if features.empty?
 
           migration_template "db/migrate/create_rodauth.rb", "create_rodauth_#{features.join("_")}.rb"

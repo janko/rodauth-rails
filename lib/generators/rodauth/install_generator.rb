@@ -26,7 +26,7 @@ module Rodauth
         class_option :jwt, type: :boolean, desc: "Configure JWT support"
 
         def create_rodauth_migration
-          return unless defined?(ActiveRecord::Base)
+          return unless defined?(ActiveRecord::Railtie)
 
           migration_template "db/migrate/create_rodauth.rb"
         end
@@ -36,7 +36,7 @@ module Rodauth
         end
 
         def create_sequel_initializer
-          return unless defined?(ActiveRecord::Base)
+          return unless defined?(ActiveRecord::Railtie)
           return if defined?(Sequel) && !Sequel::DATABASES.empty?
 
           template "config/initializers/sequel.rb"
@@ -51,7 +51,7 @@ module Rodauth
         end
 
         def create_account_model
-          return unless defined?(ActiveRecord::Base)
+          return unless defined?(ActiveRecord::Railtie)
 
           template "app/models/account.rb"
         end

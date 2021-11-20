@@ -1,5 +1,7 @@
 ## HEAD
 
+* Skip Active Record files in `rodauth:install` if `ActiveRecord::Railtie` is not defined (@janko)
+
 * Stop loading `pass` plugin in `Rodauth::Rails::App` (@janko)
 
 * Remove deprecated `:query` and `:form` options in `Rodauth::Rails.rodauth` (@janko)
