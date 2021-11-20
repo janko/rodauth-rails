@@ -32,7 +32,7 @@ module Rodauth
           rescue ActiveRecord::RecordNotFound
             not_found.call
           end
-        elsif model < Sequel::Model
+        elsif defined?(Sequel::Model) && model < Sequel::Model
           begin
             model.with_pk!(id)
           rescue Sequel::NoMatchingRow
