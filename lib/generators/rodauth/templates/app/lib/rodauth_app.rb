@@ -4,8 +4,8 @@ class RodauthApp < Rodauth::Rails::App
     enable :create_account, :verify_account, :verify_account_grace_period,
       :login, :logout<%= ", :remember" unless jwt? %><%= ", :json" if json? %><%= ", :jwt" if jwt? %>,
       :reset_password, :change_password, :change_password_notify,
-      :change_login, :verify_login_change,
-      :close_account
+      :change_login, :verify_login_change, :close_account,
+      :path_class_methods
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -60,22 +60,22 @@ class RodauthApp < Rodauth::Rails::App
     # ==> Emails
     # Use a custom mailer for delivering authentication emails.
     create_reset_password_email do
-      RodauthMailer.reset_password(email_to, reset_password_email_link)
+      RodauthMailer.reset_password(account_id, reset_password_key_value)
     end
     create_verify_account_email do
-      RodauthMailer.verify_account(email_to, verify_account_email_link)
+      RodauthMailer.verify_account(account_id, verify_account_key_value)
     end
-    create_verify_login_change_email do |login|
-      RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_email_link)
+    create_verify_login_change_email do |_login|
+      RodauthMailer.verify_login_change(account_id, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_key_value)
     end
     create_password_changed_email do
-      RodauthMailer.password_changed(email_to)
+      RodauthMailer.password_changed(account_id)
     end
     # create_email_auth_email do
-    #   RodauthMailer.email_auth(email_to, email_auth_email_link)
+    #   RodauthMailer.email_auth(account_id, email_auth_key_value)
     # end
     # create_unlock_account_email do
-    #   RodauthMailer.unlock_account(email_to, unlock_account_email_link)
+    #   RodauthMailer.unlock_account(account_id, unlock_account_key_value)
     # end
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits

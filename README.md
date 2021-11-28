@@ -344,22 +344,22 @@ flow to use it.
 ```rb
 # app/mailers/rodauth_mailer.rb
 class RodauthMailer < ApplicationMailer
-  def verify_account(recipient, email_link)
+  def verify_account(account_id, key)
     # ...
   end
-  def reset_password(recipient, email_link)
+  def reset_password(account_id, key)
     # ...
   end
-  def verify_login_change(recipient, old_login, new_login, email_link)
+  def verify_login_change(account_id, old_login, new_login, key)
     # ...
   end
-  def password_changed(recipient)
+  def password_changed(account_id)
     # ...
   end
-  # def email_auth(recipient, email_link)
+  # def email_auth(account_id, key)
   # ...
   # end
-  # def unlock_account(recipient, email_link)
+  # def unlock_account(account_id, key)
   # ...
   # end
 end
@@ -370,22 +370,22 @@ class RodauthApp < Rodauth::Rails::App
   configure do
     # ...
     create_reset_password_email do
-      RodauthMailer.reset_password(email_to, reset_password_email_link)
+      RodauthMailer.reset_password(account_id, reset_password_key_value)
     end
     create_verify_account_email do
-      RodauthMailer.verify_account(email_to, verify_account_email_link)
+      RodauthMailer.verify_account(account_id, verify_account_key_value)
     end
     create_verify_login_change_email do |login|
-      RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_email_link)
+      RodauthMailer.verify_login_change(login, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_key_value)
     end
     create_password_changed_email do
-      RodauthMailer.password_changed(email_to)
+      RodauthMailer.password_changed(account_id)
     end
     # create_email_auth_email do
-    #   RodauthMailer.email_auth(email_to, email_auth_email_link)
+    #   RodauthMailer.email_auth(account_id, email_auth_key_value)
     # end
     # create_unlock_account_email do
-    #   RodauthMailer.unlock_account(email_to, unlock_account_email_link)
+    #   RodauthMailer.unlock_account(account_id, unlock_account_key_value)
     # end
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits
@@ -426,7 +426,7 @@ class RodauthApp < Rodauth::Rails::App
     # ...
     # use `#send_*_email` method to be able to immediately enqueue email delivery
     send_reset_password_email do
-      enqueue_email(:reset_password, email_to, reset_password_email_link)
+      enqueue_email(:reset_password, account_id, reset_password_key_value)
     end
     # ...
     auth_class_eval do

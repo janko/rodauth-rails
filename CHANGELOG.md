@@ -1,5 +1,9 @@
 ## HEAD
 
+* Enable `path_class_methods` feature by default in generated configuration (@janko)
+
+* Modify generated mailer integration to generate URLs according to `default_url_options` (@janko)
+
 * Skip Active Record files in `rodauth:install` if `ActiveRecord::Railtie` is not defined (@janko)
 
 * Stop loading `pass` plugin in `Rodauth::Rails::App` (@janko)
