@@ -16,11 +16,21 @@ module Rodauth
 
         def migration_content
           migration_features
-            .select { |feature| File.exist?("#{__dir__}/migration/#{feature}.erb") }
-            .map { |feature| File.read("#{__dir__}/migration/#{feature}.erb") }
+            .select { |feature| File.exist?(migration_chunk(feature)) }
+            .map { |feature| File.read(migration_chunk(feature)) }
             .map { |content| erb_eval(content) }
             .join("\n")
             .indent(4)
+        end
+
+        def migration_chunk(feature)
+          if defined?(ActiveRecord::Railtie)
+            "#{__dir__}/migration/active_record/#{feature}.erb"
+          elsif defined?(Sequel)
+            "#{__dir__}/migration/sequel/#{feature}.erb"
+          else
+            fail Rodauth::Rails::Error, "unsupported database library (must be Active Record or Sequel)"
+          end
         end
 
         def activerecord_adapter
@@ -31,6 +41,10 @@ module Rodauth
           end
         end
 
+        def db
+          Sequel::DATABASES.first or fail Rodauth::Rails::Error, "missing Sequel database connection"
+        end
+
         def migration_version
           return unless ActiveRecord.version >= Gem::Version.new("5.0")
 
@@ -38,7 +52,11 @@ module Rodauth
         end
 
         def db_migrate_path
-          return "db/migrate" unless ActiveRecord.version >= Gem::Version.new("5.0")
+          if defined?(ActiveRecord::Railtie) && ActiveRecord.version < Gem::Version.new("5.0") || defined?(Sequel)
+            return "db/migrate"
+          else
+            super
+          end
 
           super
         end

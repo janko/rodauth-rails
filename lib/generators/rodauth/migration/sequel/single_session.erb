@@ -1,0 +1,5 @@
+# Used by the single session feature
+create_table :account_session_keys do
+  foreign_key :id, :accounts, primary_key: true, type: :Bignum
+  String :key, null: false
+end
