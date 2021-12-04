@@ -16,15 +16,22 @@ module Rodauth
           desc: "Rodauth features to create tables for (otp, sms_codes, single_session, account_expiration etc.)",
           default: %w[]
 
+        class_option :name, optional: true, type: :string,
+          desc: "Name of the generated migration file"
+
         def create_rodauth_migration
           return unless defined?(ActiveRecord::Railtie)
           return if features.empty?
 
-          migration_template "db/migrate/create_rodauth.rb", "create_rodauth_#{features.join("_")}.rb"
+          migration_template "db/migrate/create_rodauth.rb", "#{migration_name}.rb"
         end
 
         def migration_features
           features
+        end
+
+        def migration_name
+          options[:name] || "create_rodauth_#{features.join("_")}"
         end
       end
     end

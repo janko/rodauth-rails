@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add `--name` option to `rodauth:migration` generator (@janko)
+
 * Disable Turbo in all built-in and generated views (@janko)
 
 * Enable `path_class_methods` feature by default in generated configuration (@janko)

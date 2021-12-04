@@ -471,6 +471,20 @@ class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration
 end
 ```
 
+You can change the default migration name:
+
+```sh
+$ rails generate rodauth:migration email_auth --name create_account_email_auth_keys
+```
+```rb
+# db/migration/*_create_account_email_auth_keys
+class CreateAccountEmailAuthKeys < ActiveRecord::Migration
+  def change
+    create_table :account_email_auth_keys do |t| ... end
+  end
+end
+```
+
 ### Model
 
 The `Rodauth::Rails::Model` mixin can be included into the account model, which
