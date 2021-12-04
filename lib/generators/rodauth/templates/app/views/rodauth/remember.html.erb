@@ -1,6 +1,6 @@
 <% content_for :title, rodauth.remember_page_title %>
 
-<%= form_with url: rodauth.remember_path, method: :post do |form| %>
+<%= form_with url: rodauth.remember_path, method: :post, data: { turbo: false } do |form| %>
   <fieldset class="form-group mb-3">
     <div class="form-check">
       <%= form.radio_button rodauth.remember_param, rodauth.remember_remember_param_value, id: "remember-remember", class: "form-check-input" %>

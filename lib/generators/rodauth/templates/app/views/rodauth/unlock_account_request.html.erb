@@ -1,6 +1,6 @@
 <% content_for :title, rodauth.unlock_account_request_page_title %>
 
-<%= form_with url: rodauth.unlock_account_request_path, method: :post do |form| %>
+<%= form_with url: rodauth.unlock_account_request_path, method: :post, data: { turbo: false } do |form| %>
   <%= form.hidden_field rodauth.login_param, value: params[rodauth.login_param] %>
 
   <%== rodauth.unlock_account_request_explanatory_text %>

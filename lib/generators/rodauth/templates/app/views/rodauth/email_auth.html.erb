@@ -1,6 +1,6 @@
 <% content_for :title, rodauth.email_auth_page_title %>
 
-<%= form_with url: rodauth.email_auth_path, method: :post do |form| %>
+<%= form_with url: rodauth.email_auth_path, method: :post, data: { turbo: false } do |form| %>
   <div class="form-group mb-3">
     <%= form.submit rodauth.login_button, class: "btn btn-primary" %>
   </div>

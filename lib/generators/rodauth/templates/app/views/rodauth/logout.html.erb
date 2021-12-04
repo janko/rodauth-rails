@@ -1,6 +1,6 @@
 <% content_for :title, rodauth.logout_page_title %>
 
-<%= form_with url: rodauth.logout_path, method: :post do |form| %>
+<%= form_with url: rodauth.logout_path, method: :post, data: { turbo: false } do |form| %>
   <% if rodauth.features.include?(:active_sessions) %>
     <div class="form-group mb-3">
       <div class="form-check">

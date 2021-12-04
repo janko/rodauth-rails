@@ -42,6 +42,14 @@ module Rodauth
           controller.formats = rails_request.formats.map(&:ref).compact
           controller
         end
+
+        # Not all Rodauth actions are Turbo-compatible (some form submissions
+        # render 200 HTML responses), so we disable Turbo on all Rodauth forms.
+        def _view(meth, *)
+          html = super
+          html = html.gsub(/<form(.+)>/, '<form\1 data-turbo="false">') if meth == :view
+          html
+        end
       end
     end
   end

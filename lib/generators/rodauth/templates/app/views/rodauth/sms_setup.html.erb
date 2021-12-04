@@ -1,6 +1,6 @@
 <% content_for :title, rodauth.sms_setup_page_title %>
 
-<%= form_with url: rodauth.sms_setup_path, method: :post do |form| %>
+<%= form_with url: rodauth.sms_setup_path, method: :post, data: { turbo: false } do |form| %>
   <% if rodauth.two_factor_modifications_require_password? %>
     <div class="form-group mb-3">
       <%= form.label "password", rodauth.password_label, class: "form-label" %>

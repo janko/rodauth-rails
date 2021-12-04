@@ -1,5 +1,7 @@
 ## HEAD
 
+* Disable Turbo in all built-in and generated views (@janko)
+
 * Enable `path_class_methods` feature by default in generated configuration (@janko)
 
 * Modify generated mailer integration to generate URLs according to `default_url_options` (@janko)

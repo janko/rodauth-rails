@@ -335,6 +335,15 @@ class RodauthController < ApplicationController
 end
 ```
 
+#### Turbo
+
+[Turbo] has been disabled by default on all built-in and generated view
+templates, because some Rodauth actions (multi-phase login, adding recovery
+codes) aren't Turbo-compatible, as they return 200 responses on POST requests.
+
+That being said, most of Rodauth *is* Turbo-compatible, so feel free to enable
+Turbo for actions where you want to use it.
+
 ### Mailer
 
 The install generator will create `RodauthMailer` with default email templates,
@@ -1104,3 +1113,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [composite_primary_keys]: https://github.com/composite-primary-keys/composite_primary_keys
 [path_class_methods]: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html
 [account types]: https://github.com/janko/rodauth-rails/wiki/Account-Types
+[Turbo]: https://turbo.hotwired.dev/

@@ -1,6 +1,6 @@
 <% content_for :title, rodauth.verify_login_change_page_title %>
 
-<%= form_with url: rodauth.verify_login_change_path, method: :post do |form| %>
+<%= form_with url: rodauth.verify_login_change_path, method: :post, data: { turbo: false } do |form| %>
   <div class="form-group mb-3">
     <%= form.submit rodauth.verify_login_change_button, class: "btn btn-primary" %>
   </div>

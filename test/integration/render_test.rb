@@ -67,6 +67,14 @@ class RenderTest < IntegrationTest
     assert_equal 1, page.html.scan(%(<title>Rodauth::Rails Test</title>)).count
   end
 
+  test "disabling turbo for built-in templates" do
+    visit "/verify-account-resend"
+    assert_includes page.html, %(<form action="/verify-account-resend" method="post" class="rodauth" role="form" id="verify-account-resend-form" data-turbo="false">)
+
+    visit "/login"
+    assert_includes page.html, %(<form method="post" class="rodauth" role="form" id="login-form" data-turbo="false">)
+  end
+
   test "rendering built-in templates with alternative formats" do
     Mime::Type.register "text/vnd.turbo-stream.html", :turbo_stream
 

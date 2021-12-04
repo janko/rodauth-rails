@@ -1,6 +1,6 @@
 <% content_for :title, rodauth.recovery_auth_page_title %>
 
-<%= form_with url: rodauth.recovery_auth_path, method: :post do |form| %>
+<%= form_with url: rodauth.recovery_auth_path, method: :post, data: { turbo: false } do |form| %>
   <div class="form-group mb-3">
     <%= form.label "recovery-code", rodauth.recovery_codes_label, class: "form-label" %>
     <%= form.text_field rodauth.recovery_codes_param, value: "", id: "recovery-code", autocomplete: "off", required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.recovery_codes_param)}", aria: ({ invalid: true, describedby: "recovery-code_error_message" } if rodauth.field_error(rodauth.recovery_codes_param)) %>

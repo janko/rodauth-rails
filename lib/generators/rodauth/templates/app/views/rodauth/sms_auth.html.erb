@@ -1,6 +1,6 @@
 <% content_for :title, rodauth.sms_auth_page_title %>
 
-<%= form_with url: rodauth.sms_auth_path, method: :post do |form| %>
+<%= form_with url: rodauth.sms_auth_path, method: :post, data: { turbo: false } do |form| %>
   <div class="form-group mb-3">
     <%= form.label "sms-code", rodauth.sms_code_label, class: "form-label" %>
     <div class="row">

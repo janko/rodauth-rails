@@ -1,4 +1,4 @@
-<%= form_with url: rodauth.email_auth_request_path, method: :post do |form| %>
+<%= form_with url: rodauth.email_auth_request_path, method: :post, data: { turbo: false } do |form| %>
   <%= form.hidden_field rodauth.login_param, value: params[rodauth.login_param] %>
 
   <div class="form-group mb-3">
