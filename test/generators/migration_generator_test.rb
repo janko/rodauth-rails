@@ -22,6 +22,12 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
     assert_migration migration_file, /t\.column :id, :bigint/
   end
 
+  test "migration name" do
+    run_generator %w[email_auth --name create_account_email_auth_keys]
+
+    assert_migration "db/migrate/create_account_email_auth_keys.rb", /class CreateAccountEmailAuthKeys/
+  end
+
   test "migration uuid" do
     Rails.application.config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
