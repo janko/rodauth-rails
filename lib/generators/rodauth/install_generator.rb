@@ -10,6 +10,20 @@ module Rodauth
         include ::ActiveRecord::Generators::Migration
         include MigrationHelpers
 
+        if RUBY_ENGINE == "jruby"
+          SEQUEL_ADAPTERS = {
+            "sqlite3"         => "sqlite",
+            "oracle_enhanced" => "oracle", # https://github.com/rsim/oracle-enhanced
+            "sqlserver"       => "mssql",
+          }
+        else
+          SEQUEL_ADAPTERS = {
+            "sqlite3"         => "sqlite",
+            "oracle_enhanced" => "oracle", # https://github.com/rsim/oracle-enhanced
+            "sqlserver"       => "tinytds", # https://github.com/rails-sqlserver/activerecord-sqlserver-adapter
+          }
+        end
+
         MAILER_VIEWS = %w[
           email_auth
           password_changed
@@ -89,31 +103,9 @@ module Rodauth
         end
 
         def sequel_uri_scheme
-          if RUBY_ENGINE == "jruby"
-            "jdbc:#{sequel_jdbc_subadapter}"
-          else
-            sequel_adapter
-          end
-        end
-
-        def sequel_adapter
-          case activerecord_adapter
-          when "sqlite3"         then "sqlite"
-          when "oracle_enhanced" then "oracle" # https://github.com/rsim/oracle-enhanced
-          when "sqlserver"       then "tinytds" # https://github.com/rails-sqlserver/activerecord-sqlserver-adapter
-          else
-            activerecord_adapter
-          end
-        end
-
-        def sequel_jdbc_subadapter
-          case activerecord_adapter
-          when "sqlite3"         then "sqlite"
-          when "oracle_enhanced" then "oracle" # https://github.com/rsim/oracle-enhanced
-          when "sqlserver"       then "mssql"
-          else
-            activerecord_adapter
-          end
+          scheme = SEQUEL_ADAPTERS[activerecord_adapter] || activerecord_adapter
+          scheme = "jdbc:#{sequel_adapter}" if RUBY_ENGINE == "jruby"
+          scheme
         end
       end
     end
