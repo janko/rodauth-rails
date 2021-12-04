@@ -43,7 +43,7 @@ module Rodauth
         end
 
         def create_rodauth_app
-          template "app/lib/rodauth_app.rb"
+          template "app/misc/rodauth_app.rb"
         end
 
         def create_rodauth_controller

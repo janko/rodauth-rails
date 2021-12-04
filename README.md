@@ -169,7 +169,7 @@ the configured table name. If that fails, you can set the account model
 manually:
 
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure do
     # ...
@@ -186,7 +186,7 @@ in your Rodauth app's routing block, which helps keep the authentication logic
 encapsulated:
 
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   # ...
   route do |r|
@@ -374,7 +374,7 @@ class RodauthMailer < ApplicationMailer
 end
 ```
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure do
     # ...
@@ -429,7 +429,7 @@ class RodauthMailerWorker
 end
 ```
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure do
     # ...
@@ -619,7 +619,7 @@ If you need to handle multiple types of accounts that require different
 authentication logic, you can create additional configurations for them:
 
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   # primary configuration
   configure do
@@ -666,7 +666,7 @@ However, you can also define the auth classes explicitly, by creating
 subclasses of `Rodauth::Rails::Auth`:
 
 ```rb
-# app/lib/rodauth_main.rb
+# app/misc/rodauth_main.rb
 class RodauthMain < Rodauth::Rails::Auth
   configure do
     # ... main configuration ...
@@ -674,7 +674,7 @@ class RodauthMain < Rodauth::Rails::Auth
 end
 ```
 ```rb
-# app/lib/rodauth_admin.rb
+# app/misc/rodauth_admin.rb
 class RodauthAdmin < Rodauth::Rails::Auth
   configure do
     # ...
@@ -685,7 +685,7 @@ class RodauthAdmin < Rodauth::Rails::Auth
 end
 ```
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure RodauthMain
   configure RodauthAdmin, :admin
@@ -698,7 +698,7 @@ improve introspection and error messages. You can also use inheritance to share
 common settings:
 
 ```rb
-# app/lib/rodauth_base.rb
+# app/misc/rodauth_base.rb
 class RodauthBase < Rodauth::Rails::Auth
   # common settings that can be shared between multiple configurations
   configure do
@@ -710,7 +710,7 @@ class RodauthBase < Rodauth::Rails::Auth
 end
 ```
 ```rb
-# app/lib/rodauth_main.rb
+# app/misc/rodauth_main.rb
 class RodauthMain < RodauthBase # inherit common settings
   configure do
     # ... customize main ...
@@ -718,7 +718,7 @@ class RodauthMain < RodauthBase # inherit common settings
 end
 ```
 ```rb
-# app/lib/rodauth_admin.rb
+# app/misc/rodauth_admin.rb
 class RodauthAdmin < RodauthBase # inherit common settings
   configure do
     # ... customize admin ...
@@ -730,7 +730,7 @@ Another benefit of explicit classes is that you can define custom methods
 directly at the class level instead of inside an `auth_class_eval`:
 
 ```rb
-# app/lib/rodauth_admin.rb
+# app/misc/rodauth_admin.rb
 class RodauthAdmin < Rodauth::Rails::Auth
   configure do
     # ...
@@ -766,7 +766,7 @@ class ApplicationController < ActionController::Base
 end
 ```
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure do
     after_create_account do
@@ -783,7 +783,7 @@ to perform authentication operations outside of request context, Rodauth ships
 with the [internal_request] feature just for that.
 
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure do
     enable :internal_request
@@ -807,7 +807,7 @@ For generating authentication URLs outside of a request use the
 [path_class_methods] plugin:
 
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure do
     enable :path_class_methods
@@ -830,7 +830,7 @@ use `Rodauth::Rails.rodauth` to retrieve the Rodauth instance used by the
 internal_request feature:
 
 ```rb
-# app/lib/rodauth_app.rb
+# app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   configure do
     enable :internal_request # this is required

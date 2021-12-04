@@ -1,5 +1,7 @@
 ## HEAD
 
+* Generate `rodauth_app.rb` in `app/misc` directory (@janko)
+
 * Add `--name` option to `rodauth:migration` generator (@janko)
 
 * Disable Turbo in all built-in and generated views (@janko)
