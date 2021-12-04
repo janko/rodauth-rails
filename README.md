@@ -78,9 +78,9 @@ $ rails generate rodauth:install --jwt # token authentication via the "Authoriza
 $ bundle add jwt
 ```
 
-This generator will create a Rodauth app with common authentication features
-enabled, a database migration with tables required by those features, a mailer
-with default templates, and a few other files.
+This generator will create a Rodauth app and configuration with common
+authentication features enabled, a database migration with tables required by
+those features, a mailer with default templates, and a few other files.
 
 Feel free to remove any features you don't need, along with their corresponding
 tables. Afterwards, run the migration:
@@ -135,7 +135,8 @@ Inside Rodauth configuration and the `route` block you can access Rails route
 helpers through `#rails_routes`:
 
 ```rb
-class RodauthApp < Rodauth::Rails::App
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
   configure do
     # ...
     login_redirect { rails_routes.activity_path }
@@ -169,8 +170,8 @@ the configured table name. If that fails, you can set the account model
 manually:
 
 ```rb
-# app/misc/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
   configure do
     # ...
     rails_account_model Authentication::Account # custom model name
@@ -315,6 +316,7 @@ To use different layouts for different Rodauth views, you can compare the
 request path in the layout method:
 
 ```rb
+# app/controllers/rodauth_controller.rb
 class RodauthController < ApplicationController
   layout :rodauth_layout
 
@@ -374,8 +376,8 @@ class RodauthMailer < ApplicationMailer
 end
 ```
 ```rb
-# app/misc/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
   configure do
     # ...
     create_reset_password_email do
@@ -429,8 +431,8 @@ class RodauthMailerWorker
 end
 ```
 ```rb
-# app/misc/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
   configure do
     # ...
     # use `#send_*_email` method to be able to immediately enqueue email delivery
@@ -438,15 +440,15 @@ class RodauthApp < Rodauth::Rails::App
       enqueue_email(:reset_password, account_id, reset_password_key_value)
     end
     # ...
-    auth_class_eval do
-      # custom method for enqueuing email delivery using our worker
-      def enqueue_email(name, *args)
-        db.after_commit do
-          RodauthMailerWorker.perform_async(name, *args)
-        end
-      end
+  end
+
+  private
+
+  # define custom method for enqueuing email delivery using our worker
+  def enqueue_email(name, *args)
+    db.after_commit do
+      RodauthMailerWorker.perform_async(name, *args)
     end
-    # ...
   end
 end
 ```
@@ -616,24 +618,18 @@ need to add the [composite_primary_keys] gem to your Gemfile.
 ### Multiple configurations
 
 If you need to handle multiple types of accounts that require different
-authentication logic, you can create additional configurations for them:
+authentication logic, you can create new configurations for them. This
+is done by creating new `Rodauth::Rails::Auth` subclasses, and registering
+them under a name.
 
 ```rb
 # app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
   # primary configuration
-  configure do
-    # ...
-  end
+  configure RodauthMain
 
-  # alternative configuration
-  configure(:admin) do
-    # ... enable features ...
-    prefix "/admin"
-    session_key_prefix "admin_"
-    remember_cookie_key "_admin_remember" # if using remember feature
-    # ...
-  end
+  # secondary configuration
+  configure RodauthAdmin, :admin
 
   route do |r|
     r.rodauth
@@ -647,6 +643,26 @@ class RodauthApp < Rodauth::Rails::App
   end
 end
 ```
+```rb
+# app/misc/rodauth_admin.rb
+class RodauthAdmin < Rodauth::Rails::Auth
+  configure do
+    # ... enable features ...
+    prefix "/admin"
+    session_key_prefix "admin_"
+    remember_cookie_key "_admin_remember" # if using remember feature
+    # ...
+
+    # search views in `app/views/admin/rodauth` directory
+    rails_controller { Admin::RodauthController }
+  end
+end
+```
+```rb
+# app/controllers/admin/rodauth_controller.rb
+class Admin::RodauthController < ApplicationController
+end
+```
 
 Then in your application you can reference the secondary Rodauth instance:
 
@@ -658,49 +674,15 @@ You'll likely want to save the information of which account belongs to which
 configuration to the database. See [this guide][account types] on how you can do
 that.
 
-#### Named auth classes
+#### Sharing configuration
 
-A `configure` block inside `Rodauth::Rails::App` will internally create an
-anonymous `Rodauth::Auth` subclass, and register it under the given name.
-However, you can also define the auth classes explicitly, by creating
-subclasses of `Rodauth::Rails::Auth`:
-
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    # ... main configuration ...
-  end
-end
-```
-```rb
-# app/misc/rodauth_admin.rb
-class RodauthAdmin < Rodauth::Rails::Auth
-  configure do
-    # ...
-    prefix "/admin"
-    session_key_prefix "admin_"
-    # ...
-  end
-end
-```
-```rb
-# app/misc/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  configure RodauthMain
-  configure RodauthAdmin, :admin
-  # ...
-end
-```
-
-This allows having each configuration in a dedicated file, and named constants
-improve introspection and error messages. You can also use inheritance to share
-common settings:
+If there are common settings that you want to share between Rodauth
+configurations, you can do so via inheritance:
 
 ```rb
 # app/misc/rodauth_base.rb
 class RodauthBase < Rodauth::Rails::Auth
-  # common settings that can be shared between multiple configurations
+  # common settings that are shared between multiple configurations
   configure do
     enable :login, :logout
     login_return_to_requested_location? true
@@ -726,30 +708,6 @@ class RodauthAdmin < RodauthBase # inherit common settings
 end
 ```
 
-Another benefit of explicit classes is that you can define custom methods
-directly at the class level instead of inside an `auth_class_eval`:
-
-```rb
-# app/misc/rodauth_admin.rb
-class RodauthAdmin < Rodauth::Rails::Auth
-  configure do
-    # ...
-  end
-
-  def superadmin?
-    Role.where(account_id: session_id, type: "superadmin").any?
-  end
-end
-```
-```rb
-# config/routes.rb
-Rails.application.routes.draw do
-  constraints Rodauth::Rails.authenticated(:admin) { |rodauth| rodauth.superadmin? } do
-    mount Sidekiq::Web => "sidekiq"
-  end
-end
-```
-
 ### Calling controller methods
 
 When using Rodauth before/after hooks or generally overriding your Rodauth
@@ -766,8 +724,8 @@ class ApplicationController < ActionController::Base
 end
 ```
 ```rb
-# app/misc/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
   configure do
     after_create_account do
       rails_controller_eval { setup_tracking(account_id) }
@@ -783,20 +741,17 @@ to perform authentication operations outside of request context, Rodauth ships
 with the [internal_request] feature just for that.
 
 ```rb
-# app/misc/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
   configure do
     enable :internal_request
   end
 end
 ```
 ```rb
-# main configuration
-RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
-RodauthApp.rodauth.verify_account(account_login: "user@example.com")
-
-# secondary configuration
-RodauthApp.rodauth(:admin).close_account(account_login: "admin@example.com")
+RodauthMain.create_account(login: "user@example.com", password: "secret")
+RodauthMain.verify_account(account_login: "user@example.com")
+RodauthMain.close_account(account_login: "user@example.com")
 ```
 
 The rodauth-rails gem additionally updates the internal rack env hash with your
@@ -807,20 +762,18 @@ For generating authentication URLs outside of a request use the
 [path_class_methods] plugin:
 
 ```rb
-# app/misc/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
   configure do
     enable :path_class_methods
+    create_account_route "register"
   end
 end
 ```
 ```rb
-# main configuration
-RodauthApp.rodauth.create_account_path
-RodauthApp.rodauth.verify_account_url(key: "abc123")
-
-# secondary configuration
-RodauthApp.rodauth(:admin).close_account_path
+RodauthMain.create_account_path # => "/register"
+RodauthMain.verify_account_url(key: "abc123") #=> "https://example.com/verify-account?key=abc123"
+RodauthMain.close_account_path(foo: "bar") #=> "/close-account?foo=bar"
 ```
 
 #### Calling instance methods
@@ -830,8 +783,8 @@ use `Rodauth::Rails.rodauth` to retrieve the Rodauth instance used by the
 internal_request feature:
 
 ```rb
-# app/misc/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
   configure do
     enable :internal_request # this is required
   end

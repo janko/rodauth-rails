@@ -1,5 +1,7 @@
 ## HEAD
 
+* Generate named auth classes in `rodauth:install` generator (@janko)
+
 * Generate `rodauth_app.rb` in `app/misc` directory (@janko)
 
 * Add `--name` option to `rodauth:migration` generator (@janko)
