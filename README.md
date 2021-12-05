@@ -131,20 +131,6 @@ These routes are fully functional, feel free to visit them and interact with the
 pages. The templates that ship with Rodauth aim to provide a complete
 authentication experience, and the forms use [Bootstrap] markup.
 
-Inside Rodauth configuration and the `route` block you can access Rails route
-helpers through `#rails_routes`:
-
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    # ...
-    login_redirect { rails_routes.activity_path }
-    # ...
-  end
-end
-```
-
 ### Current account
 
 The `#current_account` method is defined in controllers and views, which
@@ -164,6 +150,8 @@ configurations:
 ```rb
 current_account(:admin)
 ```
+
+#### Custom account model
 
 The `#current_account` method will try to infer the account model class from
 the configured table name. If that fails, you can set the account model
@@ -414,44 +402,8 @@ deliveries. However, if you want to send emails synchronously, you can modify
 the configuration to call `#deliver_now` instead.
 
 If you're using a background processing library without an Active Job adapter,
-or a 3rd-party service for sending transactional emails, this two-phase API
-might not be suitable. In this case, instead of overriding `#create_*_email`
-and `#send_email`, override the `#send_*_email` methods instead, which are
-required to send the email immediately. For example:
-
-```rb
-# app/workers/rodauth_mailer_worker.rb
-class RodauthMailerWorker
-  include Sidekiq::Worker
-
-  def perform(name, *args)
-    email = RodauthMailer.public_send(name, *args)
-    email.deliver_now
-  end
-end
-```
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    # ...
-    # use `#send_*_email` method to be able to immediately enqueue email delivery
-    send_reset_password_email do
-      enqueue_email(:reset_password, account_id, reset_password_key_value)
-    end
-    # ...
-  end
-
-  private
-
-  # define custom method for enqueuing email delivery using our worker
-  def enqueue_email(name, *args)
-    db.after_commit do
-      RodauthMailerWorker.perform_async(name, *args)
-    end
-  end
-end
-```
+or a 3rd-party service for sending transactional emails, see [this wiki
+page][custom mailer worker] on how to set it up.
 
 ### Migrations
 
@@ -473,6 +425,8 @@ class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration
 end
 ```
 
+#### Custom migration name
+
 You can change the default migration name:
 
 ```sh
@@ -487,7 +441,7 @@ class CreateAccountEmailAuthKeys < ActiveRecord::Migration
 end
 ```
 
-### Model
+## Model
 
 The `Rodauth::Rails::Model` mixin can be included into the account model, which
 defines a password attribute and associations for tables used by enabled
@@ -499,7 +453,7 @@ class Account < ApplicationRecord
 end
 ```
 
-#### Password attribute
+### Password attribute
 
 Regardless of whether you're storing the password hash in a column in the
 accounts table, or in a separate table, the `#password` attribute can be used
@@ -523,7 +477,7 @@ Note that the password attribute doesn't come with validations, making it
 unsuitable for forms. It was primarily intended to allow easily creating
 accounts in development console and in tests.
 
-#### Associations
+### Associations
 
 The `Rodauth::Rails::Model` mixin defines associations for Rodauth tables
 associated to the accounts table:
@@ -573,6 +527,8 @@ class Account < ApplicationRecord
 end
 ```
 
+#### Association reference
+
 Below is a list of all associations defined depending on the features loaded:
 
 | Feature                 | Association                  | Type       | Model                    | Table (default)                     |
@@ -597,6 +553,12 @@ Below is a list of all associations defined depending on the features loaded:
 | webauthn                | `:webauthn_keys`             | `has_many` | `WebauthnKey`            | `account_webauthn_keys`             |
 | webauthn                | `:webauthn_user_id`          | `has_one`  | `WebauthnUserId`         | `account_webauthn_user_ids`         |
 
+Note that some Rodauth tables use composite primary keys, which Active Record
+doesn't support out of the box. For associations to work properly, you might
+need to add the [composite_primary_keys] gem to your Gemfile.
+
+#### Association options
+
 By default, all associations except for audit logs have `dependent: :destroy`
 set, to allow for easy deletion of account records in the console. You can use
 `:association_options` to modify global or per-association options:
@@ -611,11 +573,7 @@ Rodauth::Rails.model(association_options: -> (name) {
 })
 ```
 
-Note that some Rodauth tables use composite primary keys, which Active Record
-doesn't support out of the box. For associations to work properly, you might
-need to add the [composite_primary_keys] gem to your Gemfile.
-
-### Multiple configurations
+## Multiple configurations
 
 If you need to handle multiple types of accounts that require different
 authentication logic, you can create new configurations for them. This
@@ -674,7 +632,7 @@ You'll likely want to save the information of which account belongs to which
 configuration to the database. See [this guide][account types] on how you can do
 that.
 
-#### Sharing configuration
+### Sharing configuration
 
 If there are common settings that you want to share between Rodauth
 configurations, you can do so via inheritance:
@@ -708,33 +666,9 @@ class RodauthAdmin < RodauthBase # inherit common settings
 end
 ```
 
-### Calling controller methods
+## Outside of a request
 
-When using Rodauth before/after hooks or generally overriding your Rodauth
-configuration, in some cases you might want to call methods defined on your
-controllers. You can do so with `rails_controller_eval`, for example:
-
-```rb
-# app/controllers/application_controller.rb
-class ApplicationController < ActionController::Base
-  private
-  def setup_tracking(account_id)
-    # ... some implementation ...
-  end
-end
-```
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    after_create_account do
-      rails_controller_eval { setup_tracking(account_id) }
-    end
-  end
-end
-```
-
-### Outside of a request
+### Calling actions
 
 In some cases you might need to use Rodauth more programmatically. If you want
 to perform authentication operations outside of request context, Rodauth ships
@@ -758,6 +692,8 @@ The rodauth-rails gem additionally updates the internal rack env hash with your
 `config.action_mailer.default_url_options`, which is used for generating email
 links.
 
+### Generating URLs
+
 For generating authentication URLs outside of a request use the
 [path_class_methods] plugin:
 
@@ -776,7 +712,7 @@ RodauthMain.verify_account_url(key: "abc123") #=> "https://example.com/verify-ac
 RodauthMain.close_account_path(foo: "bar") #=> "/close-account?foo=bar"
 ```
 
-#### Calling instance methods
+### Calling instance methods
 
 If you need to access Rodauth methods not exposed as internal requests, you can
 use `Rodauth::Rails::Auth.instance` to retrieve the Rodauth instance used by the
@@ -912,6 +848,8 @@ as an implementation detail of Rodauth.
 
 ## Configuring
 
+### Configuration methods
+
 The `rails` feature rodauth-rails loads provides the following configuration
 methods:
 
@@ -925,6 +863,8 @@ methods:
 | `rails_controller_instance` | Instance of the controller with the request env context.           |
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 | `rails_account_model`       | Model class connected with the accounts table.                     |
+
+### General configuration
 
 The `Rodauth::Rails` module has a few config settings available as well:
 
@@ -943,6 +883,48 @@ end
 
 For the list of configuration methods provided by Rodauth, see the [feature
 documentation].
+
+### Rails URL helpers
+
+Inside Rodauth configuration and the `route` block you can access Rails route
+helpers through `#rails_routes`:
+
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    # ...
+    login_redirect { rails_routes.activity_path }
+    # ...
+  end
+end
+```
+
+### Calling controller methods
+
+When using Rodauth before/after hooks or generally overriding your Rodauth
+configuration, in some cases you might want to call methods defined on your
+controllers. You can do so with `rails_controller_eval`, for example:
+
+```rb
+# app/controllers/application_controller.rb
+class ApplicationController < ActionController::Base
+  private
+  def setup_tracking(account_id)
+    # ... some implementation ...
+  end
+end
+```
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    after_create_account do
+      rails_controller_eval { setup_tracking(account_id) }
+    end
+  end
+end
+```
 
 ## Rodauth defaults
 
@@ -1079,4 +1061,5 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [composite_primary_keys]: https://github.com/composite-primary-keys/composite_primary_keys
 [path_class_methods]: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html
 [account types]: https://github.com/janko/rodauth-rails/wiki/Account-Types
+[custom mailer worker]: https://github.com/janko/rodauth-rails/wiki/Custom-Mailer-Worker
 [Turbo]: https://turbo.hotwired.dev/
