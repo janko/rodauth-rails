@@ -5,16 +5,17 @@ module Rodauth
         def domain
           return super unless missing_host?
 
-          Rodauth::Rails.url_options[:host]
+          rails_url_options[:host]
         end
 
         def base_url
           return super unless missing_host? && domain
 
-          url_options = Rodauth::Rails.url_options
+          scheme = rails_url_options[:protocol] || "http"
+          port = rails_url_options[:port]
 
-          url = "#{url_options[:protocol]}://#{domain}"
-          url << ":#{url_options[:port]}" if url_options[:port]
+          url = "#{scheme}://#{domain}"
+          url << ":#{port}" if port
           url
         end
 
@@ -39,6 +40,10 @@ module Rodauth
         # or the request doesn't exist such as with path_class_methods feature.
         def missing_host?
           internal_request? && request.host == INVALID_DOMAIN || scope.nil?
+        end
+
+        def rails_url_options
+          ::Rails.application.config.action_mailer.default_url_options || {}
         end
       end
     end

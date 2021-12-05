@@ -1,5 +1,9 @@
 ## HEAD
 
+* Don't modify `config.action_mailer.default_url_options` when `:protocol` is missing (@janko)
+
+* Move `Rodauth::Rails.url_options` into `Rodauth::Auth#rails_url_options` (@janko)
+
 * Add `Rodauth::Rails::Auth.instance` which returns internal request's Rodauth instance (@janko)
 
 * Deprecate `Rodauth::Rails.rodauth` in favour of `Rodauth::Rails::Auth.instance` (@janko)
