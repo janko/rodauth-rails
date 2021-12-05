@@ -3,16 +3,16 @@ require "sequel/model"
 
 class RodauthTest < UnitTest
   test "allows retrieving a Rodauth instance" do
-    rodauth = Rodauth::Rails.rodauth
+    rodauth = RodauthMain.instance
 
-    assert_kind_of Rodauth::Auth, rodauth
+    assert_kind_of RodauthMain, rodauth
     assert_equal "https://example.com/login", rodauth.login_url
   end
 
   test "allows setting Active Record account" do
     account = Account.create!(email: "user@example.com")
 
-    rodauth = Rodauth::Rails.rodauth(account: account)
+    rodauth = RodauthMain.instance(account: account)
     assert_equal "user@example.com", rodauth.send(:email_to)
     assert_equal account.id, rodauth.session_value
   end
@@ -22,14 +22,21 @@ class RodauthTest < UnitTest
     account_class.dataset = :accounts
     account = account_class.create(email: "user@example.com")
 
-    rodauth = Rodauth::Rails.rodauth(account: account)
+    rodauth = RodauthMain.instance(account: account)
     assert_equal "user@example.com", rodauth.send(:email_to)
     assert_equal account.id, rodauth.session_value
   end
 
   test "allows setting additional internal request options" do
-    rodauth = Rodauth::Rails.rodauth(env: { "HTTP_USER_AGENT" => "API" })
+    rodauth = RodauthMain.instance(env: { "HTTP_USER_AGENT" => "API" })
     assert_equal "API", rodauth.request.user_agent
+  end
+
+  test "supports deprecated Rodauth::Rails.rodauth" do
+    capture_io do
+      rodauth = Rodauth::Rails.rodauth
+      assert_kind_of RodauthMain, rodauth
+    end
   end
 
   test "retrieves secret_key_base from env variable, credentials, or secrets" do
@@ -53,7 +60,7 @@ class RodauthTest < UnitTest
   test "builds authenticated constraint" do
     Account.create!(email: "user@example.com", password: "secret")
 
-    rodauth = Rodauth::Rails.rodauth
+    rodauth = RodauthMain.instance
     rodauth.scope.env["rodauth"] = rodauth
 
     error = assert_raises(Rodauth::InternalRequestError) { Rodauth::Rails.authenticated.call(rodauth.request) }

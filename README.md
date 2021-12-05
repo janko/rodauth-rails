@@ -779,7 +779,7 @@ RodauthMain.close_account_path(foo: "bar") #=> "/close-account?foo=bar"
 #### Calling instance methods
 
 If you need to access Rodauth methods not exposed as internal requests, you can
-use `Rodauth::Rails.rodauth` to retrieve the Rodauth instance used by the
+use `Rodauth::Rails::Auth.instance` to retrieve the Rodauth instance used by the
 internal_request feature:
 
 ```rb
@@ -792,7 +792,7 @@ end
 ```
 ```rb
 account = Account.find_by!(email: "user@example.com")
-rodauth = Rodauth::Rails.rodauth(account: account)
+rodauth = RodauthMain.instance(account: account)
 
 rodauth.compute_hmac("token") #=> "TpEJTKfKwqYvIDKWsuZhkhKlhaBXtR1aodskBAflD8U"
 rodauth.open_account? #=> true
@@ -801,16 +801,15 @@ rodauth.password_meets_requirements?("foo") #=> false
 rodauth.locked_out? #=> false
 ```
 
-In addition to the `:account` option, the `Rodauth::Rails.rodauth`
+In addition to the `:account` option, the `Rodauth::Rails::Auth.instance`
 method accepts any options supported by the internal_request feature.
 
 ```rb
-# main configuration
-Rodauth::Rails.rodauth(env: { "HTTP_USER_AGENT" => "programmatic" })
-Rodauth::Rails.rodauth(session: { two_factor_auth_setup: true })
-
-# secondary configuration
-Rodauth::Rails.rodauth(:admin, params: { "param" => "value" })
+RodauthMain.instance(
+  env: { "HTTP_USER_AGENT" => "programmatic" },
+  session: { two_factor_auth_setup: true },
+  params: { "param" => "value" },
+)
 ```
 
 ## How it works
