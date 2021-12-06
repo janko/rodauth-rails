@@ -24,9 +24,7 @@ module Rodauth
 
         auth_class ||= Class.new(Rodauth::Rails::Auth)
 
-        plugin :rodauth, auth_class: auth_class, name: name, csrf: false, flash: false, json: true, **options do
-          instance_exec(&block) if block
-        end
+        plugin :rodauth, auth_class: auth_class, name: name, csrf: false, flash: false, json: true, **options, &block
       end
 
       before do

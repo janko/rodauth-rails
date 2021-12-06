@@ -1,5 +1,7 @@
 ## HEAD
 
+* Avoid method re-definition warnings with named auth classes caused by `post_configure` being called twice (@janko)
+
 * Don't modify `config.action_mailer.default_url_options` when `:protocol` is missing (@janko)
 
 * Move `Rodauth::Rails.url_options` into `Rodauth::Auth#rails_url_options` (@janko)
