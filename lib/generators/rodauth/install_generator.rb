@@ -105,7 +105,7 @@ module Rodauth
 
         def sequel_uri_scheme
           scheme = SEQUEL_ADAPTERS[activerecord_adapter] || activerecord_adapter
-          scheme = "jdbc:#{sequel_adapter}" if RUBY_ENGINE == "jruby"
+          scheme = "jdbc:#{scheme}" if RUBY_ENGINE == "jruby"
           scheme
         end
       end
