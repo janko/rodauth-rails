@@ -884,6 +884,36 @@ end
 For the list of configuration methods provided by Rodauth, see the [feature
 documentation].
 
+### Defining custom methods
+
+All Rodauth configuration methods are just syntax sugar for defining instance
+methods on the auth class. You can also define your own custom methods on the
+auth class:
+
+```rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    password_match? { |password| ldap_valid?(password) }
+  end
+
+  # Example external identities table
+  def identities
+    db[:account_identities].where(account_id: account_id).all
+  end
+
+  private
+
+  # Example LDAP authentication
+  def ldap_valid?(password)
+    SimpleLdapAuthenticator.valid?(account[:email], password)
+  end
+end
+```
+```rb
+rodauth.identities #=> [{ provider: "facebook", uid: "abc123", ... }, ...]
+```
+
+
 ### Rails URL helpers
 
 Inside Rodauth configuration and the `route` block you can access Rails route
@@ -893,9 +923,7 @@ helpers through `#rails_routes`:
 # app/misc/rodauth_main.rb
 class RodauthMain < Rodauth::Rails::Auth
   configure do
-    # ...
     login_redirect { rails_routes.activity_path }
-    # ...
   end
 end
 ```
