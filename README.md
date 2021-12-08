@@ -131,6 +131,25 @@ These routes are fully functional, feel free to visit them and interact with the
 pages. The templates that ship with Rodauth aim to provide a complete
 authentication experience, and the forms use [Bootstrap] markup.
 
+#### Changing Route Prefix
+
+To change the route prefix, use the `prefix` setting and add a block to the `route` block.
+
+```rb
+class RodauthAdmin < Rodauth::Rails::Auth
+  configure do
+    prefix "/auth"
+    # ...
+  end
+  
+  route do |r|
+    r.on "auth" do
+      r.rodauth
+    end
+  end
+end
+```
+
 ### Current account
 
 The `#current_account` method is defined in controllers and views, which
