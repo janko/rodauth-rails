@@ -43,11 +43,6 @@ Active Record. There are good reasons for this, and to make Rodauth work
 smoothly alongside Active Record, rodauth-rails configures Sequel to [reuse
 Active Record's database connection][sequel-activerecord_connection].
 
-## Upgrading
-
-For instructions on upgrading from previous rodauth-rails versions, see
-[UPGRADING.md](/UPGRADING.md).
-
 ## Installation
 
 Add the gem to your Gemfile:
