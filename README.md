@@ -88,7 +88,11 @@ $ rails db:migrate
 
 ### Routes
 
-You can see the list of routes our Rodauth middleware handles:
+Because requests to Rodauth endpoints are handled by the Rodauth middleware, and
+not a Rails controller, Rodauth routes will not show in `rails routes`.
+
+Use the `rodauth:routes` rake task to view the list of endpoints based on
+currently loaded features:
 
 ```sh
 $ rails rodauth:routes
@@ -907,7 +911,6 @@ end
 ```rb
 rodauth.identities #=> [{ provider: "facebook", uid: "abc123", ... }, ...]
 ```
-
 
 ### Rails URL helpers
 
