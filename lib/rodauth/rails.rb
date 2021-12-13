@@ -15,11 +15,26 @@ module Rodauth
     @middleware = true
 
     class << self
-      def rodauth(name = nil, **options)
-        warn "The Rodauth::Rails.rodauth method has been deprecated, and will be removed in version 1.1. Please use Rodauth::Rails::Auth.instance instead."
-
+      def rodauth(name = nil, query: nil, form: nil, account: nil, **options)
         auth_class = app.rodauth!(name)
-        auth_class.instance(**options)
+
+        unless auth_class.features.include?(:internal_request)
+          fail Rodauth::Rails::Error, "Rodauth::Rails.rodauth requires internal_request feature to be enabled"
+        end
+
+        if account
+          options[:account_id] = account.id
+        end
+
+        auth_class.internal_request_eval(options) do
+          if defined?(ActiveRecord::Base) && account.is_a?(ActiveRecord::Base)
+            @account = account.attributes.symbolize_keys
+          elsif defined?(Sequel::Model) && account.is_a?(Sequel::Model)
+            @account = account.values
+          end
+
+          self
+        end
       end
 
       def model(name = nil, **options)

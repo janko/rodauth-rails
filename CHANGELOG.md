@@ -6,10 +6,6 @@
 
 * Move `Rodauth::Rails.url_options` into `Rodauth::Auth#rails_url_options` (@janko)
 
-* Add `Rodauth::Rails::Auth.instance` which returns internal request's Rodauth instance (@janko)
-
-* Deprecate `Rodauth::Rails.rodauth` in favour of `Rodauth::Rails::Auth.instance` (@janko)
-
 * Generate named auth classes in `rodauth:install` generator (@janko)
 
 * Generate `rodauth_app.rb` in `app/misc` directory (@janko)
