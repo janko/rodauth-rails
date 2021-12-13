@@ -682,9 +682,12 @@ class RodauthMain < Rodauth::Rails::Auth
 end
 ```
 ```rb
-RodauthMain.create_account(login: "user@example.com", password: "secret")
-RodauthMain.verify_account(account_login: "user@example.com")
-RodauthMain.close_account(account_login: "user@example.com")
+# primary configuration
+RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
+RodauthApp.rodauth.verify_account(account_login: "user@example.com")
+
+# secondary configuration
+RodauthApp.rodauth(:admin).close_account(account_login: "user@example.com")
 ```
 
 The rodauth-rails gem additionally updates the internal rack env hash with your
@@ -706,9 +709,12 @@ class RodauthMain < Rodauth::Rails::Auth
 end
 ```
 ```rb
-RodauthMain.create_account_path # => "/register"
-RodauthMain.verify_account_url(key: "abc123") #=> "https://example.com/verify-account?key=abc123"
-RodauthMain.close_account_path(foo: "bar") #=> "/close-account?foo=bar"
+# primary configuration
+RodauthApp.rodauth.create_account_path # => "/register"
+RodauthApp.rodauth.verify_account_url(key: "abc123") #=> "https://example.com/verify-account?key=abc123"
+
+# secondary configuration
+RodauthApp.rodauth(:admin).close_account_path(foo: "bar") #=> "/close-account?foo=bar"
 ```
 
 ### Calling instance methods
@@ -727,7 +733,7 @@ end
 ```
 ```rb
 account = Account.find_by!(email: "user@example.com")
-rodauth = RodauthMain.instance(account: account)
+rodauth = RodauthApp.rodauth.instance(account: account)
 
 rodauth.compute_hmac("token") #=> "TpEJTKfKwqYvIDKWsuZhkhKlhaBXtR1aodskBAflD8U"
 rodauth.open_account? #=> true
@@ -740,7 +746,7 @@ In addition to the `:account` option, the `Rodauth::Rails::Auth.instance`
 method accepts any options supported by the internal_request feature.
 
 ```rb
-RodauthMain.instance(
+RodauthApp.rodauth.instance(
   env: { "HTTP_USER_AGENT" => "programmatic" },
   session: { two_factor_auth_setup: true },
   params: { "param" => "value" },
