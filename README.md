@@ -11,7 +11,6 @@ Useful links:
 * [JSON API guide](https://github.com/janko/rodauth-rails/wiki/JSON-API)
 * [OmniAuth guide](https://github.com/janko/rodauth-rails/wiki/OmniAuth)
 * [Testing guide](https://github.com/janko/rodauth-rails/wiki/Testing)
-* [Custom extensions guide](https://github.com/janko/rodauth-rails/wiki/Custom-Extensions)
 
 Articles:
 
