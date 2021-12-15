@@ -958,6 +958,33 @@ class RodauthMain < Rodauth::Rails::Auth
 end
 ```
 
+### Single-file configuration
+
+If you would prefer to have all Rodauth logic contained inside a single file,
+you call `Rodauth::Rails::App.configure` with a block, which will create an
+anonymous auth class.
+
+```rb
+# app/misc/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  # primary configuration
+  configure do
+    enable :login, :logout, :create_account, :verify_account
+    # ...
+  end
+
+  # secondary configuration
+  configure(:admin) do
+    enable :email_auth, :single_session
+    # ...
+  end
+
+  route do |r|
+    # ...
+  end
+end
+```
+
 ## Rodauth defaults
 
 rodauth-rails changes some of the default Rodauth settings for easier setup:
