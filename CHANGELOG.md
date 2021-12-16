@@ -26,6 +26,10 @@
 
 * Require internal_request feature to be enabled in `Rodauth::Rails.rodauth` (@janko)
 
+## 0.18.1 (2021-12-16)
+
+* Loosen Rails gem dependency to allow Rails 7.x (Intrepidd)
+
 ## 0.18.0 (2021-11-05)
 
 * Disable Turbo on the generated login form (@janko)
