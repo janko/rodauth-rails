@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.files         = Dir["README.md", "LICENSE.txt", "CHANGELOG.md", "lib/**/*", "*.gemspec"]
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "railties", ">= 4.2", "< 7"
+  spec.add_dependency "railties", ">= 4.2", "< 8"
   spec.add_dependency "rodauth", "~> 2.15"
   spec.add_dependency "sequel-activerecord_connection", "~> 1.1"
   spec.add_dependency "tilt"
