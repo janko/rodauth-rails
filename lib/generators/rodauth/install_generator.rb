@@ -79,6 +79,10 @@ module Rodauth
           end
         end
 
+        def show_instructions
+          readme "INSTRUCTIONS" if behavior == :invoke
+        end
+
         private
 
         def migration_features
