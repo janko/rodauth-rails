@@ -1,5 +1,7 @@
 ## HEAD
 
+* Raise error when outside of a request and `config.action_mailer.default_url_options` is unset (@janko)
+
 * Avoid method re-definition warnings with named auth classes caused by `post_configure` being called twice (@janko)
 
 * Don't modify `config.action_mailer.default_url_options` when `:protocol` is missing (@janko)

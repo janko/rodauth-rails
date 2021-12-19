@@ -14,6 +14,18 @@ class InternalRequestTest < UnitTest
     assert_match %r{http://foobar\.com}, email.body.to_s
   end
 
+  test "missing config.action_mailer.default_url_options" do
+    Rails.application.config.action_mailer.stub(:default_url_options, nil) do
+      assert_equal "/create-account", RodauthApp.rodauth.create_account_path
+      assert_raises Rodauth::Rails::Error do
+        RodauthApp.rodauth.create_account_url
+      end
+      assert_raises Rodauth::Rails::Error do
+        RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
+      end
+    end
+  end
+
   test "internal request eval" do
     path = RodauthApp.rodauth.internal_request_eval { login_path }
     assert_equal "/login", path
