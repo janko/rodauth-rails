@@ -83,6 +83,14 @@ tables. Afterwards, run the migration:
 $ rails db:migrate
 ```
 
+For your mailer to be able to generate email links, you'll need to set up
+default URL options in each environment. Here is a possible configuration for
+`config/environments/development.rb`:
+
+```rb
+config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+```
+
 ## Usage
 
 ### Routes
