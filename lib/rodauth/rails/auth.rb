@@ -3,23 +3,8 @@ require "rodauth/rails/feature"
 
 module Rodauth
   module Rails
-    # Base auth class that applies some default configuration and supports
-    # multi-level inheritance.
+    # Base auth class that applies some changes to the default configuration.
     class Auth < Rodauth::Auth
-      def self.inherited(subclass)
-        super
-        superclass = self
-        subclass.class_eval do
-          @roda_class = Rodauth::Rails.app
-          @features = superclass.features.clone
-          @routes = superclass.routes.clone
-          @route_hash = superclass.route_hash.clone
-          @configuration = superclass.instance_variable_get(:@configuration).clone
-          @configuration.instance_variable_set(:@auth, self)
-        end
-      end
-
-      # apply default configuration
       configure do
         enable :rails
 

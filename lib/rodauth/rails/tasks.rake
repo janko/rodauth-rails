@@ -5,13 +5,13 @@ namespace :rodauth do
     puts "Routes handled by #{app}:"
 
     app.opts[:rodauths].each do |configuration_name, auth_class|
-      auth_class.configure { enable :path_class_methods }
+      rodauth = auth_class.allocate
 
       routes = auth_class.routes.map do |handle_method|
         path_method = "#{handle_method.to_s.sub(/\Ahandle_/, "")}_path"
 
         [
-          auth_class.public_send(path_method),
+          rodauth.public_send(path_method),
           "rodauth#{configuration_name && "(:#{configuration_name})"}.#{path_method}",
         ]
       end
