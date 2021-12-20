@@ -26,15 +26,20 @@ module Rodauth
           options[:account_id] = account.id
         end
 
-        auth_class.internal_request_eval(options) do
+        instance = auth_class.internal_request_eval(options) do
           if defined?(ActiveRecord::Base) && account.is_a?(ActiveRecord::Base)
             @account = account.attributes.symbolize_keys
           elsif defined?(Sequel::Model) && account.is_a?(Sequel::Model)
             @account = account.values
           end
-
           self
         end
+
+        # clean up inspect output
+        instance.remove_instance_variable(:@internal_request_block)
+        instance.remove_instance_variable(:@internal_request_return_value)
+
+        instance
       end
 
       def model(name = nil, **options)
