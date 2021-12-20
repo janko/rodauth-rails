@@ -4,8 +4,7 @@ class RodauthMain < Rodauth::Rails::Auth
     enable :create_account, :verify_account, :verify_account_grace_period,
       :login, :logout<%= ", :remember" unless jwt? %><%= ", :json" if json? %><%= ", :jwt" if jwt? %>,
       :reset_password, :change_password, :change_password_notify,
-      :change_login, :verify_login_change, :close_account,
-      :path_class_methods
+      :change_login, :verify_login_change, :close_account
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html

@@ -1,5 +1,7 @@
 ## HEAD
 
+* Set Rodauth's email subject in the generated mailer (@janko)
+
 * Raise error when outside of a request and `config.action_mailer.default_url_options` is unset (@janko)
 
 * Avoid method re-definition warnings with named auth classes caused by `post_configure` being called twice (@janko)
@@ -15,8 +17,6 @@
 * Add `--name` option to `rodauth:migration` generator (@janko)
 
 * Disable Turbo in all built-in and generated views (@janko)
-
-* Enable `path_class_methods` feature by default in generated configuration (@janko)
 
 * Modify generated mailer integration to generate URLs according to `default_url_options` (@janko)
 
