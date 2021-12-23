@@ -304,6 +304,26 @@ Use `--name` to generate views for a different Rodauth configuration:
 $ rails generate rodauth:views webauthn --name admin
 ```
 
+#### Page titles
+
+The generated view templates use `content_for(:title)` to store Rodauth's page
+titles, which you can then retrieve in your layout template to set the page
+title:
+
+```erb
+<!-- app/views/layouts/application.html.erb -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) %></title>
+    <!-- ... -->
+  </head>
+  <body>
+    <!-- ... -->
+  </body>
+</html>
+```
+
 #### Layout
 
 To use different layouts for different Rodauth views, you can compare the
