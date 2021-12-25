@@ -47,7 +47,7 @@ Active Record's database connection][sequel-activerecord_connection].
 Add the gem to your Gemfile:
 
 ```rb
-gem "rodauth-rails", "~> 0.18"
+gem "rodauth-rails", "~> 1.0"
 
 # gem "jwt",      require: false # for JWT feature
 # gem "rotp",     require: false # for OTP feature

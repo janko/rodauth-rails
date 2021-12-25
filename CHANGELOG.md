@@ -1,4 +1,4 @@
-## HEAD
+## 1.0.0 (2021-12-25)
 
 * Set Rodauth's email subject in the generated mailer (@janko)
 
