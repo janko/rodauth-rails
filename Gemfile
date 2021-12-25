@@ -11,5 +11,11 @@ gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 gem "capybara"
 
 if RUBY_VERSION >= "3.1.0"
+  # mail gem dependencies on Ruby 3.1+
   gem "net-smtp"
+  gem "net-imap"
+  gem "net-pop"
+
+  # rake gem dependency on Ruby 3.1+
+  gem "matrix"
 end
