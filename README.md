@@ -717,10 +717,6 @@ RodauthApp.rodauth.verify_account(account_login: "user@example.com")
 RodauthApp.rodauth(:admin).close_account(account_login: "user@example.com")
 ```
 
-The rodauth-rails gem additionally updates the internal rack env hash with your
-`config.action_mailer.default_url_options`, which is used for generating email
-links.
-
 ### Generating URLs
 
 For generating authentication URLs outside of a request use the
