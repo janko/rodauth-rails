@@ -95,8 +95,8 @@ config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
 
 ### Routes
 
-Because requests to Rodauth endpoints are handled by the Rodauth middleware, and
-not a Rails controller, Rodauth routes will not show in `rails routes`.
+Because requests to Rodauth endpoints are handled by a Rack middleware (and not
+a Rails controller), Rodauth routes will not show in `rails routes`.
 
 Use the `rodauth:routes` rake task to view the list of endpoints based on
 currently loaded features:
