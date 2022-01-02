@@ -777,104 +777,6 @@ Rodauth::Rails.rodauth(session: { two_factor_auth_setup: true })
 Rodauth::Rails.rodauth(:admin, params: { "param" => "value" })
 ```
 
-## How it works
-
-### Middleware
-
-rodauth-rails inserts a `Rodauth::Rails::Middleware` into your middleware
-stack, which calls your Rodauth app for each request, before the request
-reaches the Rails router.
-
-```sh
-$ rails middleware
-...
-use Rodauth::Rails::Middleware
-run MyApp::Application.routes
-```
-
-The Rodauth app stores the `Rodauth::Auth` instance in the Rack env hash, which
-is then available in your Rails app:
-
-```rb
-request.env["rodauth"]       #=> #<Rodauth::Auth>
-request.env["rodauth.admin"] #=> #<Rodauth::Auth> (if using multiple configurations)
-```
-
-For convenience, this object can be accessed via the `#rodauth` method in views
-and controllers:
-
-```rb
-class MyController < ApplicationController
-  def my_action
-    rodauth         #=> #<Rodauth::Auth>
-    rodauth(:admin) #=> #<Rodauth::Auth> (if using multiple configurations)
-  end
-end
-```
-```erb
-<% rodauth         #=> #<Rodauth::Auth> %>
-<% rodauth(:admin) #=> #<Rodauth::Auth> (if using multiple configurations) %>
-```
-
-### App
-
-The `Rodauth::Rails::App` class is a [Roda] subclass that provides Rails
-integration for Rodauth:
-
-* uses Action Dispatch flash instead of Roda's
-* uses Action Dispatch CSRF protection instead of Roda's
-* sets [HMAC] secret to Rails' secret key base
-* uses Action Controller for rendering templates
-* runs Action Controller callbacks & rescue handlers around Rodauth actions
-* uses Action Mailer for sending emails
-
-The `configure` method wraps configuring the Rodauth plugin, forwarding
-any additional [plugin options].
-
-```rb
-class RodauthApp < Rodauth::Rails::App
-  configure { ... }             # defining default Rodauth configuration
-  configure(json: true) { ... } # passing options to the Rodauth plugin
-  configure(:admin) { ... }     # defining multiple Rodauth configurations
-end
-```
-
-The `route` block is provided by Roda, and it's called on each request before
-it reaches the Rails router.
-
-```rb
-class RodauthApp < Rodauth::Rails::App
-  route do |r|
-    # ... called before each request ...
-  end
-end
-```
-
-Since `Rodauth::Rails::App` is just a Roda subclass, you can do anything you
-would with a Roda app, such as loading additional Roda plugins:
-
-```rb
-class RodauthApp < Rodauth::Rails::App
-  plugin :request_headers # easier access to request headers
-  plugin :typecast_params # methods for conversion of request params
-  plugin :default_headers, { "Foo" => "Bar" }
-  # ...
-end
-```
-
-### Sequel
-
-Rodauth uses the [Sequel] library for database queries, due to more advanced
-database usage (SQL expressions, database-agnostic date arithmetic, SQL
-function calls).
-
-If ActiveRecord is used in the application, the `rodauth:install` generator
-will have automatically configured Sequel to reuse ActiveRecord's database
-connection, using the [sequel-activerecord_connection] gem.
-
-This means that, from the usage perspective, Sequel can be considered just
-as an implementation detail of Rodauth.
-
 ## Configuring
 
 ### Configuration methods
@@ -893,23 +795,6 @@ methods:
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 | `rails_account_model`       | Model class connected with the accounts table.                     |
 
-### General configuration
-
-The `Rodauth::Rails` module has a few config settings available as well:
-
-| Name         | Description                                                                                         |
-| :-----       | :----------                                                                                         |
-| `app`        | Constant name of your Rodauth app, which is called by the middleware.                               |
-| `middleware` | Whether to insert the middleware into the Rails application's middleware stack. Defaults to `true`. |
-
-```rb
-# config/initializers/rodauth.rb
-Rodauth::Rails.configure do |config|
-  config.app = "RodauthApp"
-  config.middleware = true
-end
-```
-
 For the list of configuration methods provided by Rodauth, see the [feature
 documentation].
 
@@ -922,7 +807,9 @@ auth class:
 ```rb
 class RodauthMain < Rodauth::Rails::Auth
   configure do
+    # ...
     password_match? { |password| ldap_valid?(password) }
+    # ...
   end
 
   # Example external identities table
@@ -1008,6 +895,150 @@ class RodauthApp < Rodauth::Rails::App
   end
 end
 ```
+
+## How it works
+
+### Rack middleware
+
+The railtie inserts [`Rodauth::Rails::Middleware`](/lib/rodauth/rails/middleware.rb)
+at the end of the middleware stack, which calls your Rodauth app around each request.
+
+```sh
+$ rails middleware
+# ...
+# use Rodauth::Rails::Middleware
+# run MyApp::Application.routes
+```
+
+It can be inserted at any point in the middleware stack:
+
+```rb
+Rodauth::Rails.configure do |config|
+  config.middleware = false # disable auto-insertion
+end
+
+Rails.application.config.middleware.insert_before AnotherMiddleware, Rodauth::Rails::Middleware
+```
+
+The middleware retrieves the Rodauth app via `Rodauth::Rails.app`, which is
+specified as a string to keep the class autoloadable and reloadable in
+development.
+
+```rb
+Rodauth::Rails.configure do |config|
+  config.app = "RodauthApp"
+end
+```
+
+In addition to Zeitwerk compatibility, this extra layer catches Rodauth redirects
+that happen on the controller level (e.g. when calling
+`rodauth.require_authentication` in a `before_action` filter).
+
+### Roda app
+
+The [`Rodauth::Rails::App`](/lib/rodauth/rails/app.rb) class is a [Roda]
+subclass that provides a convenience layer for Rodauth:
+
+* uses Action Dispatch flash messages
+* provides syntax sugar for loading the rodauth plugin
+* saves Rodauth object(s) to Rack env hash
+* propagates edited headers to Rails responses
+
+The `configure` call loads the rodauth plugin. By convention, it receives an
+auth class and configuration name as positional arguments (forwarded as
+`:auth_class` and `:name` plugin options), a block for anonymous auth classes,
+and also accepts any additional plugin options.
+
+```rb
+class RodauthApp < Rodauth::Rails::App
+  # named auth class
+  configure(RodauthMain)
+  configure(RodauthAdmin, :admin)
+
+  # anonymous auth class
+  configure { ... }
+  configure(:admin) { ... }
+
+  # plugin options
+  configure(RodauthMain, json: :only)
+end
+```
+
+The `route` block is called for each request, before it reaches the Rails
+router, and it's yielded the request object.
+
+```rb
+class RodauthApp < Rodauth::Rails::App
+  route do |r|
+    # called before each request
+  end
+end
+```
+
+### Auth class
+
+The [`Rodauth::Rails::Auth`](/lib/rodauth/rails/auth.rb) class is a subclass of
+`Rodauth::Auth`, which preloads the `rails` rodauth feature, sets [HMAC] secret to
+Rails' secret key base, and modifies some [configuration defaults](#rodauth-defaults).
+
+```rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    # authentication configuration
+  end
+end
+```
+
+### Rodauth feature
+
+The [`rails`](/lib/rodauth/rails/feature.rb) Rodauth feature loaded by
+`Rodauth::Rails::Auth` provides the main part of the Rails integration for Rodauth:
+
+* uses Action View for template rendering
+* uses Action Dispatch for CSRF protection
+* runs Action Controller callbacks and rescue from blocks around Rodauth requests
+* uses Action Mailer to create and deliver emails
+* uses Action Controller instrumentation around Rodauth requests
+* uses Action Mailer's default URL options when calling Rodauth outside of a request
+
+### Controller
+
+The Rodauth app stores the `Rodauth::Rails::Auth` instances in the Rack env
+hash, which is then available in your Rails app:
+
+```rb
+request.env["rodauth"]       #=> #<RodauthMain>
+request.env["rodauth.admin"] #=> #<RodauthAdmin> (if using multiple configurations)
+```
+
+For convenience, this object can be accessed via the `#rodauth` method in views
+and controllers:
+
+```rb
+class MyController < ApplicationController
+  def my_action
+    rodauth         #=> #<RodauthMain>
+    rodauth(:admin) #=> #<RodauthAdmin> (if using multiple configurations)
+  end
+end
+```
+```erb
+<% rodauth         #=> #<RodauthMain> %>
+<% rodauth(:admin) #=> #<RodauthAdmin> (if using multiple configurations) %>
+```
+
+### Sequel
+
+Rodauth uses the [Sequel] library for database interaction, which offers
+powerful APIs for building advanced queries (it supports SQL expressions,
+database-agnostic date arithmetic, SQL function calls).
+
+If you're using Active Record in your application, the `rodauth:install`
+generator automatically configures Sequel to reuse ActiveRecord's database
+connection, using the [sequel-activerecord_connection] gem.
+
+This means that, from the usage perspective, Sequel can be considered just
+as an implementation detail of Rodauth.
 
 ## Rodauth defaults
 
