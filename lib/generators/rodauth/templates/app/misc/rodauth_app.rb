@@ -12,12 +12,9 @@ class RodauthApp < Rodauth::Rails::App
 <% end -%>
     r.rodauth # route rodauth requests
 
-    # ==> Authenticating Requests
+    # ==> Authenticating requests
     # Call `rodauth.require_authentication` for requests that you want to
-    # require authentication for. Some examples:
-    #
-    # next if r.path.start_with?("/docs") # skip authentication for documentation pages
-    # next if session[:admin] # skip authentication for admins
+    # require authentication for. For example:
     #
     # # authenticate /dashboard/* and /account/* requests
     # if r.path.start_with?("/dashboard") || r.path.start_with?("/account")
@@ -27,11 +24,6 @@ class RodauthApp < Rodauth::Rails::App
     # ==> Secondary configurations
     # r.on "admin" do
     #   r.rodauth(:admin)
-    #
-    #   unless rodauth(:admin).logged_in?
-    #     rodauth(:admin).require_http_basic_auth
-    #   end
-    #
     #   break # allow the Rails app to handle other "/admin/*" requests
     # end
   end
