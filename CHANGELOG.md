@@ -1,3 +1,7 @@
+## HEAD
+
+* Automatically route the path prefix in `r.rodauth` if one has been set (@janko)
+
 ## 1.0.0 (2021-12-25)
 
 * Set Rodauth's email subject in the generated mailer (@janko)

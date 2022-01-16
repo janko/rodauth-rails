@@ -25,6 +25,8 @@ module Rodauth
         auth_class ||= Class.new(Rodauth::Rails::Auth)
 
         plugin :rodauth, auth_class: auth_class, name: name, csrf: false, flash: false, json: true, **options, &block
+
+        self::RodaRequest.include RequestMethods
       end
 
       before do
@@ -43,6 +45,21 @@ module Rodauth
 
       def self.rodauth!(name)
         rodauth(name) or fail ArgumentError, "unknown rodauth configuration: #{name.inspect}"
+      end
+
+      module RequestMethods
+        def rodauth(name = nil)
+          prefix = scope.rodauth(name).prefix
+
+          if prefix.present? && remaining_path == path_info
+            on prefix[1..-1] do
+              super
+              break # forward other `{prefix}/*` requests to the rails router
+            end
+          else
+            super
+          end
+        end
       end
     end
   end

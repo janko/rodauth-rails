@@ -609,21 +609,12 @@ them under a name.
 ```rb
 # app/misc/rodauth_app.rb
 class RodauthApp < Rodauth::Rails::App
-  # primary configuration
-  configure RodauthMain
-
-  # secondary configuration
-  configure RodauthAdmin, :admin
+  configure RodauthMain          # primary configuration
+  configure RodauthAdmin, :admin # secondary configuration
 
   route do |r|
-    r.rodauth
-
-    r.on "admin" do
-      r.rodauth(:admin)
-      break # allow routing of other /admin/* requests to continue to Rails
-    end
-
-    # ...
+    r.rodauth         # route primary rodauth requests
+    r.rodauth(:admin) # route secondary rodauth requests
   end
 end
 ```
@@ -635,7 +626,6 @@ class RodauthAdmin < Rodauth::Rails::Auth
     prefix "/admin"
     session_key_prefix "admin_"
     remember_cookie_key "_admin_remember" # if using remember feature
-    # ...
 
     # search views in `app/views/admin/rodauth` directory
     rails_controller { Admin::RodauthController }
@@ -944,6 +934,8 @@ subclass that provides a convenience layer for Rodauth:
 * saves Rodauth object(s) to Rack env hash
 * propagates edited headers to Rails responses
 
+#### Configure block
+
 The `configure` call loads the rodauth plugin. By convention, it receives an
 auth class and configuration name as positional arguments (forwarded as
 `:auth_class` and `:name` plugin options), a block for anonymous auth classes,
@@ -964,6 +956,8 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
+#### Route block
+
 The `route` block is called for each request, before it reaches the Rails
 router, and it's yielded the request object.
 
@@ -971,6 +965,24 @@ router, and it's yielded the request object.
 class RodauthApp < Rodauth::Rails::App
   route do |r|
     # called before each request
+  end
+end
+```
+
+#### Routing prefix
+
+If you use a routing prefix, you don't need to add a call to `r.on` like with
+vanilla Rodauth, as `r.rodauth` has been modified to automatically route the
+prefix.
+
+```rb
+class RodauthApp < Rodauth::Rails::App
+  configure do
+    prefix "/user"
+  end
+
+  route do |r|
+    r.rodauth # no need to wrap with `r.on("user") { ... }`
   end
 end
 ```

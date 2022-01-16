@@ -23,7 +23,7 @@ class RodauthApp < Rodauth::Rails::App
     rodauth.load_memory
 
     r.rodauth
-    r.on("admin") { r.rodauth(:admin) }
+    r.rodauth(:admin)
     r.on("jwt") { r.rodauth(:jwt) }
     r.on("json") { r.rodauth(:json) }
 

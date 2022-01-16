@@ -22,9 +22,6 @@ class RodauthApp < Rodauth::Rails::App
     # end
 
     # ==> Secondary configurations
-    # r.on "admin" do
-    #   r.rodauth(:admin)
-    #   break # allow the Rails app to handle other "/admin/*" requests
-    # end
+    # r.rodauth(:admin) # route admin rodauth requests
   end
 end
