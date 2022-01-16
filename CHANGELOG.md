@@ -1,4 +1,4 @@
-## HEAD
+## 1.1.0 (2022-01-16)
 
 * Automatically route the path prefix in `r.rodauth` if one has been set (@janko)
 
