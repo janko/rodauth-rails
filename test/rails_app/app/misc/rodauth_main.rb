@@ -18,9 +18,6 @@ class RodauthMain < Rodauth::Rails::Auth
     end
 
     account_status_column :status
-    account_unverified_status_value "unverified"
-    account_open_status_value "verified"
-    account_closed_status_value "closed"
 
     email_subject_prefix "[RodauthTest] "
     email_from "noreply@rodauth.test"

@@ -1097,16 +1097,15 @@ end
 
 The recommended [Rodauth migration] stores possible account status values in a
 separate table, and creates a foreign key on the accounts table, which ensures
-only a valid status value will be persisted.
+only a valid status value will be persisted. Unfortunately, this doesn't work
+when the database is restored from the schema file, in which case the account
+statuses table will be empty. This happens in tests by default, but it's also
+not unusual to do it in development.
 
-Unfortunately, this doesn't work when the database is restored from the schema
-file, in which case the account statuses table will be empty. This happens in
-tests by default, but it's also commonly done in development.
-
-To address this, rodauth-rails modifies the setup to store account status text
-directly in the accounts table. If you're worried about invalid status values
-creeping in, you may use enums instead. Alternatively, you can always go back
-to the setup recommended by Rodauth.
+To address this, rodauth-rails uses a `status` column without a separate table.
+If you're worried about invalid status values creeping in, you may use enums
+instead. Alternatively, you can always go back to the setup recommended by
+Rodauth.
 
 ```rb
 # in the migration:
@@ -1122,14 +1121,13 @@ create_table :accounts do |t|
 end
 ```
 ```diff
-configure do
-  # ...
-- account_status_column :status
-- account_unverified_status_value "unverified"
-- account_open_status_value "verified"
-- account_closed_status_value "closed"
-  # ...
-end
+  class RodauthMain < Rodauth::Rails::Auth
+    configure do
+      # ...
+-     account_status_column :status
+      # ...
+    end
+  end
 ```
 
 ### Deadline values

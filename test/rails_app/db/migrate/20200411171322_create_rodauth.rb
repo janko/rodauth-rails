@@ -11,8 +11,8 @@ class CreateRodauth < superclass
   def change
     create_table :accounts do |t|
       t.string :email, null: false
-      t.index :email, unique: true, where: "status IN ('unverified', 'verified')"
-      t.string :status, null: false, default: "unverified"
+      t.index :email, unique: true, where: "status IN (1, 2)"
+      t.integer :status, null: false, default: 1
       t.string :password_hash
     end
 
