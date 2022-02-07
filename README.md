@@ -15,8 +15,8 @@ Useful links:
 Articles:
 
 * [Rodauth: A Refreshing Authentication Solution for Ruby](https://janko.io/rodauth-a-refreshing-authentication-solution-for-ruby/)
-* [Adding Authentication in Rails with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
-* [Adding Multifactor Authentication in Rails with Rodauth](https://janko.io/adding-multifactor-authentication-in-rails-with-rodauth/)
+* [Rails Authentication with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
+* [Multifactor Authentication in Rails with Rodauth](https://janko.io/adding-multifactor-authentication-in-rails-with-rodauth/)
 * [How to build an OIDC provider using rodauth-oauth on Rails](https://honeyryderchuck.gitlab.io/httpx/2021/03/15/oidc-provider-on-rails-using-rodauth-oauth.html)
 
 ## Why Rodauth?
