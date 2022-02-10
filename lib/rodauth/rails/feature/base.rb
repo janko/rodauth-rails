@@ -8,6 +8,17 @@ module Rodauth
           feature.auth_cached_method :rails_controller_instance
         end
 
+        def rails_account
+          account_from_session unless account
+
+          unless account
+            clear_session if logged_in?
+            return
+          end
+
+          @rails_account ||= instantiate_rails_account
+        end
+
         # Reset Rails session to protect from session fixation attacks.
         def clear_session
           rails_controller_instance.reset_session
@@ -42,6 +53,16 @@ module Rodauth
         delegate :rails_routes, :rails_request, to: :scope
 
         private
+
+        def instantiate_rails_account
+          if defined?(ActiveRecord::Base) && rails_account_model < ActiveRecord::Base
+            rails_account_model.instantiate(account.stringify_keys)
+          elsif defined?(Sequel::Model) && rails_account_model < Sequel::Model
+            rails_account_model.load(account)
+          else
+            fail Error, "unsupported model type: #{rails_account_model}"
+          end
+        end
 
         # Instances of the configured controller with current request's env hash.
         def _rails_controller_instance

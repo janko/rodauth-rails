@@ -140,15 +140,13 @@ authentication experience, and the forms use [Bootstrap] markup.
 ### Current account
 
 The `#current_account` method is defined in controllers and views, which
-returns the model instance of the currently logged in account.
+returns the model instance of the currently logged in account. If the account
+doesn't exist in the database, the session will be cleared.
 
 ```rb
 current_account #=> #<Account id=123 email="user@example.com">
 current_account.email #=> "user@example.com"
 ```
-
-If the account doesn't exist in the database, the session will be cleared and
-login required.
 
 Pass the configuration name to retrieve accounts belonging to other Rodauth
 configurations:
@@ -156,6 +154,8 @@ configurations:
 ```rb
 current_account(:admin)
 ```
+
+This just delegates to the `#rails_account` method on the Rodauth object.
 
 #### Custom account model
 
@@ -243,6 +243,18 @@ called with the Rodauth instance:
 Rails.application.routes.draw do
   # require multifactor authentication to be setup
   constraints Rodauth::Rails.authenticated { |rodauth| rodauth.uses_two_factor_authentication? } do
+    # ...
+  end
+end
+```
+
+The current account can be retrieved via the `#rails_account` method:
+
+```rb
+# config/routes.rb
+Rails.application.routes.draw do
+  # require user to be admin
+  constraints Rodauth::Rails.authenticated { |rodauth| rodauth.rails_account.admin? } do
     # ...
   end
 end
