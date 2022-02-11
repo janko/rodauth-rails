@@ -27,15 +27,15 @@ class CreateRodauth < superclass
       t.foreign_key :accounts, column: :id
       t.string :key, null: false
       t.datetime :deadline, null: false
-      t.datetime :email_last_sent, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :email_last_sent, null: false, default: current_timestamp
     end
 
     # Used by the account verification feature
     create_table :account_verification_keys do |t|
       t.foreign_key :accounts, column: :id
       t.string :key, null: false
-      t.datetime :requested_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
-      t.datetime :email_last_sent, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :requested_at, null: false, default: current_timestamp
+      t.datetime :email_last_sent, null: false, default: current_timestamp
     end
 
     # Used by the verify login change feature
@@ -56,7 +56,7 @@ class CreateRodauth < superclass
     # Used by the audit logging feature
     create_table :account_authentication_audit_logs do |t|
       t.references :account, null: false
-      t.datetime :at, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :at, null: false, default: current_timestamp
       t.text :message, null: false
       if ActiveRecord.version >= Gem::Version.new("5.2")
         t.json :metadata
@@ -98,13 +98,13 @@ class CreateRodauth < superclass
       t.foreign_key :accounts, column: :id
       t.string :key, null: false
       t.datetime :deadline, null: false
-      t.datetime :email_last_sent, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :email_last_sent, null: false, default: current_timestamp
     end
 
     # Used by the password expiration feature
     create_table :account_password_change_times do |t|
       t.foreign_key :accounts, column: :id
-      t.datetime :changed_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :changed_at, null: false, default: current_timestamp
     end
 
     # Used by the account expiration feature
@@ -125,8 +125,8 @@ class CreateRodauth < superclass
     create_table :account_active_session_keys, primary_key: [:account_id, :session_id] do |t|
       t.references :account
       t.string :session_id
-      t.datetime :created_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
-      t.datetime :last_use, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :created_at, null: false, default: current_timestamp
+      t.datetime :last_use, null: false, default: current_timestamp
     end
 
     # Used by the webauthn feature
@@ -139,7 +139,7 @@ class CreateRodauth < superclass
       t.string :webauthn_id
       t.string :public_key, null: false
       t.integer :sign_count, null: false
-      t.datetime :last_use, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :last_use, null: false, default: current_timestamp
     end
 
     # Used by the otp feature
@@ -147,7 +147,7 @@ class CreateRodauth < superclass
       t.foreign_key :accounts, column: :id
       t.string :key, null: false
       t.integer :num_failures, null: false, default: 0
-      t.datetime :last_use, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :last_use, null: false, default: current_timestamp
     end
 
     # Used by the recovery codes feature
@@ -163,7 +163,17 @@ class CreateRodauth < superclass
       t.string :phone_number, null: false
       t.integer :num_failures
       t.string :code
-      t.datetime :code_issued_at, null: false, default: -> { "CURRENT_TIMESTAMP" }
+      t.datetime :code_issued_at, null: false, default: current_timestamp
+    end
+  end
+
+  private
+
+  def current_timestamp
+    if ActiveRecord.version >= Gem::Version.new("5.0")
+      -> { "CURRENT_TIMESTAMP" }
+    else
+      OpenStruct.new(quoted_id: "CURRENT_TIMESTAMP")
     end
   end
 end

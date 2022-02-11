@@ -1,3 +1,7 @@
+## HEAD
+
+* Work around Active Record 4.2 not supporting procs for literal SQL column default (@janko)
+
 ## 1.1.0 (2022-01-16)
 
 * Automatically route the path prefix in `r.rodauth` if one has been set (@janko)

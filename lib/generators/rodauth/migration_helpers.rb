@@ -63,6 +63,14 @@ module Rodauth
             ERB.new(content, 0, "-").result(binding)
           end
         end
+
+        def current_timestamp
+          if ActiveRecord.version >= Gem::Version.new("5.0")
+            %(-> { "CURRENT_TIMESTAMP" })
+          else
+            %(OpenStruct.new(quoted_id: "CURRENT_TIMESTAMP"))
+          end
+        end
       end
     end
   end

@@ -43,4 +43,14 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
 
     Rails.application.config.generators.options[:active_record].delete(:primary_key_type)
   end
+
+  test "current timestamp column default" do
+    run_generator %w[email_auth]
+
+    if ActiveRecord.version >= Gem::Version.new("5.0")
+      assert_migration "db/migrate/create_rodauth_email_auth.rb", /default: -> { "CURRENT_TIMESTAMP" }/
+    else
+      assert_migration "db/migrate/create_rodauth_email_auth.rb", /default: OpenStruct\.new\(quoted_id: "CURRENT_TIMESTAMP"\)/
+    end
+  end
 end

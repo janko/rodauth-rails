@@ -8,5 +8,5 @@ create_table :account_webauthn_keys, primary_key: [:account_id, :webauthn_id] do
   t.string :webauthn_id
   t.string :public_key, null: false
   t.integer :sign_count, null: false
-  t.datetime :last_use, null: false, default: -> { "CURRENT_TIMESTAMP" }
+  t.datetime :last_use, null: false, default: <%= current_timestamp %>
 end

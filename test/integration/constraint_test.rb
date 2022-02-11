@@ -8,7 +8,7 @@ class ConstraintTest < IntegrationTest
 
     register
     visit "/authenticated"
-    assert_equal current_path, "/authenticated"
+    assert_equal "/authenticated", page.current_path
     assert_includes page.html, %(Authenticated as user@example.com)
   end
 end
