@@ -4,7 +4,7 @@ Provides Rails integration for the [Rodauth] authentication framework.
 
 ## Resources
 
-Useful links:
+🔗 Useful links:
 
 * [Rodauth documentation](http://rodauth.jeremyevans.net/documentation.html)
 * [Rails demo](https://github.com/janko/rodauth-demo-rails)
@@ -12,7 +12,11 @@ Useful links:
 * [OmniAuth guide](https://github.com/janko/rodauth-rails/wiki/OmniAuth)
 * [Testing guide](https://github.com/janko/rodauth-rails/wiki/Testing)
 
-Articles:
+🎥 Screencasts:
+
+* [Rails Authentication with Rodauth](https://www.youtube.com/watch?v=2hDpNikacf0)
+
+📚 Articles:
 
 * [Rodauth: A Refreshing Authentication Solution for Ruby](https://janko.io/rodauth-a-refreshing-authentication-solution-for-ruby/)
 * [Rails Authentication with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
