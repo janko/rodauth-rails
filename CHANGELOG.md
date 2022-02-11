@@ -1,6 +1,12 @@
-## HEAD
+## 1.2.0 (2022-02-11)
 
 * Work around Active Record 4.2 not supporting procs for literal SQL column default (@janko)
+
+* Avoid re-fetching the account in `#current_account` when it has already been fetched by Rodauth (@janko)
+
+* Extract `#current_account` helper functionality into `#rails_account` Rodauth method (@janko)
+
+* Use default account status values in generated configuration, with enum on `Account` model (@janko)
 
 ## 1.1.0 (2022-01-16)
 
