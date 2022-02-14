@@ -40,7 +40,7 @@ module Rodauth
             begin
               result = catch(:halt) { yield }
 
-              response = ActionDispatch::Response.new *(result || [404, {}, []])
+              response = ActionDispatch::Response.new(*(result || [404, {}, []]))
               payload[:response] = response
               payload[:status] = response.status
 
