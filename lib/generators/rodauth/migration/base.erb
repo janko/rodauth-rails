@@ -9,7 +9,7 @@ create_table :accounts<%= primary_key_type %> do |t|
 <% else -%>
   t.string :email, null: false
 <% end -%>
-  t.string :status, null: false, default: 1
+  t.integer :status, null: false, default: 1
 <% case activerecord_adapter -%>
 <% when "postgresql", "sqlite3" -%>
   t.index :email, unique: true, where: "status IN (1, 2)"
