@@ -1,3 +1,7 @@
+## 1.2.1 (2022-02-19)
+
+* Change `accounts.status` column type from string to integer (@zhongsheng)
+
 ## 1.2.0 (2022-02-11)
 
 * Work around Active Record 4.2 not supporting procs for literal SQL column default (@janko)
