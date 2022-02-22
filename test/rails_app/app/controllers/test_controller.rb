@@ -28,4 +28,8 @@ class TestController < ApplicationController
 
     headers["X-After"] = "true"
   end
+
+  def roda
+    render json: { instance: rodauth.scope.inspect, class: rodauth.scope.class.inspect }
+  end
 end
