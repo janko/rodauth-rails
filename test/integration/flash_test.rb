@@ -80,5 +80,5 @@ class FlashTest < IntegrationTest
     visit "/auth2"
     assert_equal "/recovery-auth", page.current_path
     assert_text "You need to authenticate via an additional factor before continuing"
-  end
+  end unless RUBY_ENGINE == "jruby" && ActiveRecord.version < Gem::Version.new("5.0")
 end
