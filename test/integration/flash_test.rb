@@ -63,4 +63,22 @@ class FlashTest < IntegrationTest
     refute_includes page.html, %(id="alert")
     refute_includes page.html, %(id="notice")
   end
+
+  test "preserving flash on double redirect" do
+    register(password: "secret", verify: true)
+
+    visit "/multifactor-manage"
+    fill_in "Password", with: "secret"
+    click_on "View Authentication Recovery Codes"
+    fill_in "Password", with: "secret"
+    click_on "Add Authentication Recovery Codes"
+    assert_text "Additional authentication recovery codes have been added"
+
+    logout
+    login
+
+    visit "/auth2"
+    assert_equal "/recovery-auth", page.current_path
+    assert_text "You need to authenticate via an additional factor before continuing"
+  end
 end

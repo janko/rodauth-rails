@@ -1,3 +1,7 @@
+## HEAD
+
+* Fix flash messages not being preserved through consecutive redirects (@janko)
+
 ## 1.2.1 (2022-02-19)
 
 * Change `accounts.status` column type from string to integer (@zhongsheng)

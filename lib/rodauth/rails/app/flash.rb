@@ -8,8 +8,7 @@ module Rodauth
         end
 
         def self.configure(app)
-          app.before { request.flash }        # load flash
-          app.after  { request.commit_flash } # save flash
+          app.after { request.commit_flash }
         end
 
         module InstanceMethods
