@@ -40,7 +40,7 @@ of the advantages that stand out for me:
 * consistent before/after hooks around everything
 * dedicated object encapsulating all authentication logic
 
-One commmon concern is the fact that, unlike most other authentication
+One common concern is the fact that, unlike most other authentication
 frameworks for Rails, Rodauth uses [Sequel] for database interaction instead of
 Active Record. There are good reasons for this, and to make Rodauth work
 smoothly alongside Active Record, rodauth-rails configures Sequel to [reuse
