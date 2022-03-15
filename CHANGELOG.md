@@ -1,3 +1,7 @@
+## HEAD
+
+* Ensure `require_login_redirect` points to the login page even if the login route changes (@janko)
+
 ## 1.2.2 (2022-02-22)
 
 * Fix flash messages not being preserved through consecutive redirects (@janko)

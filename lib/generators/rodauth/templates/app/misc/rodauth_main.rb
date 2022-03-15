@@ -138,6 +138,9 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Redirect to login page after password reset.
     reset_password_redirect { login_path }
+
+    # Ensure requiring login follows login route changes.
+    require_login_redirect { login_path }
 <% end -%>
 
     # ==> Deadlines
