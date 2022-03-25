@@ -10,9 +10,7 @@ require "capybara/rails"
 ActiveRecord::Migrator.migrations_paths = [Rails.root.join("db/migrate")]
 Rails.backtrace_cleaner.remove_silencers! # show full stack traces
 
-class UnitTest < ActiveSupport::TestCase
-  self.test_order = :random
-
+module TestSetupTeardown
   def setup
     super
     if ActiveRecord.version >= Gem::Version.new("5.2")
@@ -32,6 +30,15 @@ class UnitTest < ActiveSupport::TestCase
     ActiveRecord::Base.clear_cache! # clear schema cache
     ActionMailer::Base.deliveries.clear
   end
+end
+
+class UnitTest < ActiveSupport::TestCase
+  self.test_order = :random
+  include TestSetupTeardown
+end
+
+class ControllerTest < ActionController::TestCase
+  include TestSetupTeardown
 end
 
 class IntegrationTest < UnitTest
