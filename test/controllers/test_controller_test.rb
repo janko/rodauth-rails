@@ -1,6 +1,8 @@
 require "test_helper"
 
-class TestControllerTest < ControllerTest
+class TestControllerTest < ActionController::TestCase
+  include TestSetupTeardown
+
   test "integration" do
     get :auth2
 

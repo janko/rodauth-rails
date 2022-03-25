@@ -37,10 +37,6 @@ class UnitTest < ActiveSupport::TestCase
   include TestSetupTeardown
 end
 
-class ControllerTest < ActionController::TestCase
-  include TestSetupTeardown
-end
-
 class IntegrationTest < UnitTest
   include Capybara::DSL
 
