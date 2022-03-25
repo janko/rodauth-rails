@@ -1,5 +1,7 @@
 ## HEAD
 
+* Fix `enum` declaration in generated `Account` model for Active Record < 7.0 (@janko)
+
 * Ensure `require_login_redirect` points to the login page even if the login route changes (@janko)
 
 ## 1.2.2 (2022-02-22)
