@@ -1,5 +1,6 @@
 require "rodauth/rails/middleware"
 require "rodauth/rails/controller_methods"
+require "rodauth/rails/test"
 
 require "rails"
 
@@ -21,6 +22,10 @@ module Rodauth
       initializer "rodauth.test" do
         # Rodauth uses RACK_ENV to set the default bcrypt hash cost
         ENV["RACK_ENV"] = "test" if ::Rails.env.test?
+
+        ActiveSupport.on_load(:action_controller_test_case) do
+          include Rodauth::Rails::Test::Controller
+        end
       end
 
       rake_tasks do
