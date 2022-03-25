@@ -9,7 +9,7 @@ class TestControllerTest < ActionController::TestCase
     assert_response 302
     assert_redirected_to rodauth.login_url
 
-    account = Account.create!(email: "user@example.com", password: "secret", status: "verified")
+    account = Account.create!(email: "user@example.com", password: "secret")
     login(account)
 
     get :auth2
