@@ -23,8 +23,12 @@ module Rodauth
         # Rodauth uses RACK_ENV to set the default bcrypt hash cost
         ENV["RACK_ENV"] = "test" if ::Rails.env.test?
 
-        ActiveSupport.on_load(:action_controller_test_case) do
-          include Rodauth::Rails::Test::Controller
+        if ActionPack.version >= Gem::Version.new("5.0")
+          ActiveSupport.on_load(:action_controller_test_case) do
+            include Rodauth::Rails::Test::Controller
+          end
+        else
+          ActionController::TestCase.include Rodauth::Rails::Test::Controller
         end
       end
 
