@@ -10,9 +10,7 @@ require "capybara/rails"
 ActiveRecord::Migrator.migrations_paths = [Rails.root.join("db/migrate")]
 Rails.backtrace_cleaner.remove_silencers! # show full stack traces
 
-class UnitTest < ActiveSupport::TestCase
-  self.test_order = :random
-
+module TestSetupTeardown
   def setup
     super
     if ActiveRecord.version >= Gem::Version.new("5.2")
@@ -32,6 +30,11 @@ class UnitTest < ActiveSupport::TestCase
     ActiveRecord::Base.clear_cache! # clear schema cache
     ActionMailer::Base.deliveries.clear
   end
+end
+
+class UnitTest < ActiveSupport::TestCase
+  self.test_order = :random
+  include TestSetupTeardown
 end
 
 class IntegrationTest < UnitTest
@@ -68,5 +71,22 @@ class IntegrationTest < UnitTest
   def teardown
     super
     Capybara.reset_sessions!
+  end
+end
+
+# a workaround to avoid MonitorMixin double-initialize error
+# https://github.com/rails/rails/issues/34790#issuecomment-681034561
+if RUBY_VERSION >= "2.6" && ActionPack.version < Gem::Version.new("5.0")
+  class ActionController::TestResponse < ActionDispatch::TestResponse
+    def recycle!
+      if RUBY_VERSION >= "2.7" || RUBY_ENGINE == "jruby"
+        @mon_data = nil
+        @mon_data_owner_object_id = nil
+      else
+        @mon_mutex = nil
+        @mon_mutex_owner_object_id = nil
+      end
+      initialize
+    end
   end
 end

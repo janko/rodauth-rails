@@ -10,7 +10,6 @@ Provides Rails integration for the [Rodauth] authentication framework.
 * [Rails demo](https://github.com/janko/rodauth-demo-rails)
 * [JSON API guide](https://github.com/janko/rodauth-rails/wiki/JSON-API)
 * [OmniAuth guide](https://github.com/janko/rodauth-rails/wiki/OmniAuth)
-* [Testing guide](https://github.com/janko/rodauth-rails/wiki/Testing)
 
 🎥 Screencasts:
 
@@ -781,6 +780,69 @@ Rodauth::Rails.rodauth(session: { two_factor_auth_setup: true })
 
 # secondary configuration
 Rodauth::Rails.rodauth(:admin, params: { "param" => "value" })
+```
+
+## Testing
+
+For system and integration tests, which run the whole middleware stack,
+authentication can be exercised normally via HTTP endpoints. See [this wiki
+page](https://github.com/janko/rodauth-rails/wiki/Testing) for some examples.
+
+For controller tests, you can log in accounts by modifying the session:
+
+```rb
+# app/controllers/articles_controller.rb
+class ArticlesController < ApplicationController
+  before_action -> { rodauth.require_authentication }
+
+  def index
+    # ...
+  end
+end
+```
+```rb
+# test/controllers/articles_controller_test.rb
+class ArticlesControllerTest < ActionController::TestCase
+  test "required authentication" do
+    get :index
+
+    assert_response 302
+    assert_redirected_to "/login"
+    assert_equal "Please login to continue", flash[:alert]
+
+    account = Account.create!(email: "user@example.com", password: "secret", status: "verified")
+    login(account)
+
+    get :index
+    assert_response 200
+
+    logout
+
+    get :index
+    assert_response 302
+    assert_equal "Please login to continue", flash[:alert]
+  end
+
+  private
+
+  # Manually modify the session into what Rodauth expects.
+  def login(account)
+    session[:account_id] = account.id
+    session[:authenticated_by] = ["password"] # or ["password", "totp"] for MFA
+  end
+
+  def logout
+    session.clear
+  end
+end
+```
+
+If you want to access the Rodauth instance in controller tests, you can do so
+through the controller instance:
+
+```rb
+# in a controller test:
+@controller.rodauth #=> #<RodauthMain ...>
 ```
 
 ## Configuring
