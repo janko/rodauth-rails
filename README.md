@@ -837,12 +837,29 @@ class ArticlesControllerTest < ActionController::TestCase
 end
 ```
 
+If you're using multiple configurations with different session prefixes, you'll need
+to make sure to use those in controller tests as well:
+
+```rb
+class RodauthAdmin < Rodauth::Rails::Auth
+  configure do
+    session_key_prefix "admin_"
+  end
+end
+```
+```rb
+# in a controller test:
+session[:admin_account_id] = account.id
+session[:admin_authenticated_by] = ["password"]
+```
+
 If you want to access the Rodauth instance in controller tests, you can do so
 through the controller instance:
 
 ```rb
 # in a controller test:
-@controller.rodauth #=> #<RodauthMain ...>
+@controller.rodauth         #=> #<RodauthMain ...>
+@controller.rodauth(:admin) #=> #<RodauthAdmin ...>
 ```
 
 ## Configuring
