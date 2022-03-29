@@ -15,8 +15,6 @@ module Rodauth
         end
         ruby2_keywords(:process) if respond_to?(:ruby2_keywords, true)
 
-        delegate :rodauth, to: :@controller
-
         private
 
         def setup_rodauth

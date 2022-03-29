@@ -6,9 +6,10 @@ class TestControllerTest < ActionController::TestCase
   test "integration" do
     get :auth2
     assert_response 302
-    assert_redirected_to rodauth.login_url
+    assert_redirected_to "/login"
+    assert_equal "Please login to continue", flash[:alert]
 
-    account = Account.create!(email: "user@example.com", password: "secret")
+    account = Account.create!(email: "user@example.com", password: "secret", status: "verified")
     login(account)
 
     get :auth2
@@ -17,12 +18,22 @@ class TestControllerTest < ActionController::TestCase
     # session state is retained on further requests
     get :auth2
     assert_response 200
+
+    logout
+
+    get :auth2
+    assert_response 302
+    assert_equal "Please login to continue", flash[:alert]
   end
 
   private
 
   def login(account)
-    rodauth.account_from_login(account.email)
-    rodauth.login_session("password")
+    session[:account_id] = account.id
+    session[:authenticated_by] = ["password"]
+  end
+
+  def logout
+    session.clear
   end
 end
