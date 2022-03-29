@@ -5,7 +5,6 @@ class TestControllerTest < ActionController::TestCase
 
   test "integration" do
     get :auth2
-
     assert_response 302
     assert_redirected_to rodauth.login_url
 
@@ -13,7 +12,10 @@ class TestControllerTest < ActionController::TestCase
     login(account)
 
     get :auth2
+    assert_response 200
 
+    # session state is retained on further requests
+    get :auth2
     assert_response 200
   end
 
