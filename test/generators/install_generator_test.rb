@@ -81,6 +81,11 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     assert_file "app/models/account.rb", /class Account < ApplicationRecord/
+    if ActiveRecord.version >= Gem::Version.new("7.0")
+      assert_file "app/models/account.rb", /enum :status, unverified: 1, verified: 2, closed: 3/
+    else
+      assert_file "app/models/account.rb", /enum status: { unverified: 1, verified: 2, closed: 3 }/
+    end
   end
 
   test "mailer" do
