@@ -1,5 +1,7 @@
 ## HEAD
 
+* Store password hash on the `accounts` table in generated Rodauth migration and configuration (@janko)
+
 * Add support for controller testing with Minitest or RSpec (@janko)
 
 * Fix `enum` declaration in generated `Account` model for Active Record < 7.0 (@janko)

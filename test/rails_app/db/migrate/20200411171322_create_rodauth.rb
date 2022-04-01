@@ -10,9 +10,9 @@ class CreateRodauth < superclass
 
   def change
     create_table :accounts do |t|
+      t.integer :status, null: false, default: 1
       t.string :email, null: false
       t.index :email, unique: true, where: "status IN (1, 2)"
-      t.integer :status, null: false, default: 1
       t.string :password_hash
     end
 

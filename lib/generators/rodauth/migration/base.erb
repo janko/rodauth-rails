@@ -3,23 +3,18 @@ enable_extension "citext"
 
 <% end -%>
 create_table :accounts<%= primary_key_type %> do |t|
+  t.integer :status, null: false, default: 1
 <% case activerecord_adapter -%>
 <% when "postgresql" -%>
   t.citext :email, null: false
 <% else -%>
   t.string :email, null: false
 <% end -%>
-  t.integer :status, null: false, default: 1
 <% case activerecord_adapter -%>
 <% when "postgresql", "sqlite3" -%>
   t.index :email, unique: true, where: "status IN (1, 2)"
 <% else -%>
   t.index :email, unique: true
 <% end -%>
-end
-
-# Used if storing password hashes in a separate table (default)
-create_table :account_password_hashes<%= primary_key_type %> do |t|
-  t.foreign_key :accounts, column: :id
-  t.string :password_hash, null: false
+  t.string :password_hash
 end

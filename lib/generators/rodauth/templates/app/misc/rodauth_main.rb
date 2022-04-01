@@ -35,7 +35,7 @@ class RodauthMain < Rodauth::Rails::Auth
     account_status_column :status
 
     # Store password hash in a column instead of a separate table.
-    # account_password_hash_column :password_digest
+    account_password_hash_column :password_hash
 
     # Set password when creating account instead of when verifying.
     verify_account_set_password? false
