@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add support for controller testing with Minitest or RSpec (@janko)
+
 * Fix `enum` declaration in generated `Account` model for Active Record < 7.0 (@janko)
 
 * Ensure `require_login_redirect` points to the login page even if the login route changes (@janko)
