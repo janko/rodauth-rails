@@ -1,5 +1,8 @@
 ENV["RAILS_ENV"] = "test"
 
+require "warning"
+Warning.ignore(:ambiguous_slash, __dir__)
+
 require "bundler/setup"
 require "i18n/backend"
 require "i18n/backend/simple" # workaround for https://github.com/jruby/jruby/issues/6547

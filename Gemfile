@@ -3,6 +3,7 @@ source "https://rubygems.org"
 gemspec
 
 gem "rake", "~> 13.0"
+gem "warning"
 
 gem "rails", ">= 4.2"
 gem "sqlite3", "~> 1.3",                platforms: :mri
