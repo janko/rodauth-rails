@@ -54,6 +54,13 @@ module Rodauth
 
         private
 
+        unless ActionPack.version < Gem::Version.new("5.0")
+          def redirect(*)
+            rails_request.commit_flash
+            super
+          end
+        end
+
         def instantiate_rails_account
           if defined?(ActiveRecord::Base) && rails_account_model < ActiveRecord::Base
             rails_account_model.instantiate(account.stringify_keys)

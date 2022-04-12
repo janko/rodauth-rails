@@ -20,11 +20,6 @@ module Rodauth
       plugin :hooks
       plugin :render, layout: false
 
-      unless Rodauth::Rails.api_only?
-        require "rodauth/rails/app/flash"
-        plugin Flash
-      end
-
       def self.configure(*args, **options, &block)
         auth_class = args.shift if args[0].is_a?(Class)
         name       = args.shift if args[0].is_a?(Symbol)
@@ -42,6 +37,14 @@ module Rodauth
         opts[:rodauths]&.each_key do |name|
           env[["rodauth", *name].join(".")] = rodauth(name)
         end
+      end
+
+      after do
+        rails_request.commit_flash
+      end unless ActionPack.version < Gem::Version.new("5.0")
+
+      def flash
+        rails_request.flash
       end
 
       def rails_routes
