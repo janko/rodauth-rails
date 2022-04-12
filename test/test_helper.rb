@@ -1,7 +1,9 @@
 ENV["RAILS_ENV"] = "test"
 
-require "warning"
-Warning.ignore(:ambiguous_slash, __dir__)
+if RUBY_VERSION >= "2.4"
+  require "warning"
+  Warning.ignore(:ambiguous_slash, __dir__)
+end
 
 require "bundler/setup"
 require "i18n/backend"
