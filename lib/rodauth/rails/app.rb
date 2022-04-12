@@ -5,8 +5,17 @@ module Rodauth
   module Rails
     # The superclass for creating a Rodauth middleware.
     class App < Roda
-      require "rodauth/rails/app/middleware"
-      plugin Middleware
+      plugin :middleware, forward_response_headers: true do |middleware|
+        middleware.class_eval do
+          def self.inspect
+            "#{superclass}::Middleware"
+          end
+
+          def inspect
+            "#<#{self.class.inspect} request=#{request.inspect} response=#{response.inspect}>"
+          end
+        end
+      end
 
       plugin :hooks
       plugin :render, layout: false
