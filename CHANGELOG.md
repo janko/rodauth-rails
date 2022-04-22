@@ -1,4 +1,4 @@
-## HEAD
+## 1.3.1 (2022-04-22)
 
 * Ensure response status is logged when calling a halting rodauth method inside a controller (@janko)
 
