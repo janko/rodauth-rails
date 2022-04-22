@@ -10,6 +10,14 @@ module Rodauth
 
         def redirect(*)
           rails_instrument_redirection { super }
+        ensure
+          request.env["rodauth.rails.status"] = response.status
+        end
+
+        def return_response(*)
+          super
+        ensure
+          request.env["rodauth.rails.status"] = response.status
         end
 
         def rails_render(*)

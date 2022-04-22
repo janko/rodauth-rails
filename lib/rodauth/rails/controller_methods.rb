@@ -18,6 +18,15 @@ module Rodauth
 
       private
 
+      # Adds response status to instrumentation payload for logging,
+      # when calling a halting rodauth method inside a controller.
+      def append_info_to_payload(payload)
+        super
+        if request.env["rodauth.rails.status"]
+          payload[:status] = request.env.delete("rodauth.rails.status")
+        end
+      end
+
       def rodauth_response
         res = catch(:halt) { return yield }
 

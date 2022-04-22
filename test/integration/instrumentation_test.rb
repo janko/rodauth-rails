@@ -54,6 +54,22 @@ class InstrumentationTest < IntegrationTest
     assert_match /Completed 404 Not Found in \d+ms/, logged
   end
 
+  test "logs response status when redirecting inside controller" do
+    logged = capture_log do
+      visit "/auth2"
+    end
+
+    assert_match /Completed 302 Found/, logged
+  end
+
+  test "logs response status when halting inside controller" do
+    logged = capture_log do
+      visit "/auth_json"
+    end
+
+    assert_match /Completed 401 Unauthorized/, logged
+  end
+
   private
 
   def capture_log

@@ -1,3 +1,7 @@
+## HEAD
+
+* Ensure response status is logged when calling a halting rodauth method inside a controller (@janko)
+
 ## 1.3.0 (2022-04-01)
 
 * Store password hash on the `accounts` table in generated Rodauth migration and configuration (@janko)

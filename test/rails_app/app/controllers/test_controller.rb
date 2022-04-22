@@ -19,6 +19,12 @@ class TestController < ApplicationController
     render :template
   end
 
+  def auth_json
+    rodauth(:json).require_authentication
+
+    head :ok
+  end
+
   def sign_in
     rodauth.account_from_login(Account.first.email)
 
