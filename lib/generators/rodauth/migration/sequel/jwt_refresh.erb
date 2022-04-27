@@ -1,0 +1,8 @@
+# Used by the jwt refresh feature
+create_table :account_jwt_refresh_keys do
+  primary_key :id, type: :Bignum
+  foreign_key :account_id, :accounts, null: false, type: :Bignum
+  String :key, null: false
+  DateTime :deadline, null: false
+  index :account_id, name: :account_jwt_rk_account_id_idx
+end

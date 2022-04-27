@@ -6,8 +6,6 @@ module Rodauth
   module Rails
     module Generators
       class MigrationGenerator < ::Rails::Generators::Base
-        include ::ActiveRecord::Generators::Migration
-
         source_root "#{__dir__}/templates"
         namespace "rodauth:migration"
 
@@ -19,7 +17,6 @@ module Rodauth
           desc: "Name of the generated migration file"
 
         def create_rodauth_migration
-          return unless defined?(ActiveRecord::Railtie)
           return if features.empty?
 
           migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "#{migration_name}.rb")
@@ -31,46 +28,13 @@ module Rodauth
           options[:name] || "create_rodauth_#{features.join("_")}"
         end
 
-        def db_migrate_path
-          return "db/migrate" unless ActiveRecord.version >= Gem::Version.new("5.0")
-
-          super
-        end
-
-        def migration_version
-          return unless ActiveRecord.version >= Gem::Version.new("5.0")
-
-          "[#{ActiveRecord::Migration.current_version}]"
-        end
-
         def migration_content
           features
-            .select { |feature| File.exist?("#{__dir__}/migration/#{feature}.erb") }
-            .map { |feature| File.read("#{__dir__}/migration/#{feature}.erb") }
+            .select { |feature| File.exist?(migration_chunk(feature)) }
+            .map { |feature| File.read(migration_chunk(feature)) }
             .map { |content| erb_eval(content) }
             .join("\n")
             .indent(4)
-        end
-
-        def activerecord_adapter
-          if ActiveRecord::Base.respond_to?(:connection_db_config)
-            ActiveRecord::Base.connection_db_config.adapter
-          else
-            ActiveRecord::Base.connection_config.fetch(:adapter)
-          end
-        end
-
-        def primary_key_type(key = :id)
-          generators  = ::Rails.application.config.generators
-          column_type = generators.options[:active_record][:primary_key_type]
-
-          return unless column_type
-
-          if key
-            ", #{key}: :#{column_type}"
-          else
-            column_type
-          end
         end
 
         def erb_eval(content)
@@ -81,11 +45,72 @@ module Rodauth
           end
         end
 
-        def current_timestamp
-          if ActiveRecord.version >= Gem::Version.new("5.0")
-            %(-> { "CURRENT_TIMESTAMP" })
-          else
-            %(OpenStruct.new(quoted_id: "CURRENT_TIMESTAMP"))
+        if defined?(::ActiveRecord::Railtie) # Active Record
+          include ::ActiveRecord::Generators::Migration
+
+          def db_migrate_path
+            return "db/migrate" unless ActiveRecord.version >= Gem::Version.new("5.0")
+
+            super
+          end
+
+          def migration_chunk(feature)
+            "#{__dir__}/migration/active_record/#{feature}.erb"
+          end
+
+          def migration_version
+            return unless ActiveRecord.version >= Gem::Version.new("5.0")
+
+            "[#{ActiveRecord::Migration.current_version}]"
+          end
+
+          def activerecord_adapter
+            if ActiveRecord::Base.respond_to?(:connection_db_config)
+              ActiveRecord::Base.connection_db_config.adapter
+            else
+              ActiveRecord::Base.connection_config.fetch(:adapter)
+            end
+          end
+
+          def primary_key_type(key = :id)
+            generators  = ::Rails.application.config.generators
+            column_type = generators.options[:active_record][:primary_key_type]
+
+            return unless column_type
+
+            if key
+              ", #{key}: :#{column_type}"
+            else
+              column_type
+            end
+          end
+
+          def current_timestamp
+            if ActiveRecord.version >= Gem::Version.new("5.0")
+              %(-> { "CURRENT_TIMESTAMP" })
+            else
+              %(OpenStruct.new(quoted_id: "CURRENT_TIMESTAMP"))
+            end
+          end
+        else # Sequel
+          include ::Rails::Generators::Migration
+
+          def self.next_migration_number(dirname)
+            next_migration_number = current_migration_number(dirname) + 1
+            [Time.now.utc.strftime('%Y%m%d%H%M%S'), format('%.14d', next_migration_number)].max
+          end
+
+          def db_migrate_path
+            "db/migrate"
+          end
+
+          def migration_chunk(feature)
+            "#{__dir__}/migration/sequel/#{feature}.erb"
+          end
+
+          def db
+            db = ::Sequel::DATABASES.first if defined?(::Sequel)
+            db or fail Rodauth::Rails::Error, "missing Sequel database connection"
           end
         end
       end

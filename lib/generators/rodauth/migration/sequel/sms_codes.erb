@@ -1,0 +1,8 @@
+# Used by the sms codes feature
+create_table :account_sms_codes do
+  foreign_key :id, :accounts, primary_key: true, type: :Bignum
+  String :phone_number, null: false
+  Integer :num_failures
+  String :code
+  DateTime :code_issued_at, null: false, default: Sequel::CURRENT_TIMESTAMP
+end

@@ -59,8 +59,6 @@ module Rodauth
         end
 
         def create_account_model
-          return unless defined?(ActiveRecord::Railtie)
-
           template "app/models/account.rb"
         end
 

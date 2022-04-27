@@ -1,0 +1,25 @@
+<% if db.database_type == :postgres -%>
+enable_extension "citext"
+
+<% end -%>
+create_table :accounts do
+  primary_key :id, type: :Bignum
+<% if db.database_type == :postgres -%>
+  citext :email, null: false
+  constraint :valid_email, email: /^[^,;@ \r\n]+@[^,@; \r\n]+\.[^,@; \r\n]+$/
+<% else -%>
+  String :email, null: false
+<% end -%>
+  String :status, null: false, default: "unverified"
+<% if db.supports_partial_indexes? -%>
+  index :email, unique: true, where: { status: ["unverified", "verified"] }
+<% else -%>
+  index :email, unique: true
+<% end -%>
+end
+
+# Used if storing password hashes in a separate table (default)
+create_table :account_password_hashes do
+  foreign_key :id, :accounts, primary_key: true, type: :Bignum
+  String :password_hash, null: false
+end
