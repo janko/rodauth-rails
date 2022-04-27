@@ -1,15 +1,10 @@
 require "rails/generators/base"
-require "rails/generators/active_record/migration"
-require "generators/rodauth/migration_helpers"
 require "securerandom"
 
 module Rodauth
   module Rails
     module Generators
       class InstallGenerator < ::Rails::Generators::Base
-        include ::ActiveRecord::Generators::Migration
-        include MigrationHelpers
-
         if RUBY_ENGINE == "jruby"
           SEQUEL_ADAPTERS = {
             "sqlite3"         => "sqlite",
@@ -40,9 +35,7 @@ module Rodauth
         class_option :jwt, type: :boolean, desc: "Configure JWT support"
 
         def create_rodauth_migration
-          return unless defined?(ActiveRecord::Railtie)
-
-          migration_template "db/migrate/create_rodauth.rb"
+          invoke "rodauth:migration", migration_features, name: "create_rodauth"
         end
 
         def create_rodauth_initializer
@@ -111,6 +104,14 @@ module Rodauth
           scheme = SEQUEL_ADAPTERS[activerecord_adapter] || activerecord_adapter
           scheme = "jdbc:#{scheme}" if RUBY_ENGINE == "jruby"
           scheme
+        end
+
+        def activerecord_adapter
+          if ActiveRecord::Base.respond_to?(:connection_db_config)
+            ActiveRecord::Base.connection_db_config.adapter
+          else
+            ActiveRecord::Base.connection_config.fetch(:adapter)
+          end
         end
       end
     end
