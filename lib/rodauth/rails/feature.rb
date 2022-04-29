@@ -11,6 +11,7 @@ module Rodauth
     require "rodauth/rails/feature/email"
     require "rodauth/rails/feature/instrumentation"
     require "rodauth/rails/feature/internal_request"
+    require "rodauth/rails/feature/associations"
 
     include Rodauth::Rails::Feature::Base
     include Rodauth::Rails::Feature::Callbacks
@@ -19,5 +20,6 @@ module Rodauth
     include Rodauth::Rails::Feature::Email
     include Rodauth::Rails::Feature::Instrumentation
     include Rodauth::Rails::Feature::InternalRequest
+    include Rodauth::Rails::Feature::Associations
   end
 end

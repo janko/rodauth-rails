@@ -1,7 +1,7 @@
 module Rodauth
   module Rails
     class Model < Module
-      require "rodauth/rails/model/associations"
+      ASSOCIATION_TYPES = { one: :has_one, many: :has_many }
 
       def initialize(auth_class, association_options: {})
         @auth_class = auth_class
@@ -46,8 +46,8 @@ module Rodauth
       def define_associations(model)
         define_password_hash_association(model) unless rodauth.account_password_hash_column
 
-        feature_associations.each do |association|
-          define_association(model, **association)
+        rodauth.associations.each do |association|
+          define_association(model, **association, type: ASSOCIATION_TYPES.fetch(association[:type]))
         end
       end
 
@@ -74,17 +74,17 @@ module Rodauth
 
         model.const_set(name.to_s.singularize.camelize, associated_model)
 
+        unless name == :authentication_audit_logs
+          dependent = type == :has_many ? :delete_all : :delete
+        end
+
         model.public_send type, name, scope,
           class_name: associated_model.name,
           foreign_key: foreign_key,
-          dependent: type == :has_many ? :delete_all : :delete,
+          dependent: dependent,
           inverse_of: :account,
           **options,
           **association_options(name)
-      end
-
-      def feature_associations
-        Rodauth::Rails::Model::Associations.call(rodauth)
       end
 
       def association_options(name)
