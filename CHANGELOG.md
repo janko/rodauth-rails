@@ -1,4 +1,8 @@
-## HEAD
+## 1.4.0 (2022-05-04)
+
+* Move association definitions to `#associations` Rodauth method, allowing external features to extend them (@janko)
+
+* Add Sequel support for generating database migrations, model, and mailer (@janko)
 
 * Skip calling Rodauth app on asset requests when using Sprockets or Propshaft (@janko)
 
