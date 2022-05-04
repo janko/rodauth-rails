@@ -614,6 +614,33 @@ Rodauth::Rails.model(association_options: -> (name) {
 })
 ```
 
+#### Extending Associations
+
+External features can extend the list of associations with their own
+definitions, which the model mixin will pick up and declare the new associations
+on the model.
+
+```rb
+# lib/rodauth/features/foo.rb
+module Rodauth
+  Feature.define(:foo, :Foo) do
+    auth_value_method :foo_table, :account_foos
+    auth_value_method :foo_id_column, :id
+
+    def associations
+      list = super
+      list << {
+        name: :foo, # will define `Account::Foo` model
+        type: :one, # or :many
+        table: foo_table,
+        foreign_key: foo_id_column
+      }
+      list
+    end
+  end
+end
+```
+
 ## Multiple configurations
 
 If you need to handle multiple types of accounts that require different
