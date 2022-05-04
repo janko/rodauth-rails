@@ -23,7 +23,7 @@ module Rodauth
       def asset_request?(env)
         return false unless ::Rails.application.config.respond_to?(:assets)
 
-        env["PATH_INFO"].match? %r(\A/{0,2}#{::Rails.application.config.assets.prefix})
+        env["PATH_INFO"] =~ %r(\A/{0,2}#{::Rails.application.config.assets.prefix})
       end
     end
   end
