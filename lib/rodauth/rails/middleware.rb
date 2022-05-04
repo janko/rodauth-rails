@@ -9,12 +9,21 @@ module Rodauth
       end
 
       def call(env)
+        return @app.call(env) if asset_request?(env)
+
         app = Rodauth::Rails.app.new(@app)
 
         # allow the Rails app to call Rodauth methods that throw :halt
         catch(:halt) do
           app.call(env)
         end
+      end
+
+      # Check whether it's a request to an asset managed by Sprockets or Propshaft.
+      def asset_request?(env)
+        return false unless ::Rails.application.config.respond_to?(:assets)
+
+        env["PATH_INFO"].match? %r(\A/{0,2}#{::Rails.application.config.assets.prefix})
       end
     end
   end

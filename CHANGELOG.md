@@ -1,3 +1,7 @@
+## HEAD
+
+* Skip calling Rodauth app on asset requests when using Sprockets or Propshaft (@janko)
+
 ## 1.3.1 (2022-04-22)
 
 * Ensure response status is logged when calling a halting rodauth method inside a controller (@janko)

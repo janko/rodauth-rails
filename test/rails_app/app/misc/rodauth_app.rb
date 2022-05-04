@@ -27,6 +27,8 @@ class RodauthApp < Rodauth::Rails::App
     r.on("jwt") { r.rodauth(:jwt) }
     r.on("json") { r.rodauth(:json) }
 
+    r.on("assets") { "" }
+
     if r.path == rails_routes.auth1_path
       rodauth.require_authentication
     end
