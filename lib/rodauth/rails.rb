@@ -1,5 +1,6 @@
 require "rodauth/rails/version"
 require "rodauth/rails/railtie"
+require "rodauth/model"
 
 module Rodauth
   module Rails
@@ -43,7 +44,7 @@ module Rodauth
       end
 
       def model(name = nil, **options)
-        Rodauth::Rails::Model.new(app.rodauth!(name), **options)
+        Rodauth::Model.new(app.rodauth!(name), **options)
       end
 
       # routing constraint that requires authentication

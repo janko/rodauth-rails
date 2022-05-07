@@ -484,9 +484,9 @@ end
 
 ## Model
 
-The `Rodauth::Rails::Model` mixin can be included into the account model, which
-defines a password attribute and associations for tables used by enabled
-authentication features.
+The [rodauth-model] gem provides a `Rodauth::Model` mixin that can be included
+into the account model, which defines a password attribute and associations for
+tables used by enabled authentication features.
 
 ```rb
 class Account < ApplicationRecord
@@ -494,11 +494,9 @@ class Account < ApplicationRecord
 end
 ```
 
-### Password attribute
-
-Regardless of whether you're storing the password hash in a column in the
-accounts table, or in a separate table, the `#password` attribute can be used
-to set or clear the password hash.
+The password attribute can be used to set or clear the password hash. It
+handles both storing the password hash in a column on the accounts table, or in
+a separate table.
 
 ```rb
 account = Account.create!(email: "user@example.com", password: "secret")
@@ -514,132 +512,14 @@ account.password = nil # clears password hash
 account.password_hash #=> nil
 ```
 
-Note that the password attribute doesn't come with validations, making it
-unsuitable for forms. It was primarily intended to allow easily creating
-accounts in development console and in tests.
-
-### Associations
-
-The `Rodauth::Rails::Model` mixin defines associations for Rodauth tables
-associated to the accounts table:
+The associations are defined for tables used by enabled authentication features:
 
 ```rb
 account.remember_key #=> #<Account::RememberKey> (record from `account_remember_keys` table)
 account.active_session_keys #=> [#<Account::ActiveSessionKey>,...] (records from `account_active_session_keys` table)
 ```
 
-You can also reference the associated models directly:
-
-```rb
-# model referencing the `account_authentication_audit_logs` table
-Account::AuthenticationAuditLog.where(message: "login").group(:account_id)
-```
-
-The associated models define the inverse `belongs_to :account` association:
-
-```rb
-Account::ActiveSessionKey.includes(:account).map(&:account)
-```
-
-Here is an example of using associations to create a method that returns
-whether the account has multifactor authentication enabled:
-
-```rb
-class Account < ApplicationRecord
-  include Rodauth::Rails.model
-
-  def mfa_enabled?
-    otp_key || (sms_code && sms_code.num_failures.nil?) || recovery_codes.any?
-  end
-end
-```
-
-Here is another example of creating a query scope that selects accounts with
-multifactor authentication enabled:
-
-```rb
-class Account < ApplicationRecord
-  include Rodauth::Rails.model
-
-  scope :otp_setup, -> { where(otp_key: OtpKey.all) }
-  scope :sms_codes_setup, -> { where(sms_code: SmsCode.where(num_failures: nil)) }
-  scope :recovery_codes_setup, -> { where(recovery_codes: RecoveryCode.all) }
-  scope :mfa_enabled, -> { merge(otp_setup.or(sms_codes_setup).or(recovery_codes_setup)) }
-end
-```
-
-#### Association reference
-
-Below is a list of all associations defined depending on the features loaded:
-
-| Feature                 | Association                  | Type       | Model                    | Table (default)                     |
-| :------                 | :----------                  | :---       | :----                    | :----                               |
-| account_expiration      | `:activity_time`             | `has_one`  | `ActivityTime`           | `account_activity_times`            |
-| active_sessions         | `:active_session_keys`       | `has_many` | `ActiveSessionKey`       | `account_active_session_keys`       |
-| audit_logging           | `:authentication_audit_logs` | `has_many` | `AuthenticationAuditLog` | `account_authentication_audit_logs` |
-| disallow_password_reuse | `:previous_password_hashes`  | `has_many` | `PreviousPasswordHash`   | `account_previous_password_hashes`  |
-| email_auth              | `:email_auth_key`            | `has_one`  | `EmailAuthKey`           | `account_email_auth_keys`           |
-| jwt_refresh             | `:jwt_refresh_keys`          | `has_many` | `JwtRefreshKey`          | `account_jwt_refresh_keys`          |
-| lockout                 | `:lockout`                   | `has_one`  | `Lockout`                | `account_lockouts`                  |
-| lockout                 | `:login_failure`             | `has_one`  | `LoginFailure`           | `account_login_failures`            |
-| otp                     | `:otp_key`                   | `has_one`  | `OtpKey`                 | `account_otp_keys`                  |
-| password_expiration     | `:password_change_time`      | `has_one`  | `PasswordChangeTime`     | `account_password_change_times`     |
-| recovery_codes          | `:recovery_codes`            | `has_many` | `RecoveryCode`           | `account_recovery_codes`            |
-| remember                | `:remember_key`              | `has_one`  | `RememberKey`            | `account_remember_keys`             |
-| reset_password          | `:password_reset_key`        | `has_one`  | `PasswordResetKey`       | `account_password_reset_keys`       |
-| single_session          | `:session_key`               | `has_one`  | `SessionKey`             | `account_session_keys`              |
-| sms_codes               | `:sms_code`                  | `has_one`  | `SmsCode`                | `account_sms_codes`                 |
-| verify_account          | `:verification_key`          | `has_one`  | `VerificationKey`        | `account_verification_keys`         |
-| verify_login_change     | `:login_change_key`          | `has_one`  | `LoginChangeKey`         | `account_login_change_keys`         |
-| webauthn                | `:webauthn_keys`             | `has_many` | `WebauthnKey`            | `account_webauthn_keys`             |
-| webauthn                | `:webauthn_user_id`          | `has_one`  | `WebauthnUserId`         | `account_webauthn_user_ids`         |
-
-Note that some Rodauth tables use composite primary keys, which Active Record
-doesn't support out of the box. For associations to work properly, you might
-need to add the [composite_primary_keys] gem to your Gemfile.
-
-#### Association options
-
-By default, all associations except for audit logs have `dependent: :destroy`
-set, to allow for easy deletion of account records in the console. You can use
-`:association_options` to modify global or per-association options:
-
-```rb
-# don't auto-delete associations when account model is deleted
-Rodauth::Rails.model(association_options: { dependent: nil })
-
-# require authentication audit logs to be eager loaded before retrieval
-Rodauth::Rails.model(association_options: -> (name) {
-  { strict_loading: true } if name == :authentication_audit_logs
-})
-```
-
-#### Extending Associations
-
-External features can extend the list of associations with their own
-definitions, which the model mixin will pick up and declare the new associations
-on the model.
-
-```rb
-# lib/rodauth/features/foo.rb
-module Rodauth
-  Feature.define(:foo, :Foo) do
-    auth_value_method :foo_table, :account_foos
-    auth_value_method :foo_id_column, :id
-
-    def associations
-      list = super
-      list << {
-        name: :foo, # will define `Account::Foo` model
-        type: :one, # or :many
-        table: foo_table,
-        foreign_key: foo_id_column
-      }
-      list
-    end
-  end
-end
-```
+See the [rodauth-model] documentation for more details.
 
 ## Multiple configurations
 
@@ -1304,8 +1184,8 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [account_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/account_expiration_rdoc.html
 [simple_ldap_authenticator]: https://github.com/jeremyevans/simple_ldap_authenticator
 [internal_request]: http://rodauth.jeremyevans.net/rdoc/files/doc/internal_request_rdoc.html
-[composite_primary_keys]: https://github.com/composite-primary-keys/composite_primary_keys
 [path_class_methods]: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html
 [account types]: https://github.com/janko/rodauth-rails/wiki/Account-Types
 [custom mailer worker]: https://github.com/janko/rodauth-rails/wiki/Custom-Mailer-Worker
 [Turbo]: https://turbo.hotwired.dev/
+[rodauth-model]: https://github.com/janko/rodauth-model

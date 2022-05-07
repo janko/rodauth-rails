@@ -1,3 +1,11 @@
+## HEAD
+
+* Deprecate `Rodauth::Rails::Model` constant (@janko)
+
+* Remove `Rodauth::Rails::Auth#associations` in favour of new association registration API (@janko)
+
+* Extract model mixin into the rodauth-model gem (@janko)
+
 ## 1.4.0 (2022-05-04)
 
 * Move association definitions to `#associations` Rodauth method, allowing external features to extend them (@janko)
