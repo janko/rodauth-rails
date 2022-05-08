@@ -1,4 +1,4 @@
-## HEAD
+## 1.4.1 (2022-05-08)
 
 * Deprecate `Rodauth::Rails::Model` constant (@janko)
 
