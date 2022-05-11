@@ -489,7 +489,7 @@ into the account model, which defines a password attribute and associations for
 tables used by enabled authentication features.
 
 ```rb
-class Account < ApplicationRecord
+class Account < ActiveRecord::Base # Sequel::Model
   include Rodauth::Rails.model # or `Rodauth::Rails.model(:admin)`
 end
 ```
