@@ -1,5 +1,7 @@
 ## HEAD
 
+* Stop passing email addresses in mailer arguments on verifying login change (@janko)
+
 * Extract finding account into a method in the generated mailer (@janko)
 
 * Make generated Action Mailer integration work with secondary Rodauth configurations (@janko)

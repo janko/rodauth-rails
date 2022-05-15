@@ -62,7 +62,7 @@ class RodauthMain < Rodauth::Rails::Auth
       RodauthMailer.verify_account(*self.class.configuration_name, account_id, verify_account_key_value)
     end
     create_verify_login_change_email do |_login|
-      RodauthMailer.verify_login_change(*self.class.configuration_name, account_id, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_key_value)
+      RodauthMailer.verify_login_change(*self.class.configuration_name, account_id, verify_login_change_key_value)
     end
     create_password_changed_email do
       RodauthMailer.password_changed(*self.class.configuration_name, account_id)

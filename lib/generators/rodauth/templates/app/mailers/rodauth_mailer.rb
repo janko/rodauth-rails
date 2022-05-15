@@ -13,13 +13,12 @@ class RodauthMailer < ApplicationMailer
     mail to: @account.email, subject: rodauth(name).reset_password_email_subject
   end
 
-  def verify_login_change(name = nil, account_id, old_login, new_login, key)
-    @old_login  = old_login
-    @new_login  = new_login
+  def verify_login_change(name = nil, account_id, key)
     @email_link = email_link(name, :verify_login_change, account_id, key)
     @account = find_account(name, account_id)
+    @new_email = @account.login_change_key.login
 
-    mail to: new_login, subject: rodauth(name).verify_login_change_email_subject
+    mail to: @new_email, subject: rodauth(name).verify_login_change_email_subject
   end
 
   def password_changed(name = nil, account_id)
