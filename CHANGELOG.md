@@ -1,4 +1,4 @@
-## HEAD
+## 1.4.2 (2022-05-15)
 
 * Stop passing email addresses in mailer arguments on verifying login change (@janko)
 
