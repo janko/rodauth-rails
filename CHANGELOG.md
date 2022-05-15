@@ -1,5 +1,7 @@
 ## HEAD
 
+* Make generated Action Mailer integration work with secondary Rodauth configurations (@janko)
+
 * Include `Rodauth::Rails.model` in generated Sequel account model as well (@janko)
 
 ## 1.4.1 (2022-05-08)
