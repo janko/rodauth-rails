@@ -1,22 +1,14 @@
 class RodauthMailer < ApplicationMailer
   def verify_account(name = nil, account_id, key)
     @email_link = email_link(name, :verify_account, account_id, key)
-<% if defined?(ActiveRecord::Railtie) -%>
-    @account = Account.find(account_id)
-<% else -%>
-    @account = Account.with_pk!(account_id)
-<% end -%>
+    @account = find_account(name, account_id)
 
     mail to: @account.email, subject: rodauth(name).verify_account_email_subject
   end
 
   def reset_password(name = nil, account_id, key)
     @email_link = email_link(name, :reset_password, account_id, key)
-<% if defined?(ActiveRecord::Railtie) -%>
-    @account = Account.find(account_id)
-<% else -%>
-    @account = Account.with_pk!(account_id)
-<% end -%>
+    @account = find_account(name, account_id)
 
     mail to: @account.email, subject: rodauth(name).reset_password_email_subject
   end
@@ -25,48 +17,40 @@ class RodauthMailer < ApplicationMailer
     @old_login  = old_login
     @new_login  = new_login
     @email_link = email_link(name, :verify_login_change, account_id, key)
-<% if defined?(ActiveRecord::Railtie) -%>
-    @account = Account.find(account_id)
-<% else -%>
-    @account = Account.with_pk!(account_id)
-<% end -%>
+    @account = find_account(name, account_id)
 
     mail to: new_login, subject: rodauth(name).verify_login_change_email_subject
   end
 
   def password_changed(name = nil, account_id)
-<% if defined?(ActiveRecord::Railtie) -%>
-    @account = Account.find(account_id)
-<% else -%>
-    @account = Account.with_pk!(account_id)
-<% end -%>
+    @account = find_account(name, account_id)
 
     mail to: @account.email, subject: rodauth(name).password_changed_email_subject
   end
 
   # def email_auth(name = nil, account_id, key)
   #   @email_link = email_link(name, :email_auth, account_id, key)
-<% if defined?(ActiveRecord::Railtie) -%>
-  #   @account = Account.find(account_id)
-<% else -%>
-  #   @account = Account.with_pk!(account_id)
-<% end -%>
+  #   @account = find_account(name, account_id)
 
   #   mail to: @account.email, subject: rodauth(name).email_auth_email_subject
   # end
 
   # def unlock_account(name = nil, account_id, key)
   #   @email_link = email_link(name, :unlock_account, account_id, key)
-<% if defined?(ActiveRecord::Railtie) -%>
-  #   @account = Account.find(account_id)
-<% else -%>
-  #   @account = Account.with_pk!(account_id)
-<% end -%>
+  #   @account = find_account(name, account_id)
 
   #   mail to: @account.email, subject: rodauth(name).unlock_account_email_subject
   # end
 
   private
+
+  def find_account(_name, account_id)
+<% if defined?(ActiveRecord::Railtie) -%>
+    Account.find(account_id)
+<% else -%>
+    Account.with_pk!(account_id)
+<% end -%>
+  end
 
   def email_link(name, action, account_id, key)
     instance = rodauth(name)

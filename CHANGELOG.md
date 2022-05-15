@@ -1,5 +1,7 @@
 ## HEAD
 
+* Extract finding account into a method in the generated mailer (@janko)
+
 * Make generated Action Mailer integration work with secondary Rodauth configurations (@janko)
 
 * Include `Rodauth::Rails.model` in generated Sequel account model as well (@janko)
