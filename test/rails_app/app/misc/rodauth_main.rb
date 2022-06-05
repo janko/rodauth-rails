@@ -32,5 +32,6 @@ class RodauthMain < Rodauth::Rails::Auth
     logout_redirect { rails_routes.root_path }
     verify_account_redirect { login_redirect }
     reset_password_redirect { login_path }
+    title_instance_variable :@page_title
   end
 end

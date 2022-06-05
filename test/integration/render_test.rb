@@ -8,7 +8,7 @@ class RenderTest < IntegrationTest
     assert_includes page.html, %(name="login")
     assert_includes page.html, %(name="password")
 
-    assert_includes page.html, %(<title>Rodauth::Rails Test</title>)
+    assert_includes page.html, %(<title>Login</title>)
   end
 
   test "built-in Rodauth views with halting" do
@@ -18,7 +18,7 @@ class RenderTest < IntegrationTest
     4.times { login(password: "invalid") }
 
     assert_includes page.html, %(id="unlock-account-request-form")
-    assert_includes page.html, %(<title>Rodauth::Rails Test</title>)
+    assert_includes page.html, %(<title>Request Account Unlock</title>)
   end
 
   test "built-in Rodauth partials" do
@@ -39,7 +39,7 @@ class RenderTest < IntegrationTest
 
     assert_includes page.html, %(id="custom-verify-account-form")
 
-    assert_includes page.html, %(<title>Rodauth::Rails Test</title>)
+    assert_includes page.html, %(<title>Verify Account</title>)
   end
 
   test "custom views as partials" do
@@ -55,7 +55,7 @@ class RenderTest < IntegrationTest
 
     assert_includes page.html, %(id="custom-reset-password-request-form")
 
-    assert_equal 1, page.html.scan(%(<title>Rodauth::Rails Test</title>)).count
+    assert_includes page.html, %(<title>Login</title>)
   end
 
   test "custom partials" do
@@ -64,7 +64,17 @@ class RenderTest < IntegrationTest
     assert_includes page.html, %(id="logout-form")
     assert_includes page.html, %(id="custom-global-logout")
 
-    assert_equal 1, page.html.scan(%(<title>Rodauth::Rails Test</title>)).count
+    assert_includes page.html, %(<title>Logout</title>)
+  end
+
+  test "set title" do
+    visit "/login"
+
+    assert_includes page.html, %(<title>Login</title>)
+
+    visit "/admin/login"
+
+    assert_includes page.html, %(<title>Rodauth::Rails Test</title>)
   end
 
   test "disabling turbo for built-in templates" do
