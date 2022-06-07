@@ -1,0 +1,3 @@
+<% if rodauth.field_error(rodauth.password_param) && rodauth.features.include?(:reset_password) %>
+  <%= render template: "rodauth/reset_password_request", layout: false %>
+<% end %>
