@@ -1,3 +1,7 @@
+## HEAD
+
+* Set title instance variable on the controller when `title_instance_variable` is set (@HoneyryderChuck)
+
 ## 1.4.2 (2022-05-15)
 
 * Stop passing email addresses in mailer arguments on verifying login change (@janko)
