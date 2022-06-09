@@ -1,5 +1,3 @@
-<% content_for :title, rodauth.recovery_codes_page_title %>
-
 <%= form_with url: rodauth.recovery_codes_path, method: :post, data: { turbo: false } do |form| %>
   <% if rodauth.two_factor_modifications_require_password? %>
     <div class="form-group mb-3">

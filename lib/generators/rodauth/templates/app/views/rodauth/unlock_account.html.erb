@@ -1,5 +1,3 @@
-<% content_for :title, rodauth.unlock_account_page_title %>
-
 <%= form_with url: rodauth.unlock_account_path, method: :post, data: { turbo: false } do |form| %>
   <%== rodauth.unlock_account_explanatory_text %>
 

@@ -1,5 +1,3 @@
-<% content_for :title, rodauth.otp_setup_page_title %>
-
 <%= form_with url: rodauth.otp_setup_path, method: :post, data: { turbo: false } do |form| %>
   <%= form.hidden_field rodauth.otp_setup_param, value: rodauth.otp_user_key, id: "otp-key" %>
   <%= form.hidden_field rodauth.otp_setup_raw_param, value: rodauth.otp_key, id: "otp-hmac-secret" if rodauth.otp_keys_use_hmac? %>

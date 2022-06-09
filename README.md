@@ -321,22 +321,47 @@ $ rails generate rodauth:views webauthn --name admin
 
 #### Page titles
 
-The generated view templates use `content_for(:title)` to store Rodauth's page
-titles, which you can then retrieve in your layout template to set the page
-title:
+The generated configuration sets `title_instance_variable` to make page titles
+available in your views via `@page_title` instance variable, which you can then
+use in your layout:
 
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    # ...
+    title_instance_variable :@page_title
+    # ...
+  end
+end
+```
 ```erb
 <!-- app/views/layouts/application.html.erb -->
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) %></title>
+    <title><%= @page_title || "Default title" %></title>
     <!-- ... -->
   </head>
   <body>
     <!-- ... -->
   </body>
 </html>
+```
+
+If you're already setting page titles via `content_for`, you can use it in
+generated Rodauth views, giving it the result of the corresponding
+`*_page_title` method:
+
+```erb
+<!-- app/views/rodauth/login.html.erb -->
+<%= content_for :page_title, rodauth.login_page_title %>
+<!-- ... -->
+```
+```erb
+<!-- app/views/rodauth/change_password.html.erb -->
+<%= content_for :page_title, rodauth.change_password_page_title %>
+<!-- ... -->
 ```
 
 #### Layout

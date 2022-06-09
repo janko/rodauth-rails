@@ -1,5 +1,9 @@
 ## HEAD
 
+* Remove `content_for` calls from generated view templates (@janko)
+
+* Set title instance variable to `@page_title` in generated configuration (@janko)
+
 * Set title instance variable on the controller when `title_instance_variable` is set (@HoneyryderChuck)
 
 ## 1.4.2 (2022-05-15)

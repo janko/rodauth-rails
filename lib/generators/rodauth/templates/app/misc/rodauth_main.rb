@@ -31,6 +31,9 @@ class RodauthMain < Rodauth::Rails::Auth
     # Specify the controller used for view rendering and CSRF verification.
     rails_controller { RodauthController }
 
+    # Set on Rodauth controller with the title of the current page.
+    title_instance_variable :@page_title
+
     # Store account status in an integer column without foreign key constraint.
     account_status_column :status
 
