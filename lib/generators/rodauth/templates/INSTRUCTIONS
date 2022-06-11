@@ -31,7 +31,8 @@ Depending on your application's configuration some manual setup may be required:
 
      * Not required for API-only Applications *
 
-  4. Set page title from the `@page_title` instance variable in your layout:
+  4. Titles for Rodauth pages are available via @page_title instance variable
+     by default, you can use it in your layout file:
 
        <head>
          <title><%= @page_title || "Default title" %></title>
