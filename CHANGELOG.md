@@ -1,4 +1,4 @@
-## HEAD
+## 1.5.0 (2022-06-11)
 
 * Remove `content_for` calls from generated view templates (@janko)
 
