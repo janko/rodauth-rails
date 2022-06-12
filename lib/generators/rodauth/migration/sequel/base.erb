@@ -1,5 +1,5 @@
 <% if db.database_type == :postgres -%>
-enable_extension "citext"
+run "CREATE EXTENSION IF NOT EXISTS citext"
 
 <% end -%>
 create_table :accounts do
