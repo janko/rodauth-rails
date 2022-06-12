@@ -1,5 +1,12 @@
 <% if db.database_type == :postgres -%>
-run "CREATE EXTENSION IF NOT EXISTS citext"
+reversible do |dir|
+  dir.up do
+    run "CREATE EXTENSION IF NOT EXISTS citext"
+  end
+  dir.down do
+    run "DROP EXTENSION IF EXISTS citext"
+  end
+end
 
 <% end -%>
 create_table :accounts do
