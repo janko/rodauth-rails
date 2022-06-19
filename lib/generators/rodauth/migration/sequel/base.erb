@@ -1,5 +1,8 @@
 <% if db.database_type == :postgres -%>
-run "CREATE EXTENSION IF NOT EXISTS citext"
+begin
+  run "CREATE EXTENSION IF NOT EXISTS citext"
+rescue NoMethodError # migration is being reverted
+end
 
 <% end -%>
 create_table :accounts do
