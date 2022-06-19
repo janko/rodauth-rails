@@ -1,3 +1,7 @@
+## 1.5.1 (2022-06-19)
+
+* Fix syntax for creating `citext` PG extension in Sequel base migration (@Empact)
+
 ## 1.5.0 (2022-06-11)
 
 * Remove `content_for` calls from generated view templates (@janko)
