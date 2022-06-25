@@ -32,7 +32,7 @@ module Rodauth
           request = rails_request
 
           raw_payload = {
-            controller: scope.class.superclass.name,
+            controller: self.class.roda_class.name,
             action: "call",
             request: request,
             params: request.filtered_parameters,

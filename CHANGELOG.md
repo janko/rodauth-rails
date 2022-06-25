@@ -1,3 +1,7 @@
+## HEAD
+
+* Support `newrelic_rpm` gem instrumentation (@janko)
+
 ## 1.5.1 (2022-06-19)
 
 * Fix syntax for creating `citext` PG extension in Sequel base migration (@Empact)
