@@ -21,7 +21,6 @@ class RakeTest < ActiveSupport::TestCase
         GET/POST  /reset-password          rodauth.reset_password_path
         GET/POST  /change-password         rodauth.change_password_path
         GET/POST  /change-login            rodauth.change_login_path
-        GET/POST  /verify-login-change     rodauth.verify_login_change_path
         GET/POST  /close-account           rodauth.close_account_path
         POST      /unlock-account-request  rodauth.unlock_account_request_path
         GET/POST  /unlock-account          rodauth.unlock_account_path

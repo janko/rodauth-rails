@@ -33,5 +33,7 @@ class RodauthMain < Rodauth::Rails::Auth
     verify_account_redirect { login_redirect }
     reset_password_redirect { login_path }
     title_instance_variable :@page_title
+
+    verify_login_change_route nil
   end
 end

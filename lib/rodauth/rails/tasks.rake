@@ -8,7 +8,7 @@ namespace :rodauth do
       rodauth = auth_class.allocate
       only_json = rodauth.method(:only_json?).owner != Rodauth::Base && rodauth.only_json?
 
-      routes = auth_class.routes.map do |handle_method|
+      routes = auth_class.route_hash.map do |path, handle_method|
         file_path, start_line = rodauth.method(:"_#{handle_method}").source_location
         lines = File.foreach(file_path).to_a
         indentation = lines[start_line - 1][/^\s+/]
@@ -24,7 +24,7 @@ namespace :rodauth do
 
         [
           verbs.join("/"),
-          rodauth.public_send(path_method),
+          "#{rodauth.prefix}#{path}",
           "rodauth#{configuration_name && "(:#{configuration_name})"}.#{path_method}",
         ]
       end
