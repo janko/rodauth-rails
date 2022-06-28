@@ -1,0 +1,32 @@
+---
+# For both users: password is "password" for both accounts
+# This allows you do run request specs, or ActionDispatch::IntegrationTest
+# Here is an example:
+##### test_helper.rb
+#
+# class ActionDispatch::IntegrationTest
+#
+#  def login(account)
+#     #  you can login like this:
+#     # session[:account_id] = account.id
+#     # session[:authenticated_by] = ["password"] # or ["password", "totp"] for MFA
+#     # post login_path
+#     # or like this: 
+#     post "/login", params: {"login"=>"brian@queen.com", "password"=>"password"}
+#   end
+#
+#   def logout
+#     session.clear
+#     follow_redirect!
+#   end  
+# end
+
+one:
+  email: freddie@queen.com
+  password_hash: <%= BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST).to_s %>
+  status: 2
+
+two:
+  email: brian@queen.com
+  password_hash: <%= BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST).to_s %>
+  status: 2

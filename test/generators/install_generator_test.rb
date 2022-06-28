@@ -100,4 +100,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_file "app/views/rodauth_mailer/#{template}.text.erb"
     end
   end
+
+  test "fixture" do
+    run_generator
+
+    assert_file "app/test/fixtures/accounts.yml"
+  end
 end

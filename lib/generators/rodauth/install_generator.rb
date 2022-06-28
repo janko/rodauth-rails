@@ -70,6 +70,10 @@ module Rodauth
           end
         end
 
+        def create_fixtures
+          template "app/test/fixtures/accounts.yml"                
+        end
+
         def show_instructions
           readme "INSTRUCTIONS" if behavior == :invoke
         end
