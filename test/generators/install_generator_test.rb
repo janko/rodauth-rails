@@ -100,4 +100,15 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_file "app/views/rodauth_mailer/#{template}.text.erb"
     end
   end
+
+  test "fixture" do
+    run_generator
+
+    assert_file "app/test/fixtures/accounts.yml"
+  end
+
+  test "fixtures - skip if configuration rejects fixtures" do
+    ::Rails.application.config.generators.options[:test_unit][:fixture] = false
+    refute_file "app/test/fixtures/accounts.yml"    
+  end
 end

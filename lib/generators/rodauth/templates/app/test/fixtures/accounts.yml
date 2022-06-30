@@ -1,0 +1,10 @@
+---
+one:
+  email: freddie@queen.com
+  password_hash: <%= BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST).to_s %>
+  status: 2
+
+two:
+  email: brian@queen.com
+  password_hash: <%= BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST).to_s %>
+  status: 2
