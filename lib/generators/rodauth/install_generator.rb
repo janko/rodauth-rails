@@ -70,10 +70,10 @@ module Rodauth
           end
         end
 
-        def create_fixtures    
-          # We should be able to access the rails app, and check the config object.   
-          if ::Rails.application.config.generators.options[:test_unit][:fixture]
-            template "app/test/fixtures/accounts.yml"                
+        def create_fixtures
+          test_unit_options = ::Rails.application.config.generators.options[:test_unit]
+          if test_unit_options[:fixture] && test_unit_options[:fixture_replacement].nil?
+            template "app/test/fixtures/accounts.yml"
           end
         end
 

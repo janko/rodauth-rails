@@ -1,5 +1,7 @@
 ## HEAD
 
+* Generate fixture file for accounts on `rodauth:install` (@benkoshy)
+
 * Support `newrelic_rpm` gem instrumentation (@janko)
 
 ## 1.5.1 (2022-06-19)
