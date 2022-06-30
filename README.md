@@ -381,6 +381,7 @@ class RodauthController < ApplicationController
     when rodauth.login_path,
          rodauth.create_account_path,
          rodauth.verify_account_path,
+         rodauth.verify_account_resend_path,
          rodauth.reset_password_path,
          rodauth.reset_password_request_path
       "authentication"
