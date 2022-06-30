@@ -106,4 +106,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/test/fixtures/accounts.yml"
   end
+
+  test "fixtures - skip if configuration rejects fixtures" do
+    ::Rails.application.config.generators.options[:test_unit][:fixture] = false
+    refute_file "app/test/fixtures/accounts.yml"    
+  end
 end
