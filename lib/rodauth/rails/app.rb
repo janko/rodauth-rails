@@ -59,6 +59,12 @@ module Rodauth
         rodauth(name) or fail ArgumentError, "unknown rodauth configuration: #{name.inspect}"
       end
 
+      # The newrelic_rpm gem expects this when we pass the roda class as
+      # :controller in instrumentation payload.
+      def self.controller_path
+        name.underscore
+      end
+
       module RequestMethods
         def rodauth(name = nil)
           prefix = scope.rodauth(name).prefix
