@@ -1,10 +1,14 @@
-## HEAD
+## 1.5.2 (2022-07-03)
 
 * Bump Rodauth dependency version to 2.25+ (@janko)
 
 * Generate fixture file for accounts on `rodauth:install` (@benkoshy)
 
-* Support `newrelic_rpm` gem instrumentation (@janko)
+* Fix error about undefined `controller_path` method in `newrelic_rpm` gem instrumentation (@janko)
+
+* Don't display disabled routes in `rodauth:routes` (@janko)
+
+* Display HTTP verbs of endpoints in `rodauth:routes` rake task (@janko)
 
 ## 1.5.1 (2022-06-19)
 
