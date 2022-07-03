@@ -2,9 +2,9 @@
 one:
   email: freddie@queen.com
   password_hash: <%%= BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST) %>
-  status: 2
+  status: verified
 
 two:
   email: brian@queen.com
   password_hash: <%%= BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST) %>
-  status: 2
+  status: verified
