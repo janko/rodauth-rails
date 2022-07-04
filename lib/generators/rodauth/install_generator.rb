@@ -5,7 +5,7 @@ module Rodauth
   module Rails
     module Generators
       class InstallGenerator < ::Rails::Generators::Base
-         # hook_for :test_framework, aliases: "-t", as: :install
+        hook_for :test_framework, aliases: "-t", as: :install
 
         if RUBY_ENGINE == "jruby"
           SEQUEL_ADAPTERS = {
@@ -73,10 +73,9 @@ module Rodauth
         end
 
         def create_fixtures
-          test_unit_options = ::Rails.application.config.generators.options[:test_unit]
-          ::Rails.application.config.generators.options
+          test_unit_options = ::Rails.application.config.generators.options[:test_unit]          
           if test_unit_options[:fixture] && test_unit_options[:fixture_replacement].nil?
-            if ::Rails.application.config.generators.options[:test_framework] == ":rspec"
+            if ::Rails.application.config.generators.options[:test_framework] == ""
               template "app/spec/fixtures/accounts.yml"
             else
               template "app/test/fixtures/accounts.yml"
