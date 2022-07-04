@@ -5,6 +5,8 @@ module Rodauth
   module Rails
     module Generators
       class InstallGenerator < ::Rails::Generators::Base
+         # hook_for :test_framework, aliases: "-t", as: :install
+
         if RUBY_ENGINE == "jruby"
           SEQUEL_ADAPTERS = {
             "sqlite3"         => "sqlite",
@@ -72,8 +74,14 @@ module Rodauth
 
         def create_fixtures
           test_unit_options = ::Rails.application.config.generators.options[:test_unit]
+          ::Rails.application.config.generators.options
           if test_unit_options[:fixture] && test_unit_options[:fixture_replacement].nil?
-            template "app/test/fixtures/accounts.yml"
+            if ::Rails.application.config.generators.options[:test_framework] == ":rspec"
+              template "app/spec/fixtures/accounts.yml"
+            else
+              template "app/test/fixtures/accounts.yml"
+            end
+            
           end
         end
 
