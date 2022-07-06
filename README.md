@@ -14,6 +14,7 @@ Provides Rails integration for the [Rodauth] authentication framework.
 🎥 Screencasts:
 
 * [Rails Authentication with Rodauth](https://www.youtube.com/watch?v=2hDpNikacf0)
+* [Multifactor Authentication via TOTP with Rodauth](https://www.youtube.com/watch?v=9ON-kgXpz2A)
 
 📚 Articles:
 
