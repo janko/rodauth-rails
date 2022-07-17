@@ -67,7 +67,7 @@ Next, run the install generator:
 $ rails generate rodauth:install
 ```
 
-Or if you want Rodauth endpoints to be exposed via [JSON API](wiki/JSON-API):
+Or if you want Rodauth endpoints to be exposed via [JSON API]:
 
 ```sh
 $ rails generate rodauth:install --json # regular authentication using the Rails session
@@ -1216,3 +1216,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [custom mailer worker]: https://github.com/janko/rodauth-rails/wiki/Custom-Mailer-Worker
 [Turbo]: https://turbo.hotwired.dev/
 [rodauth-model]: https://github.com/janko/rodauth-model
+[JSON API]: https://github.com/janko/rodauth-rails/wiki/JSON-API
