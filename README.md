@@ -67,7 +67,7 @@ Next, run the install generator:
 $ rails generate rodauth:install
 ```
 
-Or if you want Rodauth endpoints to be exposed via JSON API:
+Or if you want Rodauth endpoints to be exposed via [JSON API](wiki/JSON-API):
 
 ```sh
 $ rails generate rodauth:install --json # regular authentication using the Rails session
