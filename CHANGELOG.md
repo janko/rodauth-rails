@@ -1,5 +1,7 @@
 ## HEAD
 
+* Use string status column values in generated accounts fixture (@janko)
+
 * Create integer status column in generated Sequel migration (@janko)
 
 * Store password hash in a column on accounts table in generated Sequel migration (@janko)
