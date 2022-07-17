@@ -19,5 +19,7 @@ create_table :accounts do
 <% else -%>
   index :email, unique: true
 <% end -%>
+<% unless functions? -%>
   String :password_hash
+<% end -%>
 end

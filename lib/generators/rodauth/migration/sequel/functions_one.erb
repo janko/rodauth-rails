@@ -1,0 +1,12 @@
+<% if db.database_type == :postgres && features.include?("base") -%>
+user = get(Sequel.lit("current_user")) + "_password"
+run "GRANT REFERENCES ON accounts TO #{user}"
+<% else -%>
+<% if db.database_type == :mysql -%>
+user = get(Sequel.lit("current_user")).sub(/_password@/, "@")
+<% else -%>
+user = get(Sequel.function(:DB_NAME))
+<% tables.each do |table| -%>
+run "GRANT SELECT, INSERT, UPDATE, DELETE ON <%= table %> TO #{user}"
+<% end -%>
+<% end -%>

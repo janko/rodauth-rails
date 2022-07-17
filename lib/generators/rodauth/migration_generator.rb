@@ -16,6 +16,9 @@ module Rodauth
         class_option :name, optional: true, type: :string,
           desc: "Name of the generated migration file"
 
+        class_option :functions, type: :boolean,
+          desc: "Make migration compatible with database authentication functions"
+
         def create_rodauth_migration
           return if features.empty?
 
@@ -29,6 +32,19 @@ module Rodauth
         end
 
         def migration_content
+          content = schema_content
+          content += functions_content if functions?
+          content
+        end
+
+        def functions_content
+        end
+
+        def tables
+          schema_content.scan(/(?<=create_table[( ]:)\w+/)
+        end
+
+        def schema_content
           features
             .select { |feature| File.exist?(migration_chunk(feature)) }
             .map { |feature| File.read(migration_chunk(feature)) }
@@ -42,6 +58,16 @@ module Rodauth
             ERB.new(content, trim_mode: "-").result(binding)
           else
             ERB.new(content, 0, "-").result(binding)
+          end
+        end
+
+        def functions?
+          options.fetch(:functions) { functions_configured? }
+        end
+
+        def functions_configured?
+          Rodauth::Rails.app.rodauths.values.any? do |rodauth|
+            rodauth.allocate.send(:use_database_authentication_functions?)
           end
         end
 

@@ -37,8 +37,13 @@ class RodauthMain < Rodauth::Rails::Auth
     # Store account status in an integer column without foreign key constraint.
     account_status_column :status
 
+<% if functions? -%>
+    # Match passwords using the created database authentication functions.
+    use_database_authentication_functions? true
+<% else -%>
     # Store password hash in a column instead of a separate table.
     account_password_hash_column :password_hash
+<% end -%>
 
     # Set password when creating account instead of when verifying.
     verify_account_set_password? false
