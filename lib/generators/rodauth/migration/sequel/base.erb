@@ -13,9 +13,9 @@ create_table :accounts do
 <% else -%>
   String :email, null: false
 <% end -%>
-  String :status, null: false, default: "unverified"
+  Integer :status, null: false, default: 1
 <% if db.supports_partial_indexes? -%>
-  index :email, unique: true, where: { status: ["unverified", "verified"] }
+  index :email, unique: true, where: { status: [1, 2] }
 <% else -%>
   index :email, unique: true
 <% end -%>

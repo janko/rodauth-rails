@@ -1,5 +1,7 @@
 ## HEAD
 
+* Create integer status column in generated Sequel migration (@janko)
+
 * Store password hash in a column on accounts table in generated Sequel migration (@janko)
 
 ## 1.5.2 (2022-07-03)
