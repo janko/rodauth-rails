@@ -19,10 +19,5 @@ create_table :accounts do
 <% else -%>
   index :email, unique: true
 <% end -%>
-end
-
-# Used if storing password hashes in a separate table (default)
-create_table :account_password_hashes do
-  foreign_key :id, :accounts, primary_key: true, type: :Bignum
-  String :password_hash, null: false
+  String :password_hash
 end

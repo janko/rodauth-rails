@@ -1,3 +1,7 @@
+## HEAD
+
+* Store password hash in a column on accounts table in generated Sequel migration (@janko)
+
 ## 1.5.2 (2022-07-03)
 
 * Bump Rodauth dependency version to 2.25+ (@janko)
