@@ -33,6 +33,7 @@ module Rodauth
 
         class_option :json, type: :boolean, desc: "Configure JSON support"
         class_option :jwt, type: :boolean, desc: "Configure JWT support"
+        class_option :functions, type: :boolean, desc: "Configure database authentication functions"
 
         def create_rodauth_migration
           invoke "rodauth:migration", migration_features, name: "create_rodauth"
@@ -91,6 +92,10 @@ module Rodauth
           features = [:base, :reset_password, :verify_account, :verify_login_change]
           features << :remember unless jwt?
           features
+        end
+
+        def functions?
+          options[:functions]
         end
 
         def json?
