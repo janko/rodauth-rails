@@ -1,5 +1,5 @@
 module Rodauth
   module Rails
-    VERSION = "1.5.2"
+    VERSION = "1.5.3"
   end
 end
