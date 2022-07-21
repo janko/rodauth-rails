@@ -73,7 +73,11 @@ module Rodauth
         def create_fixtures
           test_unit_options = ::Rails.application.config.generators.options[:test_unit]
           if test_unit_options[:fixture] && test_unit_options[:fixture_replacement].nil?
-            template "app/test/fixtures/accounts.yml"
+            if ::Rails.application.config.generators.options[:rails][:test_framework] == :rspec
+              template "test/fixtures/accounts.yml", "spec/fixtures/accounts.yml"
+            else
+              template "test/fixtures/accounts.yml", "test/fixtures/accounts.yml"
+            end
           end
         end
 

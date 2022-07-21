@@ -101,9 +101,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
-  test "fixture" do
+  test "fixtures" do
     run_generator
-
-    assert_file "app/test/fixtures/accounts.yml", /<%= BCrypt::Password/
+    
+    assert_file "test/fixtures/accounts.yml", /<%= BCrypt::Password/ # No tests for the rspec branch
   end
 end
