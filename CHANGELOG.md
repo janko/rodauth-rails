@@ -1,10 +1,18 @@
-## HEAD
+## 1.5.4 (2022-07-21)
+
+* Generate account fixtures in `spec/fixtures` directory when using RSpec (@benkoshy)
+
+* Generate account fixtures in `test/fixtures` directory instead of `app/test/fixtures` (@benkoshy)
 
 * Use string status column values in generated accounts fixture (@janko)
 
 * Create integer status column in generated Sequel migration (@janko)
 
-* Store password hash in a column on accounts table in generated Sequel migration (@janko)
+* Store password hash in accounts table in generated Sequel migration (@janko)
+
+## 1.5.3 (2022-07-21)
+
+*Yanked*
 
 ## 1.5.2 (2022-07-03)
 
