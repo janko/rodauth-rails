@@ -1180,7 +1180,7 @@ License](https://opensource.org/licenses/MIT).
 
 Everyone interacting in the rodauth-rails project's codebases, issue trackers,
 chat rooms and mailing lists is expected to follow the [code of
-conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
+conduct](CODE_OF_CONDUCT.md).
 
 [Rodauth]: https://github.com/jeremyevans/rodauth
 [Sequel]: https://github.com/jeremyevans/sequel
