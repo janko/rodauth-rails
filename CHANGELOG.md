@@ -1,5 +1,7 @@
 ## HEAD
 
+* Abort `rodauth:views` generator when unknown feature was specified (@janko)
+
 * Abort `rodauth:migration` generator when unknown feature was specified (@janko)
 
 ## 1.5.4 (2022-07-21)

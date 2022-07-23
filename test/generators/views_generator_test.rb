@@ -177,4 +177,11 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       run_generator %w[--name unknown]
     end
   end
+
+  test "invalid features" do
+    output = run_generator %w[otp active_sessions]
+
+    assert_equal "No available view template for feature(s): active_sessions\n", output
+    assert_no_file "app/views/rodauth/otp_auth.html.erb"
+  end
 end
