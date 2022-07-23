@@ -1,3 +1,7 @@
+## HEAD
+
+* Abort `rodauth:migration` generator when unknown feature was specified (@janko)
+
 ## 1.5.4 (2022-07-21)
 
 * Generate account fixtures in `spec/fixtures` directory when using RSpec (@benkoshy)

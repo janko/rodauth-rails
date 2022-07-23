@@ -17,7 +17,7 @@ module Rodauth
           desc: "Name of the generated migration file"
 
         def create_rodauth_migration
-          return if features.empty?
+          validate_features or return
 
           migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "#{migration_name}.rb")
         end
@@ -30,7 +30,6 @@ module Rodauth
 
         def migration_content
           features
-            .select { |feature| File.exist?(migration_chunk(feature)) }
             .map { |feature| File.read(migration_chunk(feature)) }
             .map { |content| erb_eval(content) }
             .join("\n")
@@ -45,17 +44,35 @@ module Rodauth
           end
         end
 
+        def migration_chunk(feature)
+          "#{MIGRATION_DIR}/#{feature}.erb"
+        end
+
+        def validate_features
+          if features.empty?
+            say "No features specified!", :yellow
+            false
+          elsif (features - valid_features).any?
+            say "No available migration for feature(s): #{(features - valid_features).join(", ")}", :red
+            false
+          else
+            true
+          end
+        end
+
+        def valid_features
+          Dir["#{MIGRATION_DIR}/*.erb"].map { |filename| File.basename(filename, ".erb") }
+        end
+
         if defined?(::ActiveRecord::Railtie) # Active Record
           include ::ActiveRecord::Generators::Migration
+
+          MIGRATION_DIR = "#{__dir__}/migration/active_record"
 
           def db_migrate_path
             return "db/migrate" unless ActiveRecord.version >= Gem::Version.new("5.0")
 
             super
-          end
-
-          def migration_chunk(feature)
-            "#{__dir__}/migration/active_record/#{feature}.erb"
           end
 
           def migration_version
@@ -95,6 +112,8 @@ module Rodauth
         else # Sequel
           include ::Rails::Generators::Migration
 
+          MIGRATION_DIR = "#{__dir__}/migration/sequel"
+
           def self.next_migration_number(dirname)
             next_migration_number = current_migration_number(dirname) + 1
             [Time.now.utc.strftime('%Y%m%d%H%M%S'), format('%.14d', next_migration_number)].max
@@ -102,10 +121,6 @@ module Rodauth
 
           def db_migrate_path
             "db/migrate"
-          end
-
-          def migration_chunk(feature)
-            "#{__dir__}/migration/sequel/#{feature}.erb"
           end
 
           def db
