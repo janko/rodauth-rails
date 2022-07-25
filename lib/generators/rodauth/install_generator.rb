@@ -88,8 +88,8 @@ module Rodauth
         private
 
         def migration_features
-          features = [:base, :reset_password, :verify_account, :verify_login_change]
-          features << :remember unless jwt?
+          features = ["base", "reset_password", "verify_account", "verify_login_change"]
+          features << "remember" unless jwt?
           features
         end
 
