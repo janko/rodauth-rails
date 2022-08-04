@@ -1,4 +1,4 @@
-## HEAD
+## 1.5.5 (2022-08-04)
 
 * Don't raise `ArgumentError` when calling `#current_account` without being logged in (@benkoshy)
 
