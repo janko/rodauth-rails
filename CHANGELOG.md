@@ -1,5 +1,7 @@
 ## HEAD
 
+* Don't raise `ArgumentError` when calling `#current_account` without being logged in (@benkoshy)
+
 * Abort `rodauth:views` generator when unknown feature was specified (@janko)
 
 * Abort `rodauth:migration` generator when unknown feature was specified (@janko)

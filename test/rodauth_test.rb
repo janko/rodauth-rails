@@ -78,4 +78,11 @@ class RodauthTest < UnitTest
     constraint = Rodauth::Rails.authenticated(:admin)
     assert_equal true, constraint.call(rodauth.request)
   end
+
+  test "returns current account if logged in" do
+    assert_nil Rodauth::Rails.rodauth.rails_account
+
+    account = Account.create!(email: "user@example.com", status: "verified")
+    assert_equal account, Rodauth::Rails.rodauth(account_id: account.id).rails_account
+  end
 end

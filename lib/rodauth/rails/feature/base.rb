@@ -14,7 +14,7 @@ module Rodauth
           account_from_session unless account
 
           unless account
-            clear_session if logged_in?
+            clear_session
             return
           end
 
