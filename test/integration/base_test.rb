@@ -18,7 +18,6 @@ class BaseTest < IntegrationTest
 
     rodauth.account_from_login("user@example.com")
     rodauth.login_session("password")
-    assert_equal account, rodauth.rails_account
-    # assert_equal true, Rodauth::Rails.authenticated.call(rodauth.request)    
+    assert_equal account, rodauth.rails_account    
   end
 end
