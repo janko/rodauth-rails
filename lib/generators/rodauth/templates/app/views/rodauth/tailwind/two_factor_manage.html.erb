@@ -1,1 +1,24 @@
-two_factor_manage.html.erb
+<% content_for :title, rodauth.two_factor_manage_page_title %>
+<% if rodauth.two_factor_setup_links.any? %>
+  <div class="text-3xl font-medium mt-5">
+    <%== rodauth.two_factor_setup_heading %>
+  </div>
+  <ul>
+    <% rodauth.two_factor_setup_links.sort.each do |_, link, text| %>
+      <li><%= link_to text, link, class: "text-blue-500 underline hover:text-blue-700 mt-3" %></li>
+    <% end %>
+  </ul>
+<% end %>
+<% if rodauth.two_factor_remove_links.any? %>
+  <div class="text-3xl font-medium mt-3">
+    <%== rodauth.two_factor_remove_heading %>
+  </div>
+  <ul>
+    <% rodauth.two_factor_remove_links.sort.each do |_, link, text| %>
+      <li><%= link_to text, link, class: "text-blue-500 underline hover:text-blue-700 mt-3" %></li>
+    <% end %>
+    <% if rodauth.two_factor_remove_links.length > 1 %>
+      <li><%= link_to rodauth.two_factor_disable_link_text, rodauth.two_factor_disable_path, class: "text-blue-500 underline hover:text-blue-700 mt-3" %></li>
+    <% end %>
+  </ul>
+<% end %>
