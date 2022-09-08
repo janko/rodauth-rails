@@ -1,1 +1,8 @@
-add_recovery_codes.html.erb
+<% content_for :title, rodauth.add_recovery_codes_page_title %>
+
+<pre id="recovery-codes"><%= rodauth.recovery_codes.map { |s| h(s) }.join("\n\n") %></pre>
+
+<% if rodauth.can_add_recovery_codes? %>
+  <%== rodauth.add_recovery_codes_heading %>
+  <%= render template: "rodauth/recovery_codes", layout: false %>
+<% end %>
