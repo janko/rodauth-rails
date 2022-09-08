@@ -1,1 +1,9 @@
-two_factor_auth.html.erb
+<% content_for :title, rodauth.two_factor_auth_page_title %>
+
+<ul>
+  <% rodauth.two_factor_auth_links.sort.each do |_, link, text| %>
+    <li>
+      <%= link_to text, link, class: "text-blue-500 underline hover:text-blue-700 mt-3" %>
+    </li>
+  <% end %>
+</ul>
