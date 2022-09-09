@@ -1,0 +1,17 @@
+<% content_for :title, rodauth.sms_confirm_page_title %>
+<div class="dark:bg-gray-900 flex items-center justify-center h-screen">
+  <div class="max-w-sm">
+    <div class="mx-4">
+      <%= form_with url: rodauth.sms_confirm_path, method: :post, data: { turbo: false } do |form| %>
+        <%= form.label "sms-code", rodauth.sms_code_label, class: "text-sm text-gray-500" %>
+        <div class="col-sm-3">
+          <%= form.text_field rodauth.sms_code_param, value: "", id: "sms-code", autocomplete: "one-time-code", inputmode: "numeric", required: true, class: class_names("w-full px-3 py-2 border rounded-md border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:dark:border-emerald-400 focus:dark:bg-gray-800 invalid:border-red-500 invalid:text-red-600 focus:invalid:border-red-500 focus:invalid:ring-red-500 valid:border-green-500", {"border rounded-md border-red-500": rodauth.field_error(rodauth.sms_code_param) }), aria: ({ invalid: true, describedby: "sms-code_error_message" } if rodauth.field_error(rodauth.sms_code_param)) %>
+          <%= content_tag(:span, rodauth.field_error(rodauth.sms_code_param), class: "text-red-800 text-xs mt-1 ml-1", id: "sms-code_error_message") if rodauth.field_error(rodauth.sms_code_param) %>
+        </div>
+        <div class="py-3">
+          <%= form.submit rodauth.sms_confirm_button, class: "px-8 py-2 font-semibold rounded-md flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-emerald-400 dark:text-gray-900"%>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
