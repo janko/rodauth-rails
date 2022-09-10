@@ -56,6 +56,7 @@ class RodauthMain < Rodauth::Rails::Auth
     # Redirect to the app from login and registration pages if already logged in.
     # already_logged_in { redirect login_redirect }
 
+<% if defined?(ActionMailer) -%>
     # ==> Emails
     # Use a custom mailer for delivering authentication emails.
     create_reset_password_email do
@@ -81,6 +82,7 @@ class RodauthMain < Rodauth::Rails::Auth
       db.after_commit { email.deliver_later }
     end
 
+<% end -%>
     # ==> Flash
 <% unless json? || jwt? -%>
     # Match flash keys with ones already used in the Rails app.

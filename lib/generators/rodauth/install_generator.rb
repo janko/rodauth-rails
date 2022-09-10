@@ -63,6 +63,8 @@ module Rodauth
         end
 
         def create_mailer
+          return unless defined?(ActionMailer)
+
           template "app/mailers/rodauth_mailer.rb"
 
           MAILER_VIEWS.each do |view|

@@ -3,13 +3,13 @@ module Rodauth
     module Feature
       module InternalRequest
         def domain
-          return super unless missing_host?
+          return super unless missing_host? && rails_url_options
 
           rails_url_options.fetch(:host)
         end
 
         def base_url
-          return super unless missing_host? && domain
+          return super unless missing_host? && domain && rails_url_options
 
           scheme = rails_url_options[:protocol] || "http"
           port = rails_url_options[:port]
@@ -43,6 +43,8 @@ module Rodauth
         end
 
         def rails_url_options
+          return nil unless defined?(ActionMailer)
+
           ::Rails.application.config.action_mailer.default_url_options or
             fail Error, "There is no information to set the URL host from. Please set config.action_mailer.default_url_options in your Rails application, or configure #domain and #base_url in your Rodauth configuration."
         end
