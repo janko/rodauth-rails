@@ -1,19 +1,19 @@
 class RodauthMailer < ApplicationMailer
-  def verify_account(name = nil, account_id, key)
+  def verify_account(name, account_id, key)
     @email_link = email_link(name, :verify_account, account_id, key)
     @account = find_account(name, account_id)
 
     mail to: @account.email, subject: rodauth(name).verify_account_email_subject
   end
 
-  def reset_password(name = nil, account_id, key)
+  def reset_password(name, account_id, key)
     @email_link = email_link(name, :reset_password, account_id, key)
     @account = find_account(name, account_id)
 
     mail to: @account.email, subject: rodauth(name).reset_password_email_subject
   end
 
-  def verify_login_change(name = nil, account_id, key)
+  def verify_login_change(name, account_id, key)
     @email_link = email_link(name, :verify_login_change, account_id, key)
     @account = find_account(name, account_id)
     @new_email = @account.login_change_key.login
@@ -21,20 +21,20 @@ class RodauthMailer < ApplicationMailer
     mail to: @new_email, subject: rodauth(name).verify_login_change_email_subject
   end
 
-  def password_changed(name = nil, account_id)
+  def password_changed(name, account_id)
     @account = find_account(name, account_id)
 
     mail to: @account.email, subject: rodauth(name).password_changed_email_subject
   end
 
-  # def email_auth(name = nil, account_id, key)
+  # def email_auth(name, account_id, key)
   #   @email_link = email_link(name, :email_auth, account_id, key)
   #   @account = find_account(name, account_id)
 
   #   mail to: @account.email, subject: rodauth(name).email_auth_email_subject
   # end
 
-  # def unlock_account(name = nil, account_id, key)
+  # def unlock_account(name, account_id, key)
   #   @email_link = email_link(name, :unlock_account, account_id, key)
   #   @account = find_account(name, account_id)
 
