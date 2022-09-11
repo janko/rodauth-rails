@@ -1,3 +1,11 @@
+## HEAD
+
+* Make configuration name argument required in generated `RodauthMailer` (@janko)
+
+* Make the Rails integration work without Action Mailer loaded (@janko)
+
+* Don't redirect to login page when account is missing in `current_account` method (@janko)
+
 ## 1.5.5 (2022-08-04)
 
 * Don't raise `ArgumentError` when calling `#current_account` without being logged in (@benkoshy)
