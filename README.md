@@ -194,7 +194,7 @@ class RodauthApp < Rodauth::Rails::App
 
     # require authentication for /dashboard/* and /account/* routes
     if r.path.start_with?("/dashboard") || r.path.start_with?("/account")
-      rodauth.require_authentication # redirect to login page if not authenticated
+      rodauth.require_account # redirect to login page if not authenticated
     end
   end
 end
@@ -208,7 +208,7 @@ class ApplicationController < ActionController::Base
   private
 
   def authenticate
-    rodauth.require_authentication # redirect to login page if not authenticated
+    rodauth.require_account # redirect to login page if not authenticated
   end
 end
 ```
@@ -727,7 +727,7 @@ For controller tests, you can log in accounts by modifying the session:
 ```rb
 # app/controllers/articles_controller.rb
 class ArticlesController < ApplicationController
-  before_action -> { rodauth.require_authentication }
+  before_action -> { rodauth.require_account }
 
   def index
     # ...
@@ -951,7 +951,7 @@ end
 
 In addition to Zeitwerk compatibility, this extra layer catches Rodauth redirects
 that happen on the controller level (e.g. when calling
-`rodauth.require_authentication` in a `before_action` filter).
+`rodauth.require_account` in a `before_action` filter).
 
 ### Roda app
 

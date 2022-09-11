@@ -8,7 +8,7 @@ class TestController < ApplicationController
   end
 
   def auth2
-    rodauth.require_authentication
+    rodauth.require_account
 
     render :template
   end

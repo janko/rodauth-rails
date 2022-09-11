@@ -30,7 +30,7 @@ class RodauthApp < Rodauth::Rails::App
     r.on("assets") { "" }
 
     if r.path == rails_routes.auth1_path
-      rodauth.require_authentication
+      rodauth.require_account
     end
   end
 end

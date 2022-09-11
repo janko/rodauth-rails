@@ -10,12 +10,6 @@ class ControllerTest < IntegrationTest
   test "current account" do
     register(login: "user@example.com", verify: true)
     assert_text "Authenticated as user@example.com"
-
-    capture_io { Account.last.destroy }
-
-    visit "/"
-    assert_text "Please login to continue"
-    assert_equal "/login", page.current_path
   end
 
   test "executing controller methods" do
