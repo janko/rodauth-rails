@@ -93,12 +93,18 @@ module Rodauth
             generators  = ::Rails.application.config.generators
             column_type = generators.options[:active_record][:primary_key_type]
 
-            return unless column_type
-
             if key
-              ", #{key}: :#{column_type}"
+              ", #{key}: :#{column_type}" if column_type
             else
-              column_type
+              column_type || default_primary_key_type
+            end
+          end
+
+          def default_primary_key_type
+            if ActiveRecord.version >= Gem::Version.new("5.1") && activerecord_adapter != "sqlite3"
+              :bigint
+            else
+              :integer
             end
           end
 

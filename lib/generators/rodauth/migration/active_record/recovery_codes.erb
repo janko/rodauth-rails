@@ -1,6 +1,6 @@
 # Used by the recovery codes feature
 create_table :account_recovery_codes, primary_key: [:id, :code] do |t|
-  t.column :id, :<%= primary_key_type(nil) || :bigint %>
+  t.<%= primary_key_type(nil) %> :id
   t.foreign_key :accounts, column: :id
   t.string :code
 end

@@ -1,5 +1,6 @@
 # Used by the webauthn feature
-create_table :account_webauthn_user_ids<%= primary_key_type %> do |t|
+create_table :account_webauthn_user_ids, id: false do |t|
+  t.<%= primary_key_type(nil) %> :id, primary_key: true
   t.foreign_key :accounts, column: :id
   t.string :webauthn_id, null: false
 end

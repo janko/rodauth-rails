@@ -1,5 +1,7 @@
 ## HEAD
 
+* Avoid creating IDENTITY columns for primary foreign keys on SQL Server with Active Record (@janko)
+
 * Make configuration name argument required in generated `RodauthMailer` (@janko)
 
 * Make the Rails integration work without Action Mailer loaded (@janko)
