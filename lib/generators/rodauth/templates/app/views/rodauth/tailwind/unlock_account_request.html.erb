@@ -1,2 +1,14 @@
-unlock_account_request.html.erb
-To be done!
+<% content_for :title, rodauth.unlock_account_request_page_title %>
+<div class="dark:bg-gray-900 min-h-full flex justify-center py-4 px-4 sm:px-6 lg:px-8">
+  <%= form_with url: rodauth.unlock_account_request_path, method: :post, data: { turbo: false } do |form| %>
+    <%= form.hidden_field rodauth.login_param, value: params[rodauth.login_param] %>
+    <div class="p-4 mb-4 rounded-lg text-red-800 dark:text-red-800 dark:bg-red-200 bg-red-100">
+      <%== rodauth.unlock_account_request_explanatory_text %>
+    </div>
+    <div class="flex justify-center">
+      <div class="py-2">
+        <%= form.submit rodauth.unlock_account_request_button, class: "px-8 py-2 font-semibold rounded-md flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-emerald-400 dark:text-gray-900" %>
+      </div>
+    </div>
+  <% end %>
+</div>
