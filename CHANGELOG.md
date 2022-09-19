@@ -1,3 +1,7 @@
+## HEAD
+
+* Fix argument error when calling `RodauthMailer` in default configuration (@janko)
+
 ## 1.6.0 (2022-09-14)
 
 * Avoid creating IDENTITY columns for primary foreign keys on SQL Server with Active Record (@janko)
