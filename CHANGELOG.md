@@ -1,4 +1,4 @@
-## HEAD
+## 1.6.1 (2022-09-19)
 
 * Fix argument error when calling `RodauthMailer` in default configuration (@janko)
 
