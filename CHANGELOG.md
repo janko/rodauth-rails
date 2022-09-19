@@ -1,4 +1,4 @@
-## HEAD
+## 1.6.2 (2022-09-19)
 
 * Use matching precision for current timestamp default values in Active Record 7.0+ migrations on MySQL (@janko)
 
