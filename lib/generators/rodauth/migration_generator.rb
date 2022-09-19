@@ -110,9 +110,19 @@ module Rodauth
 
           def current_timestamp
             if ActiveRecord.version >= Gem::Version.new("5.0")
-              %(-> { "CURRENT_TIMESTAMP" })
+              %(-> { "#{current_timestamp_literal}" })
             else
-              %(OpenStruct.new(quoted_id: "CURRENT_TIMESTAMP"))
+              %(OpenStruct.new(quoted_id: "#{current_timestamp_literal}"))
+            end
+          end
+
+          # Active Record 7+ sets default precision to 6 for timestamp columns,
+          # so we need to ensure we match this when setting the default value.
+          def current_timestamp_literal
+            if ActiveRecord.version >= Gem::Version.new("7.0") && activerecord_adapter == "mysql2" && ActiveRecord::Base.connection.supports_datetime_with_precision?
+              "CURRENT_TIMESTAMP(6)"
+            else
+              "CURRENT_TIMESTAMP"
             end
           end
         else # Sequel

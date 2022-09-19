@@ -1,3 +1,7 @@
+## HEAD
+
+* Use matching precision for current timestamp default values in Active Record 7.0+ migrations on MySQL (@janko)
+
 ## 1.6.1 (2022-09-19)
 
 * Fix argument error when calling `RodauthMailer` in default configuration (@janko)
