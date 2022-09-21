@@ -9,7 +9,7 @@
           <%= content_tag(:span, rodauth.field_error(rodauth.sms_code_param), class: "text-red-800 text-xs mt-1 ml-1", id: "sms-code_error_message") if rodauth.field_error(rodauth.sms_code_param) %>
         </div>
         <div class="py-3">
-          <%= form.submit rodauth.sms_confirm_button, class: "px-8 py-2 font-semibold rounded-md flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-emerald-400 dark:text-gray-900"%>
+          <%= form.submit rodauth.sms_confirm_button, class: "px-8 py-2 font-semibold rounded-md flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-emerald-400 dark:text-gray-900" %>
         </div>
       <% end %>
     </div>
