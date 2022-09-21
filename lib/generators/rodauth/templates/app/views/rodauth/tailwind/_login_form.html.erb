@@ -1,7 +1,6 @@
 <div class="dark:bg-gray-900 min-h-full flex items-center justify-center py-4 px-4 sm:px-6 lg:px-8">
   <div class="w-full max-w-sm">
-    <div class="p-4 rounded-md shadow shadow-inner sm:p-8 dark:bg-gray-900 dark:text-gray-100">         
-      <div class="flex items-center my-4"></div>            
+    <div class="p-4 rounded-md shadow shadow-inner sm:p-8 dark:bg-gray-900 dark:text-gray-100">
       <%= form_with url: rodauth.login_path, method: :post, data: { turbo: false }, class: "space-y-8 ng-untouched ng-pristine ng-valid" do |form| %>
         <div class="space-y-4">
           <% if rodauth.skip_login_field_on_login? %>
