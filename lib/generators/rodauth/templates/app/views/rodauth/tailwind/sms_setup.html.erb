@@ -1,0 +1,24 @@
+<% content_for :title, rodauth.sms_setup_page_title %>
+<div class="dark:bg-gray-900 flex items-center justify-center py-4 px-4 sm:px-6 lg:px-8">
+  <%= form_with url: rodauth.sms_setup_path, method: :post, data: { turbo: false } do |form| %>
+    <% if rodauth.two_factor_modifications_require_password? %>
+      <div class="py-2">
+        <%= form.label "password", rodauth.password_label, class: "block text-sm text-gray-600 dark:text-gray-200" %>
+        <%= form.password_field rodauth.password_param, value: "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: class_names("w-full px-3 py-2 border rounded-md border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:dark:bg-gray-800 focus:dark:border-emerald-400 invalid:border-red-500 invalid:text-red-600 focus:invalid:border-red-500 focus:invalid:ring-red-500 valid:border-green-500", {"border rounded-md border-red-500": rodauth.field_error(rodauth.password_param)}), aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
+        <%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "text-red-800 text-xs mt-1 ml-1", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
+      </div>
+    <% end %>
+    <div class="py-2">
+      <%= form.label "sms-phone", rodauth.sms_phone_label, class: "block text-sm text-gray-600 dark:text-gray-200" %>
+      <div class="grid grid-cols-3 gap-4">
+        <div class="sm:col-span-2 col-span-3 ">
+          <%= form.telephone_field rodauth.sms_phone_param, value: "", id: "sms-phone", autocomplete: "tel", required: true, class: class_names("w-full px-3 py-2 border rounded-md border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:dark:bg-gray-800 focus:dark:border-emerald-400 invalid:border-red-500 invalid:text-red-600 focus:invalid:border-red-500 focus:invalid:ring-red-500 valid:border-green-500", {"border rounded-md border-red-500": rodauth.field_error(rodauth.sms_phone_param)}), aria: ({ invalid: true, describedby: "sms-phone_error_message" } if rodauth.field_error(rodauth.sms_phone_param)) %>
+          <%= content_tag(:span, rodauth.field_error(rodauth.sms_phone_param), class: "text-red-800 text-xs mt-1 ml-1", id: "sms-phone_error_message") if rodauth.field_error(rodauth.sms_phone_param) %>
+          <div class="py-5">
+            <%= form.submit rodauth.sms_setup_button, class: "w-full px-8 py-2 font-semibold rounded-md w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-emerald-400 dark:text-gray-900" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
