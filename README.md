@@ -48,18 +48,11 @@ Active Record's database connection][sequel-activerecord_connection].
 
 ## Installation
 
-Add the gem to your Gemfile:
+Add the gem to your project:
 
-```rb
-gem "rodauth-rails", "~> 1.0"
-
-# gem "jwt",      require: false # for JWT feature
-# gem "rotp",     require: false # for OTP feature
-# gem "rqrcode",  require: false # for OTP feature
-# gem "webauthn", require: false # for WebAuthn feature
+```sh
+$ bundle add rodauth-rails
 ```
-
-Then run `bundle install`.
 
 Next, run the install generator:
 
