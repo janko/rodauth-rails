@@ -100,11 +100,11 @@ module Rodauth
         # We need to use the *_tag helpers on versions lower than Rails 5.1.
         def form_helpers_compatibility(content)
           content
-          .gsub(/form_with url: (.+) do \|form\|/, 'form_tag \1 do')
-          .gsub(/form\.(label|submit)/, '\1_tag')
-          .gsub(/form\.(email|password|text|telephone|hidden)_field (\S+), value:/, '\1_field_tag \2,')
-          .gsub(/form\.radio_button (\S+), (\S+),/, 'radio_button_tag \1, \2, false,')
-          .gsub(/form\.check_box (\S+), (.+) /, 'check_box_tag \1, "t", false, \2 ')
+           .gsub(/form_with url: (.+) do \|form\|/, 'form_tag \1 do')
+           .gsub(/form\.(label|submit)/, '\1_tag')
+           .gsub(/form\.(email|password|text|telephone|hidden)_field (\S+), value:/, '\1_field_tag \2,')
+           .gsub(/form\.radio_button (\S+), (\S+),/, 'radio_button_tag \1, \2, false,')
+           .gsub(/form\.check_box (\S+), (.+) /, 'check_box_tag \1, "t", false, \2 ')
         end
 
         def file_source_location(view)
