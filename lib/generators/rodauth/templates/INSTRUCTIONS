@@ -39,4 +39,6 @@ Depending on your application's configuration some manual setup may be required:
 
           # If using tailwind, ensure you have tailwind forms plugin installed (e.g. `yarn add @tailwindcss/forms`).
 
+      * Not required *
+
 ===============================================================================
