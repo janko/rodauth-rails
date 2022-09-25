@@ -35,22 +35,8 @@ Depending on your application's configuration some manual setup may be required:
 
        rails g rodauth:views # default bootstrap views.
   
-       rails g rodauth:views --css=tailwind # tailwind views.
-       
-       If you are using tailwind, please ensure you have: 
+       rails g rodauth:views --css=tailwind # tailwind views. 
 
-       (i) the tailwind forms plugin installed (e.g. `yarn add @tailwindcss/forms`)
-       
-       (ii) dark mode enabled (in some way) i.e. see: https://tailwindcss.com/docs/dark-mode#toggling-dark-mode-manually, should you want it:
-       
-       module.exports = {  
-          plugins: [      
-              require('@tailwindcss/forms'),
-          ],
-          darkMode: 'class' // one way of enabling dark mode
-       }
-       
-
-
+          # If using tailwind, ensure you have tailwind forms plugin installed (e.g. `yarn add @tailwindcss/forms`).
 
 ===============================================================================
