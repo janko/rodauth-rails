@@ -1,11 +1,8 @@
-<div class="dark:bg-gray-900 flex items-center justify-center h-screen">
-  <div class="mx-4 py-4">
-    <h3 class="mb-3 text-3xl font-semibold text-center text-white"> Email Auth Request </h3>
+<div class="dark:bg-gray-900 flex items-center justify-center">
+  <div class="mx-4">
     <%= form_with url: rodauth.email_auth_request_path, method: :post, data: { turbo: false } do |form| %>
-      <div class="py-2">
-        <%= form.hidden_field rodauth.login_param, value: params[rodauth.login_param] %>
-        <%= form.submit rodauth.email_auth_request_button, class: "w-full px-8 py-2 font-semibold rounded-md w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:bg-red-800 dark:text-gray-200" %>
-      </div>
+      <%= form.hidden_field rodauth.login_param, value: params[rodauth.login_param] %>
+      <%= form.submit rodauth.email_auth_request_button, class: "w-full px-8 py-2 font-semibold rounded-md w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 dark:bg-red-800 dark:text-gray-200" %>
     <% end %>
   </div>
 </div>
