@@ -51,7 +51,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/views/rodauth/login.html.erb"
     assert_file "app/views/rodauth/otp_auth.html.erb"
-    assert_file "app/views/rodauth/webauthn_setup.html.erb"
+    # assert_file "app/views/rodauth/webauthn_setup.html.erb" # this form is yet to be done.
   end
 
   test "specifying configuration" do
@@ -67,31 +67,22 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/views/rodauth/login.html.erb"
     assert_file "app/views/rodauth/logout.html.erb"
-		assert_no_file "app/views/admin/rodauth/logout.html.erb"
+	assert_no_file "app/views/admin/rodauth/logout.html.erb"
   end
 
-	test "that the tailwind file is being copied, rather than the bootstrap file" do
-		run_generator %w[--css=tailwind logout]
+  test "tailwindcss styles, without specifying css tailwind" do    
+      fork do 
+        require "tailwindcss-rails"     
+        run_generator            
+        exit
+        assert_file  "app/views/rodauth/logout.html.erb", tailwind_logout_file    
+      end
+  end
 
-	  assert_file "app/views/rodauth/logout.html.erb", <<~ERB.strip()
-<% content_for :title, rodauth.logout_page_title %>
-<div class="flex justify-center">
-  <%= form_with url: rodauth.logout_path, method: :post, data: { turbo: false } do |form| %>
-    <% if rodauth.features.include?(:active_sessions) %>
-      <div class="py-3">
-        <%= form.check_box rodauth.global_logout_param, id: "global-logout", class: "appearance-none checked:bg-blue-500" %>
-        <%= form.label "global-logout", rodauth.global_logout_label, class: "inline-block text-gray-800" %>
-      </div>
-    <% end %>
-    <div class="py-3">
-      <%= form.submit rodauth.logout_button, class: "px-8 py-2 font-semibold rounded-md flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-emerald-400 dark:text-gray-900" %>
-    </div>
-  </div>
-<% end %>
-		ERB
-	
-
-  end if ActionView.version >= Gem::Version.new("5.1")
+  test "that the tailwind file is being copied, rather than the bootstrap file" do
+    run_generator %w[--css=tailwind logout]
+    assert_file "app/views/rodauth/logout.html.erb", tailwind_logout_file
+  end 
 
   test "interpolating named configuration" do
     run_generator %w[verify_login_change]
@@ -218,4 +209,26 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       run_generator %w[--name unknown]
     end
   end
+
+private
+
+  def tailwind_logout_file
+    return <<~ERB.strip()
+      <% content_for :title, rodauth.logout_page_title %>
+      <div class="flex justify-center">
+        <%= form_with url: rodauth.logout_path, method: :post, data: { turbo: false } do |form| %>
+          <% if rodauth.features.include?(:active_sessions) %>
+            <div class="py-3">
+              <%= form.check_box rodauth.global_logout_param, id: "global-logout", class: "appearance-none checked:bg-blue-500" %>
+              <%= form.label "global-logout", rodauth.global_logout_label, class: "inline-block text-gray-800" %>
+            </div>
+          <% end %>
+          <div class="py-3">
+            <%= form.submit rodauth.logout_button, class: "px-8 py-2 font-semibold rounded-md flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-emerald-400 dark:text-gray-900" %>
+          </div>
+        </div>
+      <% end %>
+          ERB
+  end
+
 end

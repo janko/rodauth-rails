@@ -116,7 +116,9 @@ module Rodauth
         end
 
         def tailwind?
-          return options[:css]&.downcase&.to_sym == :tailwind || options[:css]&.downcase&.starts_with?("tail") # some people may try using tailwind_css, or tail.. - I want to capture that as well
+          return defined?(Tailwindcss) ||
+            options[:css]&.downcase&.to_sym == :tailwind ||
+            options[:css]&.downcase&.starts_with?("tail") # some people may try using tailwind_css, or tail.. - I want to capture that as well
         end
       end
     end
