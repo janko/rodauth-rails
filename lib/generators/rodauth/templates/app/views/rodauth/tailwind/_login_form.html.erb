@@ -11,15 +11,15 @@
           <% else %>
             <div class="space-y-2">
               <%= form.label "login", rodauth.login_label, class: "block text-sm text-gray-400" %>
-              <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", autocomplete: "email", required: true, class: class_names("w-full px-3 py-2 border rounded-md border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:dark:bg-gray-800 focus:dark:border-emerald-400 invalid:border-red-500 invalid:text-red-600 focus:invalid:border-red-500 focus:invalid:ring-red-500 valid:border-green-500", {"border rounded-md border-red-500": rodauth.field_error(rodauth.login_param)}), aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>              
+              <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", autocomplete: "email", required: true, class: class_names("w-full px-3 py-2 border rounded-md border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:dark:bg-gray-800 focus:dark:border-emerald-400 invalid:border-red-500 invalid:text-red-600 focus:invalid:border-red-500 focus:invalid:ring-red-500 valid:border-green-500", {"border rounded-md border-red-500": rodauth.field_error(rodauth.login_param)}), aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>
               <%= content_tag(:span, rodauth.field_error(rodauth.login_param), class: "text-red-800 text-xs mt-1 ml-1", id: "login_error_message") if rodauth.field_error(rodauth.login_param) %>
             </div>
           <% end %>
           <% unless rodauth.skip_password_field_on_login? %>
             <div class="space-y-2">
               <div class="flex justify-between">
-                <%= form.label "password", rodauth.password_label, class: "block text-sm text-gray-400" %>                
-                <% if rodauth.features.include?(:reset_password) %>                
+                <%= form.label "password", rodauth.password_label, class: "block text-sm text-gray-400" %>
+                <% if rodauth.features.include?(:reset_password) %>
                   <%= link_to(rodauth.reset_password_request_link_text, rodauth.reset_password_request_path, class: "text-xs text-blue-600 hover:text-blue-700 hover:underline dark:text-gray-200") %>
                 <% end %>
               </div>
