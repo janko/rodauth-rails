@@ -1,8 +1,8 @@
 <div class="dark:bg-gray-900 min-h-full flex items-center justify-center py-4 px-4 sm:px-6 lg:px-8">
   <%= form_with url: rodauth.remember_path, method: :post, data: { turbo: false } do |form| %>
-    <h3 class="mb-3 text-3xl font-semibold text-center text-white"> 
+    <h3 class="mb-3 text-3xl font-semibold text-center dark:text-gray-100"> 
       <%= rodauth.remember_page_title %>
-    </h3>
+    </h3>        
     <fieldset class="py-3 px-3">
       <div class="py-0">
         <%= form.radio_button rodauth.remember_param, rodauth.remember_remember_param_value, id: "remember-remember", class: "appearance-none checked:bg-blue-500 indeterminate:bg-gray-300" %>
