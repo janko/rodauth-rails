@@ -2,11 +2,15 @@
 <div class="dark:bg-gray-900 flex items-center justify-center h-screen">
   <div class="mx-4 py-4">
     <h3 class="mb-3 text-3xl font-semibold text-center text-white"> Close Account </h3>
+    <!-- 
+    Consider adding a stern warning to those who want to close their account.
+    You may want to translate the text to suit your own purposes. Here is an example in English:
     <div class="flex p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
       <div>
         <span class="font-medium">Warning!</span> You're about to close your account!
       </div>
-    </div>
+    </div> 
+    -->
     <%= form_with url: rodauth.close_account_path, method: :post, data: { turbo: false } do |form| %>
       <% if rodauth.close_account_requires_password? %>
         <div class="py-2">
