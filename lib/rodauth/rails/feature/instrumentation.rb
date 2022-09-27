@@ -2,6 +2,8 @@ module Rodauth
   module Rails
     module Feature
       module Instrumentation
+        extend ActiveSupport::Concern
+
         private
 
         def _around_rodauth

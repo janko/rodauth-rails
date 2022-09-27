@@ -2,8 +2,10 @@ module Rodauth
   module Rails
     module Feature
       module Csrf
-        def self.included(feature)
-          feature.auth_methods(
+        extend ActiveSupport::Concern
+
+        included do
+          auth_methods(
             :rails_csrf_tag,
             :rails_csrf_param,
             :rails_csrf_token,

@@ -2,6 +2,8 @@ module Rodauth
   module Rails
     module Feature
       module InternalRequest
+        extend ActiveSupport::Concern
+
         def domain
           return super unless missing_host? && rails_url_options
 

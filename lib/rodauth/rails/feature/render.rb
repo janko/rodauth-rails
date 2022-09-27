@@ -2,8 +2,10 @@ module Rodauth
   module Rails
     module Feature
       module Render
-        def self.included(feature)
-          feature.auth_methods :rails_render
+        extend ActiveSupport::Concern
+
+        included do
+          auth_methods :rails_render
         end
 
         # Renders templates with layout. First tries to render a user-defined

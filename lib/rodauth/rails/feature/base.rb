@@ -1,11 +1,15 @@
+require "active_support/concern"
+
 module Rodauth
   module Rails
     module Feature
       module Base
-        def self.included(feature)
-          feature.auth_methods :rails_controller
-          feature.auth_value_methods :rails_account_model
-          feature.auth_cached_method :rails_controller_instance
+        extend ActiveSupport::Concern
+
+        included do
+          auth_methods :rails_controller
+          auth_value_methods :rails_account_model
+          auth_cached_method :rails_controller_instance
         end
 
         def rails_account

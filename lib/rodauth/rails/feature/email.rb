@@ -2,8 +2,10 @@ module Rodauth
   module Rails
     module Feature
       module Email
-        def self.included(feature)
-          feature.depends :email_base
+        extend ActiveSupport::Concern
+
+        included do
+          depends :email_base
         end
 
         private
