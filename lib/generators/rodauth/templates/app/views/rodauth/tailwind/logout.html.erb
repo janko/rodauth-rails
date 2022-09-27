@@ -1,4 +1,3 @@
-<% content_for :title, rodauth.logout_page_title %>
 <div class="flex justify-center">
   <%= form_with url: rodauth.logout_path, method: :post, data: { turbo: false } do |form| %>
     <% if rodauth.features.include?(:active_sessions) %>

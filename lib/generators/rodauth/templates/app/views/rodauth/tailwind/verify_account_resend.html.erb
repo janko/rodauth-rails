@@ -1,4 +1,3 @@
-<% content_for :title, rodauth.resend_verify_account_page_title %>
 <div class="dark:bg-gray-900 min-h-full flex items-center justify-center py-4 px-4 sm:px-6 lg:px-8">
   <div class="w-full max-w-sm">
     <%= form_with url: rodauth.verify_account_resend_path, method: :post, data: { turbo: false } do |form| %>
