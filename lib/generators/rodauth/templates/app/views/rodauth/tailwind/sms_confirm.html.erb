@@ -1,6 +1,9 @@
 <div class="dark:bg-gray-900 flex items-center justify-center h-screen">
   <div class="max-w-sm">
     <div class="mx-4">
+      <h3 class="mb-3 text-3xl font-semibold text-center dark:text-gray-200">
+        <%= rodauth.sms_confirm_page_title %>
+      </h3>
       <%= form_with url: rodauth.sms_confirm_path, method: :post, data: { turbo: false } do |form| %>
         <%= form.label "sms-code", rodauth.sms_code_label, class: "text-sm text-gray-500" %>
         <div class="col-sm-3">

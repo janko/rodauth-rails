@@ -1,5 +1,8 @@
 <div class="dark:bg-gray-900 min-h-full flex items-center justify-center py-4 px-4 sm:px-6 lg:px-8">
   <div class="w-full max-w-sm">
+        <h3 class="mb-3 text-3xl font-semibold text-center dark:text-gray-200">
+      <%= rodauth.recovery_codes_page_title %>
+    </h3>
     <div class="p-4 rounded-md shadow shadow-inner sm:p-8 dark:bg-gray-900 dark:text-gray-100">
       <%= form_with url: rodauth.recovery_codes_path, method: :post, data: { turbo: false } do |form| %>
         <% if rodauth.two_factor_modifications_require_password? %>
