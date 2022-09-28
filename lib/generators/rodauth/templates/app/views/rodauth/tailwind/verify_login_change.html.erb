@@ -1,6 +1,6 @@
-<h3 class="text-center mb-3 dark:text-gray-200 text-lg">
+<h2 class="text-center mb-3 dark:text-gray-200 text-lg">
   <%= rodauth.verify_login_change_page_title %>
-</h3>
+</h2>
 <%= form_with url: rodauth.verify_login_change_path, method: :post, data: { turbo: false } do |form| %>
   <div class="py-3 mb-3">
     <%= form.submit rodauth.verify_login_change_button, class: "w-full px-8 py-3 font-semibold rounded-md flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-emerald-400 dark:text-gray-900" %>

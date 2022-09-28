@@ -1,8 +1,8 @@
 <div class="dark:bg-gray-900 flex items-center justify-center h-screen">
   <div class="max-w-sm">
-    <h3 class="mb-3 text-3xl font-semibold text-center dark:text-gray-200"> 
+    <h2 class="mb-3 text-3xl font-semibold text-center dark:text-gray-200"> 
       <%= rodauth.change_login_page_title  %>
-    </h3>
+    </h2>
     <%= form_with url: rodauth.change_login_path, method: :post, data: { turbo: false } do |form| %>
       <div class="mx-4 py-1">        
         <%= form.label "login", rodauth.login_label, class: "block text-sm text-gray-400 dark:text-gray-100" %>

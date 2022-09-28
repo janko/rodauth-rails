@@ -1,8 +1,8 @@
 <div class="dark:bg-gray-900 min-h-full flex items-center justify-center py-4 px-4 sm:px-6 lg:px-8">
   <div class="h-full min-h-full py-10">
-    <h3 class="mb-3 text-3xl font-semibold text-center dark:text-gray-200"> 
+    <h2 class="mb-3 text-3xl font-semibold text-center dark:text-gray-200"> 
       <%= rodauth.sms_auth_page_title %>
-    </h3>
+    </h2>
     <%= form_with url: rodauth.sms_auth_path, method: :post, data: { turbo: false } do |form| %>      
         <%= form.label "sms-code", rodauth.sms_code_label, class: "block text-sm text-gray-600 dark:text-gray-200" %>
         <div class="py-2">

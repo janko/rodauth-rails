@@ -1,10 +1,10 @@
 <div class="dark:bg-gray-900 min-h-full flex items-center justify-center py-4 px-4 sm:px-6 lg:px-8">
   <div class="w-full max-w-sm">
-    <h3 class="text-center mb-3 dark:text-gray-200 text-lg">
+    <h2 class="text-center mb-3 dark:text-gray-200 text-lg">
       <%= rodauth.resend_verify_account_page_title  %>
-    </h3>
+    </h2>
     <%= form_with url: rodauth.verify_account_resend_path, method: :post, data: { turbo: false } do |form| %>
-      <h3 class="text-center mb-3 font-medium leading-tight text-3xl mt-0 mb-2 text-gray-700 dark:text-white">  Resend Verification Email  </h3>
+      <h2 class="text-center mb-3 font-medium leading-tight text-3xl mt-0 mb-2 text-gray-700 dark:text-white">  Resend Verification Email  </h2>
       <div class="text-center text-sm text-gray-700 mb-8 dark:text-white">
         <%== rodauth.verify_account_resend_explanatory_text %>
       </div>
