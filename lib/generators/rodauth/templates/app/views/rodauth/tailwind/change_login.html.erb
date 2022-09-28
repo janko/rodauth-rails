@@ -6,8 +6,7 @@
     <%= form_with url: rodauth.change_login_path, method: :post, data: { turbo: false } do |form| %>
       <div class="mx-4 py-1">        
         <%= form.label "login", rodauth.login_label, class: "block text-sm text-gray-400 dark:text-gray-100" %>
-        <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", autocomplete: "email", required: true, class: class_names("w-full px-3 py-2 border rounded-md border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:dark:border-emerald-400 focus:dark:bg-gray-800 invalid:border-red-500 invalid:text-red-600 focus:invalid:border-red-500 focus:invalid:ring-red-500 valid:border-green-500", {"border rounded-md border-red-500": rodauth.field_error(rodauth.login_param)}), aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>
-        <p class="text-xs text-gray-600 dark:text-gray-300 mt-1"> Enter new email address</p>
+        <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", autocomplete: "email", required: true, class: class_names("w-full px-3 py-2 border rounded-md border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:dark:border-emerald-400 focus:dark:bg-gray-800 invalid:border-red-500 invalid:text-red-600 focus:invalid:border-red-500 focus:invalid:ring-red-500 valid:border-green-500", {"border rounded-md border-red-500": rodauth.field_error(rodauth.login_param)}), aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>        
         <%= content_tag(:span, rodauth.field_error(rodauth.login_param), class: "text-red-800 text-xs mt-1 ml-1", id: "login_error_message") if rodauth.field_error(rodauth.login_param) %>
       </div>
       <% if rodauth.require_login_confirmation? %>
