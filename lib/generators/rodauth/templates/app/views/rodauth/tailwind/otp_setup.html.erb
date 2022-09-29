@@ -20,11 +20,11 @@
             <div class="w-full">
               <div>
                 <p class="dark:text-gray-100 ">
-                  <b><%= rodauth.otp_secret_label %>: </b>
+                  <span class="font-semibold"> <%= rodauth.otp_secret_label %>: </span>
                   <%= rodauth.otp_user_key %></p>
                 <div class="mt-2">
                   <p class="dark:text-gray-100 ">
-                    <b><%= rodauth.otp_provisioning_uri_label %>: </b>
+                    <span class="font-semibold"> <%= rodauth.otp_provisioning_uri_label %>: </span>
                   </p>
                   <%= link_to(rodauth.otp_provisioning_uri.truncate(40), rodauth.otp_provisioning_uri , class: "underline text-blue-600 hover:text-blue-800 visited:text-purple-600") %>
                 </div>
