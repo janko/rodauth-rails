@@ -8,7 +8,7 @@
         <% if rodauth.two_factor_modifications_require_password? %>
           <div class="py-2">
             <%= form.label "password", rodauth.password_label, class: "text-sm text-gray-400" %>
-            <%= form.password_field rodauth.password_param, value: "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: class_names("w-full px-3 py-2 border rounded-md border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:dark:border-emerald-400 focus:dark:bg-gray-800 invalid:border-red-500 invalid:text-red-600 focus:invalid:border-red-500 focus:invalid:ring-red-500 valid:border-green-500", {"border rounded-md border-red-500": rodauth.field_error(rodauth.password_param)}), aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
+            <%= form.password_field rodauth.password_param, value: "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: "w-full px-3 py-2 border rounded-md border-gray-400 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 focus:dark:border-emerald-400 focus:dark:bg-gray-800 invalid:border-red-500 invalid:text-red-600 focus:invalid:border-red-500 focus:invalid:ring-red-500 valid:border-green-500 #{"border rounded-md border-red-500" if rodauth.field_error(rodauth.password_param)}", aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
             <%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "text-red-800 text-xs mt-1 ml-1", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
           </div>
         <% end %>
