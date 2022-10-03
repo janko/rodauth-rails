@@ -1,7 +1,7 @@
+<h2 class="mb-3 text-3xl font-semibold text-center dark:text-gray-200">
+  <%= rodauth.unlock_account_request_page_title %>
+</h2>
 <div class="dark:bg-gray-900 min-h-full flex justify-center py-4 px-4 sm:px-6 lg:px-8">
-  <h2 class="mb-3 text-3xl font-semibold text-center dark:text-gray-200">
-    <%= rodauth.unlock_account_request_page_title %>
-  </h2>
   <%= form_with url: rodauth.unlock_account_request_path, method: :post, data: { turbo: false } do |form| %>
     <%= form.hidden_field rodauth.login_param, value: params[rodauth.login_param] %>
     <div class="p-4 mb-4 rounded-lg text-red-800 dark:text-red-800 dark:bg-red-200 bg-red-100">
