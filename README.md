@@ -519,7 +519,7 @@ handles both storing the password hash in a column on the accounts table, or in
 a separate table.
 
 ```rb
-account = Account.create!(email: "user@example.com", password: "secret")
+account = Account.create!(email: "user@example.com", password: "secret123")
 
 # when password hash is stored in a column on the accounts table
 account.password_hash #=> "$2a$12$k/Ub1I2iomi84RacqY89Hu4.M0vK7klRnRtzorDyvOkVI.hKhkNw."
@@ -642,7 +642,7 @@ end
 ```
 ```rb
 # primary configuration
-RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
+RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret123")
 RodauthApp.rodauth.verify_account(account_login: "user@example.com")
 
 # secondary configuration
@@ -737,7 +737,7 @@ class ArticlesControllerTest < ActionController::TestCase
     assert_redirected_to "/login"
     assert_equal "Please login to continue", flash[:alert]
 
-    account = Account.create!(email: "user@example.com", password: "secret", status: "verified")
+    account = Account.create!(email: "user@example.com", password: "secret123", status: "verified")
     login(account)
 
     get :index

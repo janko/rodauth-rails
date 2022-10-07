@@ -1,3 +1,9 @@
+## HEAD
+
+* Set minimum password length to 8 in the generated configuration, as per OWASP recommendation (@janko)
+
+* Set maximum password bytesize to 72 in the generated configuration, as bcrypt truncates inputs longer than 72 bytes (@janko)
+
 ## 1.6.2 (2022-09-19)
 
 * Use matching precision for current timestamp default values in Active Record 7.0+ migrations on MySQL (@janko)
