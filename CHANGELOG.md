@@ -1,5 +1,7 @@
 ## HEAD
 
+* Use `pass` plugin for forwarding other `{prefix}/*` requests when automatically routing the prefix (@janko)
+
 * Set minimum password length to 8 in the generated configuration, as per OWASP recommendation (@janko)
 
 * Set maximum password bytesize to 72 in the generated configuration, as bcrypt truncates inputs longer than 72 bytes (@janko)

@@ -6,4 +6,10 @@ class ConfigurationsTest < IntegrationTest
 
     assert_equal current_path, "/admin/login"
   end
+
+  test "prefix with custom routes" do
+    visit "/admin/custom"
+
+    assert_equal "Custom admin route", page.html
+  end
 end
