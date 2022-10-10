@@ -157,15 +157,18 @@ This just delegates to the `#rails_account` method on the Rodauth object.
 #### Custom account model
 
 The `#current_account` method will try to infer the account model class from
-the configured table name. If that fails, you can set the account model
-manually:
+the configured table name. For example, if the `accounts_table` is set to
+`:users`, it will automatically assume the model class of `User`.
+
+However, if the model class cannot be inferred from the table name, you can
+configure it manually:
 
 ```rb
 # app/misc/rodauth_main.rb
 class RodauthMain < Rodauth::Rails::Auth
   configure do
     # ...
-    rails_account_model Authentication::Account # custom model name
+    rails_account_model { Authentication::Account } # custom model name
   end
 end
 ```
