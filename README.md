@@ -136,27 +136,32 @@ authentication experience, and the forms use [Bootstrap] markup.
 
 ### Current account
 
-The `#current_account` method is defined in controllers and views, which
-returns the model instance of the currently logged in account. If the account
-doesn't exist in the database, the session will be cleared.
+The Rodauth object defines a `#rails_account` method, which returns a model
+instance of the currently logged in account. You can create a helper method for
+easy access from controllers and views:
+
+```rb
+class ApplicationController < ActionController::Base
+  private
+
+  def current_account
+    rodauth.rails_account
+  end
+  helper_method :current_account # skip if inheriting from ActionController::API
+end
+```
 
 ```rb
 current_account #=> #<Account id=123 email="user@example.com">
 current_account.email #=> "user@example.com"
 ```
 
-Pass the configuration name to retrieve accounts belonging to other Rodauth
-configurations:
-
-```rb
-current_account(:admin)
-```
-
-This just delegates to the `#rails_account` method on the Rodauth object.
+If the session is logged in, but the account doesn't exist in the database, the
+session will be reset.
 
 #### Custom account model
 
-The `#current_account` method will try to infer the account model class from
+The `#rails_account` method will try to infer the account model class from
 the configured table name. For example, if the `accounts_table` is set to
 `:users`, it will automatically assume the model class of `User`.
 
