@@ -3,3 +3,4 @@ gemfiles/*.lock
 pkg/
 database.sqlite3
 tmp/
+.ruby-version
