@@ -1,4 +1,4 @@
-## HEAD
+## 1.6.3 (2022-11-15)
 
 * Suggest passing an integer to `verify_account_grace_period` instead of `ActiveSupport::Duration` (@vlado)
 
