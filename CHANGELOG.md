@@ -1,5 +1,7 @@
 ## HEAD
 
+* Suggest passing an integer to `verify_account_grace_period` instead of `ActiveSupport::Duration` (@vlado)
+
 * Use `pass` plugin for forwarding other `{prefix}/*` requests when automatically routing the prefix (@janko)
 
 * Set minimum password length to 8 in the generated configuration, as per OWASP recommendation (@janko)
