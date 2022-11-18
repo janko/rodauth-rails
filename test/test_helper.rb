@@ -3,6 +3,7 @@ ENV["RAILS_ENV"] = "test"
 if RUBY_VERSION >= "2.4"
   require "warning"
   Warning.ignore(:ambiguous_slash, __dir__)
+  Gem.path.each { |path| Warning.ignore(//, path) } # ignore warnings in dependencies
 end
 
 require "bundler/setup"
