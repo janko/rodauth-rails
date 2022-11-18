@@ -152,7 +152,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
           <% if rodauth.features.include?(:active_sessions) %>
             <div class="form-group mb-3">
               <div class="form-check">
-                <%= check_box_tag rodauth.global_logout_param, "t", false, id: "global-logout", class: "form-check-input" %>
+                <%= check_box_tag rodauth.global_logout_param, "t", false, id: "global-logout", class: "form-check-input", include_hidden: false %>
                 <%= label_tag "global-logout", rodauth.global_logout_label, class: "form-check-label" %>
               </div>
             </div>
