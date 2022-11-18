@@ -40,11 +40,19 @@ of the advantages that stand out for me:
 * consistent before/after hooks around everything
 * dedicated object encapsulating all authentication logic
 
-One common concern is the fact that, unlike most other authentication
-frameworks for Rails, Rodauth uses [Sequel] for database interaction instead of
-Active Record. There are good reasons for this, and to make Rodauth work
-smoothly alongside Active Record, rodauth-rails configures Sequel to [reuse
-Active Record's database connection][sequel-activerecord_connection].
+### Sequel
+
+One common concern for people coming from other Rails authentication frameworks
+is the fact that Rodauth uses [Sequel] for database interaction instead of
+Active Record. Sequel has powerful APIs for building advanced queries,
+supporting complex SQL expressions, database-agnostic date arithmetic, SQL
+function calls and more, all without having to drop down to raw SQL.
+
+For Rails apps using Active Record, rodauth-rails configures Sequel to [reuse
+Active Record's database connection][sequel-activerecord_connection]. This
+makes it run smoothly alongside Active Record, even allowing calling Active
+Record code from within Rodauth configuration. So, for all intents and
+purposes, Sequel can be treated just as an implementation detail of Rodauth.
 
 ## Installation
 
@@ -1068,19 +1076,6 @@ end
 <% rodauth         #=> #<RodauthMain> %>
 <% rodauth(:admin) #=> #<RodauthAdmin> (if using multiple configurations) %>
 ```
-
-### Sequel
-
-Rodauth uses the [Sequel] library for database interaction, which offers
-powerful APIs for building advanced queries (it supports SQL expressions,
-database-agnostic date arithmetic, SQL function calls).
-
-If you're using Active Record in your application, the `rodauth:install`
-generator automatically configures Sequel to reuse ActiveRecord's database
-connection, using the [sequel-activerecord_connection] gem.
-
-This means that, from the usage perspective, Sequel can be considered just
-as an implementation detail of Rodauth.
 
 ## Rodauth defaults
 
