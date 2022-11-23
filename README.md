@@ -743,12 +743,12 @@ class ArticlesController < ApplicationController
 end
 ```
 
-One can write `ActionDispatch::Integration` test helpers for `login` and
+One can write `ActionDispatch::IntegrationTest` test helpers for `login` and
 `logout` by making requests to the rodauth endpoints
 
 ```rb
 # test/controllers/articles_controller_test.rb
-class ArticlesControllerTest < ActionController::TestCase
+class ArticlesControllerTest < ActionDispatch::IntegrationTest
   def login(login, password)
     post "/login", params: { login: login, password: password }
     assert_redirected_to "/"
