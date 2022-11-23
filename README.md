@@ -728,10 +728,9 @@ Rodauth::Rails.rodauth(:admin, params: { "param" => "value" })
 ## Testing
 
 For system and integration tests, which run the whole middleware stack,
-authentication can be exercised normally via HTTP endpoints. See [this wiki
-page](https://github.com/janko/rodauth-rails/wiki/Testing) for some examples.
+authentication can be exercised normally via HTTP endpoints. For example, given
+a controller
 
-For controller tests, you can log in accounts by modifying the session:
 
 ```rb
 # app/controllers/articles_controller.rb
@@ -743,9 +742,23 @@ class ArticlesController < ApplicationController
   end
 end
 ```
+
+One can write `ActionDispatch::IntegrationTest` test helpers for `login` and
+`logout` by making requests to the rodauth endpoints
+
 ```rb
 # test/controllers/articles_controller_test.rb
-class ArticlesControllerTest < ActionController::TestCase
+class ArticlesControllerTest < ActionDispatch::IntegrationTest
+  def login(login, password)
+    post "/login", params: { login: login, password: password }
+    assert_redirected_to "/"
+  end
+
+  def logout
+    post "/logout"
+    assert_redirected_to "/"
+  end
+  
   test "required authentication" do
     get :index
 
@@ -754,7 +767,7 @@ class ArticlesControllerTest < ActionController::TestCase
     assert_equal "Please login to continue", flash[:alert]
 
     account = Account.create!(email: "user@example.com", password: "secret123", status: "verified")
-    login(account)
+    login(account.email, "secret123")
 
     get :index
     assert_response 200
@@ -765,45 +778,11 @@ class ArticlesControllerTest < ActionController::TestCase
     assert_response 302
     assert_equal "Please login to continue", flash[:alert]
   end
-
-  private
-
-  # Manually modify the session into what Rodauth expects.
-  def login(account)
-    session[:account_id] = account.id
-    session[:authenticated_by] = ["password"] # or ["password", "totp"] for MFA
-  end
-
-  def logout
-    session.clear
-  end
 end
 ```
 
-If you're using multiple configurations with different session prefixes, you'll need
-to make sure to use those in controller tests as well:
-
-```rb
-class RodauthAdmin < Rodauth::Rails::Auth
-  configure do
-    session_key_prefix "admin_"
-  end
-end
-```
-```rb
-# in a controller test:
-session[:admin_account_id] = account.id
-session[:admin_authenticated_by] = ["password"]
-```
-
-If you want to access the Rodauth instance in controller tests, you can do so
-through the controller instance:
-
-```rb
-# in a controller test:
-@controller.rodauth         #=> #<RodauthMain ...>
-@controller.rodauth(:admin) #=> #<RodauthAdmin ...>
-```
+For more examples and information about testing with rodauth, see
+[this wiki page about testing](https://github.com/janko/rodauth-rails/wiki/Testing). 
 
 ## Configuring
 
