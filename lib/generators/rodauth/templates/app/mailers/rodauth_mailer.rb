@@ -53,7 +53,7 @@ class RodauthMailer < ApplicationMailer
 
   def rodauth(name, account_id, &block)
     instance = RodauthApp.rodauth(name).allocate
-    instance.instance_eval { @account = account_ds(account_id).first }
+    instance.instance_eval { @account = account_ds(account_id).first! }
     instance.instance_eval(&block) if block
     instance
   end
