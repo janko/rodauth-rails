@@ -27,5 +27,5 @@ class ControllerTest < IntegrationTest
     assert_equal 302, page.status_code
     assert_equal "/", page.response_headers["Location"]
     assert_equal "true", page.response_headers["X-After"]
-  end unless ActiveRecord::VERSION::MAJOR <= 4 && RUBY_ENGINE == "jruby"
+  end
 end

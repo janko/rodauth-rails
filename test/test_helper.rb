@@ -84,7 +84,7 @@ end
 if RUBY_VERSION >= "2.6" && ActionPack.version < Gem::Version.new("5.0")
   class ActionController::TestResponse < ActionDispatch::TestResponse
     def recycle!
-      if RUBY_VERSION >= "2.7" || RUBY_ENGINE == "jruby"
+      if RUBY_VERSION >= "2.7"
         @mon_data = nil
         @mon_data_owner_object_id = nil
       else
