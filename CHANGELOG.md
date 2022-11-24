@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add commented out email configuration for `password_reset_notify` feature (@janko)
+
 * Design generated mailer in a way that exposes the Rodauth object (@janko)
 
 * Fix generated logout page always logging out globally when using active sessions feature (@janko)

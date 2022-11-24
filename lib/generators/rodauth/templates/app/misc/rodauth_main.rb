@@ -76,6 +76,9 @@ class RodauthMain < Rodauth::Rails::Auth
     create_password_changed_email do
       RodauthMailer.password_changed(self.class.configuration_name, account_id)
     end
+    # create_reset_password_notify_email do
+    #   RodauthMailer.reset_password_notify(self.class.configuration_name, account_id)
+    # end
     # create_email_auth_email do
     #   RodauthMailer.email_auth(self.class.configuration_name, account_id, email_auth_key_value)
     # end
