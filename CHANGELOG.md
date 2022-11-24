@@ -1,3 +1,9 @@
+## HEAD
+
+* Design generated mailer in a way that exposes the Rodauth object (@janko)
+
+* Fix generated logout page always logging out globally when using active sessions feature (@janko)
+
 ## 1.6.3 (2022-11-15)
 
 * Suggest passing an integer to `verify_account_grace_period` instead of `ActiveSupport::Duration` (@vlado)
