@@ -8,7 +8,6 @@ end
 
 require "bundler/setup"
 require "i18n/backend"
-require "i18n/backend/simple" # workaround for https://github.com/jruby/jruby/issues/6547
 require_relative "rails_app/config/environment"
 require "rails/test_help"
 require "capybara/rails"
