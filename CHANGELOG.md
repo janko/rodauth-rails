@@ -1,5 +1,7 @@
 ## HEAD
 
+* Make `#rails_account` work on directly allocated Rodauth object with `@account` set (@janko)
+
 * Add commented out email configuration for `password_reset_notify` feature (@janko)
 
 * Design generated mailer in a way that exposes the Rodauth object (@janko)

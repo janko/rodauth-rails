@@ -13,7 +13,7 @@ module Rodauth
         end
 
         def rails_account
-          return unless logged_in?
+          return unless account || logged_in?
 
           account_from_session unless account
 

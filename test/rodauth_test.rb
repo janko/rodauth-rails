@@ -84,5 +84,9 @@ class RodauthTest < UnitTest
 
     account = Account.create!(email: "user@example.com", status: "verified")
     assert_equal account, Rodauth::Rails.rodauth(account_id: account.id).rails_account
+
+    rodauth = RodauthApp.rodauth.allocate
+    rodauth.instance_eval { @account = account_ds(account.id).first! }
+    assert_equal account, rodauth.rails_account
   end
 end
