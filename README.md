@@ -22,6 +22,8 @@ Provides Rails integration for the [Rodauth] authentication framework.
 * [Rails Authentication with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
 * [Multifactor Authentication in Rails with Rodauth](https://janko.io/adding-multifactor-authentication-in-rails-with-rodauth/)
 * [How to build an OIDC provider using rodauth-oauth on Rails](https://honeyryderchuck.gitlab.io/httpx/2021/03/15/oidc-provider-on-rails-using-rodauth-oauth.html)
+* [What It Took to Build a Rails Integration for Rodauth](https://janko.io/what-it-took-to-build-a-rails-integration-for-rodauth/)
+* [Social Login in Rails with Rodauth](https://janko.io/social-login-in-rails-with-rodauth/)
 
 ## Why Rodauth?
 
