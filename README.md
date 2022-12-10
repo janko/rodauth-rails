@@ -95,18 +95,27 @@ default URL options in each environment. Here is a possible configuration for
 `config/environments/development.rb`:
 
 ```rb
-config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 ```
 
 ## Usage
 
+The Rodauth app will be called for each request before it reaches the Rails
+router. It handles requests to Rodauth endpoints, and allows you to call
+additional code before your main routes.
+
+```sh
+$ rails middleware
+# ...
+# use Rodauth::Rails::Middleware (calls your Rodauth app)
+# run YourApp::Application.routes
+```
+
 ### Routes
 
-Because requests to Rodauth endpoints are handled by a Rack middleware (and not
-a Rails controller), Rodauth routes will not show in `rails routes`.
-
-Use the `rodauth:routes` rake task to view the list of endpoints based on
-currently loaded features:
+Because requests to Rodauth endpoints are handled by Roda, Rodauth routes will
+not show in `rails routes`. You can use the `rodauth:routes` rake task to view
+the list of endpoints based on currently loaded features:
 
 ```sh
 $ rails rodauth:routes
