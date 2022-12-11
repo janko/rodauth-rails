@@ -314,7 +314,9 @@ you'll want to start editing the markup. You can run the following command to
 copy Rodauth templates into your Rails app:
 
 ```sh
-$ rails generate rodauth:views
+$ rails generate rodauth:views # bootstrap views
+# or
+$ rails generate rodauth:views --css=tailwind # tailwind views (requires @tailwindcss/forms plugin)
 ```
 
 This will generate views for Rodauth features you have currently enabled into

@@ -1,3 +1,7 @@
+## HEAD
+
+* Add view templates that use Tailwind CSS (@benkoshy, @janko)
+
 ## 1.6.4 (2022-11-24)
 
 * Make `#rails_account` work on directly allocated Rodauth object with `@account` set (@janko)

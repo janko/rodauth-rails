@@ -1,13 +1,10 @@
-<div class="flex justify-center">
-  <%= form_with url: rodauth.logout_path, method: :post, data: { turbo: false } do |form| %>
-    <% if rodauth.features.include?(:active_sessions) %>
-      <div class="py-3">
-        <%= form.check_box rodauth.global_logout_param, id: "global-logout", class: "appearance-none checked:bg-blue-500" %>
-        <%= form.label "global-logout", rodauth.global_logout_label, class: "inline-block text-gray-800" %>
-      </div>
-    <% end %>
-    <div class="py-3">
-      <%= form.submit rodauth.logout_button, class: "px-8 py-2 font-semibold rounded-md flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:bg-emerald-400 dark:text-gray-900" %>
+<%= form_with url: rodauth.logout_path, method: :post, data: { turbo: false }, class: "w-full max-w-sm" do |form| %>
+  <% if rodauth.features.include?(:active_sessions) %>
+    <div class="mb-6 flex items-center space-x-2">
+      <%= form.check_box rodauth.global_logout_param, id: "global-logout", class: "rounded dark:bg-gray-900 dark:border-gray-600 dark:checked:bg-current dark:checked:border-current dark:checked:text-emerald-400 dark:focus:ring-emerald-400 dark:focus:ring-offset-gray-900", include_hidden: false %>
+      <%= form.label "global-logout", rodauth.global_logout_label, class: "text-sm" %>
     </div>
-  </div>
+  <% end %>
+
+  <%= form.submit rodauth.logout_button, class: "w-full px-8 py-3 cursor-pointer font-semibold text-sm rounded-md bg-yellow-300 hover:bg-yellow-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-300 dark:bg-violet-400 dark:hover:bg-violet-500 dark:text-gray-900 dark:focus:ring-violet-400 dark:focus:ring-offset-current" %>
 <% end %>

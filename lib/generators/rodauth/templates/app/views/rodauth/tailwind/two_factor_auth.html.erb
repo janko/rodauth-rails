@@ -1,12 +1,5 @@
-<div class="dark:bg-gray-900">
-  <h2 class="mb-3 text-3xl font-semibold text-center dark:text-gray-200">
-    <%= rodauth.two_factor_manage_page_title %>
-  </h2>
-  <ul>
-    <% rodauth.two_factor_auth_links.sort.each do |_, link, text| %>
-      <li>
-        <%= link_to text, link, class: "text-blue-500 underline hover:text-blue-700 mt-3" %>
-      </li>
-    <% end %>
-  </ul>
-</div>
+<ul>
+  <% rodauth.two_factor_auth_links.sort.each do |_, link, text| %>
+    <li><%= link_to text, link, class: "text-blue-600 rounded-sm text-sm hover:underline hover:text-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:text-blue-300 dark:focus-visible:ring-2 dark:focus-visible:ring-blue-300" %></li>
+  <% end %>
+</ul>

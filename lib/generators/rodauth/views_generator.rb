@@ -14,8 +14,8 @@ module Rodauth
           desc: "Generates views for all Rodauth features",
           default: false
 
-        class_option :css, type: :string,
-          desc: "Generates tailwind css specific views",
+        class_option :css, type: :string, enum: %w[bootstrap tailwind tailwindcss],
+          desc: "CSS framework to generate views for",
           default: "bootstrap"
 
         class_option :name, aliases: "-n", type: :string,
@@ -53,7 +53,7 @@ module Rodauth
           validate_features or return
 
           views.each do |view|
-            copy_file file_source_location(view), "app/views/#{directory}/#{view}.html.erb" do |content|
+            copy_file view_location(view), "app/views/#{directory}/#{view}.html.erb" do |content|
               content = content.gsub("rodauth.", "rodauth(:#{configuration_name}).") if configuration_name
               content = content.gsub("rodauth/", "#{directory}/")
               content = form_helpers_compatibility(content) if ActionView.version < Gem::Version.new("5.1")
@@ -113,25 +113,24 @@ module Rodauth
         # We need to use the *_tag helpers on versions lower than Rails 5.1.
         def form_helpers_compatibility(content)
           content
-           .gsub(/form_with url: (.+) do \|form\|/, 'form_tag \1 do')
-           .gsub(/form\.(label|submit)/, '\1_tag')
-           .gsub(/form\.(email|password|text|telephone|hidden)_field (\S+), value:/, '\1_field_tag \2,')
-           .gsub(/form\.radio_button (\S+), (\S+),/, 'radio_button_tag \1, \2, false,')
-           .gsub(/form\.check_box (\S+), (.+) /, 'check_box_tag \1, "t", false, \2 ')
+            .gsub(/form_with url: (.+) do \|form\|/, 'form_tag \1 do')
+            .gsub(/form\.(label|submit)/, '\1_tag')
+            .gsub(/form\.(email|password|text|telephone|hidden)_field (\S+), value:/, '\1_field_tag \2,')
+            .gsub(/form\.radio_button (\S+), (\S+),/, 'radio_button_tag \1, \2, false,')
+            .gsub(/form\.check_box (\S+), (.+) /, 'check_box_tag \1, "t", false, \2 ')
         end
 
-        def file_source_location(view)
-          if tailwind? # then we copy from the tailwind directory.
+        def view_location(view)
+          if tailwind?
             "app/views/rodauth/tailwind/#{view}.html.erb"
-          else # use the default bootstrap styles.
+          else
             "app/views/rodauth/#{view}.html.erb"
           end
         end
 
         def tailwind?
-          return defined?(Tailwindcss) ||
-            options[:css]&.downcase&.to_sym == :tailwind ||
-            options[:css]&.downcase&.starts_with?("tail") # some people may try using tailwind_css, or tail.. - I want to capture that as well
+          ::Rails.application.config.generators.options[:rails][:template_engine] == :tailwindcss ||
+            options[:css]&.downcase&.start_with?("tailwind")
         end
       end
     end

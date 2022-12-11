@@ -1,6 +1,16 @@
-<pre id="recovery-codes"><%= rodauth.recovery_codes.map { |s| h(s) }.join("\n\n") %></pre>
+<div>
+  <% if rodauth.recovery_codes.any? %>
+    <div class="text-sm px-4 py-3 bg-white rounded-lg border shadow-lg grid grid-cols-2 gap-y-2 gap-x-4 dark:bg-gray-900 dark:text-gray-200">
+      <% rodauth.recovery_codes.each do |code| %>
+        <div class="font-mono"><%= code %></div>
+      <% end %>
+    </div>
+  <% end %>
 
-<% if rodauth.can_add_recovery_codes? %>
-  <%== rodauth.add_recovery_codes_heading %>
-  <%= render template: "rodauth/recovery_codes", layout: false %>
-<% end %>
+  <% if rodauth.can_add_recovery_codes? %>
+    <div class="text-2xl font-medium mt-6 mb-4">
+      <%== rodauth.add_recovery_codes_heading %>
+    </div>
+    <%= render template: "rodauth/recovery_codes", layout: false %>
+  <% end %>
+</div>
