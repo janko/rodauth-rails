@@ -613,9 +613,9 @@ Then in your application you can reference the secondary Rodauth instance:
 rodauth(:admin).login_path #=> "/admin/login"
 ```
 
-You'll likely want to save the information of which account belongs to which
+*NOTE: You'll likely want to save the information of which account belongs to which
 configuration to the database. See [this guide][account types] on how you can do
-that.
+that.*
 
 ### Sharing configuration
 
