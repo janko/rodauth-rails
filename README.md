@@ -857,6 +857,8 @@ helpers through `#rails_routes`:
 class RodauthMain < Rodauth::Rails::Auth
   configure do
     login_redirect { rails_routes.activity_path }
+    change_password_redirect { rails_routes.profile_path }
+    change_login_redirect { rails_routes.profile_path }
   end
 end
 ```
