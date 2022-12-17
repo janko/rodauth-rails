@@ -17,7 +17,7 @@ module Rodauth
           desc: "Name of the generated migration file"
 
         def create_rodauth_migration
-          return if features.empty?
+          validate_features or return
 
           migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "#{migration_name}.rb")
         end
@@ -30,7 +30,6 @@ module Rodauth
 
         def migration_content
           features
-            .select { |feature| File.exist?(migration_chunk(feature)) }
             .map { |feature| File.read(migration_chunk(feature)) }
             .map { |content| erb_eval(content) }
             .join("\n")
@@ -45,17 +44,35 @@ module Rodauth
           end
         end
 
+        def migration_chunk(feature)
+          "#{MIGRATION_DIR}/#{feature}.erb"
+        end
+
+        def validate_features
+          if features.empty?
+            say "No features specified!", :yellow
+            false
+          elsif (features - valid_features).any?
+            say "No available migration for feature(s): #{(features - valid_features).join(", ")}", :red
+            false
+          else
+            true
+          end
+        end
+
+        def valid_features
+          Dir["#{MIGRATION_DIR}/*.erb"].map { |filename| File.basename(filename, ".erb") }
+        end
+
         if defined?(::ActiveRecord::Railtie) # Active Record
           include ::ActiveRecord::Generators::Migration
+
+          MIGRATION_DIR = "#{__dir__}/migration/active_record"
 
           def db_migrate_path
             return "db/migrate" unless ActiveRecord.version >= Gem::Version.new("5.0")
 
             super
-          end
-
-          def migration_chunk(feature)
-            "#{__dir__}/migration/active_record/#{feature}.erb"
           end
 
           def migration_version
@@ -76,24 +93,42 @@ module Rodauth
             generators  = ::Rails.application.config.generators
             column_type = generators.options[:active_record][:primary_key_type]
 
-            return unless column_type
-
             if key
-              ", #{key}: :#{column_type}"
+              ", #{key}: :#{column_type}" if column_type
             else
-              column_type
+              column_type || default_primary_key_type
+            end
+          end
+
+          def default_primary_key_type
+            if ActiveRecord.version >= Gem::Version.new("5.1") && activerecord_adapter != "sqlite3"
+              :bigint
+            else
+              :integer
             end
           end
 
           def current_timestamp
             if ActiveRecord.version >= Gem::Version.new("5.0")
-              %(-> { "CURRENT_TIMESTAMP" })
+              %(-> { "#{current_timestamp_literal}" })
             else
-              %(OpenStruct.new(quoted_id: "CURRENT_TIMESTAMP"))
+              %(OpenStruct.new(quoted_id: "#{current_timestamp_literal}"))
+            end
+          end
+
+          # Active Record 7+ sets default precision to 6 for timestamp columns,
+          # so we need to ensure we match this when setting the default value.
+          def current_timestamp_literal
+            if ActiveRecord.version >= Gem::Version.new("7.0") && activerecord_adapter == "mysql2" && ActiveRecord::Base.connection.supports_datetime_with_precision?
+              "CURRENT_TIMESTAMP(6)"
+            else
+              "CURRENT_TIMESTAMP"
             end
           end
         else # Sequel
           include ::Rails::Generators::Migration
+
+          MIGRATION_DIR = "#{__dir__}/migration/sequel"
 
           def self.next_migration_number(dirname)
             next_migration_number = current_migration_number(dirname) + 1
@@ -102,10 +137,6 @@ module Rodauth
 
           def db_migrate_path
             "db/migrate"
-          end
-
-          def migration_chunk(feature)
-            "#{__dir__}/migration/sequel/#{feature}.erb"
           end
 
           def db

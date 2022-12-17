@@ -31,11 +31,19 @@ class RodauthMain < Rodauth::Rails::Auth
     # Specify the controller used for view rendering and CSRF verification.
     rails_controller { RodauthController }
 
+    # Set on Rodauth controller with the title of the current page.
+    title_instance_variable :@page_title
+
     # Store account status in an integer column without foreign key constraint.
     account_status_column :status
 
     # Store password hash in a column instead of a separate table.
     account_password_hash_column :password_hash
+
+    # Passwords shorter than 8 characters are considered weak according to OWASP.
+    password_minimum_length 8
+    # bcrypt has a maximum input length of 72 bytes, truncating any extra bytes.
+    password_maximum_bytes 72
 
     # Set password when creating account instead of when verifying.
     verify_account_set_password? false
@@ -53,31 +61,36 @@ class RodauthMain < Rodauth::Rails::Auth
     # Redirect to the app from login and registration pages if already logged in.
     # already_logged_in { redirect login_redirect }
 
+<% if defined?(ActionMailer) -%>
     # ==> Emails
     # Use a custom mailer for delivering authentication emails.
     create_reset_password_email do
-      RodauthMailer.reset_password(*self.class.configuration_name, account_id, reset_password_key_value)
+      RodauthMailer.reset_password(self.class.configuration_name, account_id, reset_password_key_value)
     end
     create_verify_account_email do
-      RodauthMailer.verify_account(*self.class.configuration_name, account_id, verify_account_key_value)
+      RodauthMailer.verify_account(self.class.configuration_name, account_id, verify_account_key_value)
     end
     create_verify_login_change_email do |_login|
-      RodauthMailer.verify_login_change(*self.class.configuration_name, account_id, verify_login_change_key_value)
+      RodauthMailer.verify_login_change(self.class.configuration_name, account_id, verify_login_change_key_value)
     end
     create_password_changed_email do
-      RodauthMailer.password_changed(*self.class.configuration_name, account_id)
+      RodauthMailer.password_changed(self.class.configuration_name, account_id)
     end
+    # create_reset_password_notify_email do
+    #   RodauthMailer.reset_password_notify(self.class.configuration_name, account_id)
+    # end
     # create_email_auth_email do
-    #   RodauthMailer.email_auth(*self.class.configuration_name, account_id, email_auth_key_value)
+    #   RodauthMailer.email_auth(self.class.configuration_name, account_id, email_auth_key_value)
     # end
     # create_unlock_account_email do
-    #   RodauthMailer.unlock_account(*self.class.configuration_name, account_id, unlock_account_key_value)
+    #   RodauthMailer.unlock_account(self.class.configuration_name, account_id, unlock_account_key_value)
     # end
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits
       db.after_commit { email.deliver_later }
     end
 
+<% end -%>
     # ==> Flash
 <% unless json? || jwt? -%>
     # Match flash keys with ones already used in the Rails app.
@@ -145,7 +158,7 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # ==> Deadlines
     # Change default deadlines for some actions.
-    # verify_account_grace_period 3.days
+    # verify_account_grace_period 3.days.to_i
     # reset_password_deadline_interval Hash[hours: 6]
     # verify_login_change_deadline_interval Hash[days: 2]
 <% unless jwt? -%>

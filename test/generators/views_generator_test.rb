@@ -88,8 +88,6 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator %w[verify_login_change]
 
     assert_file "app/views/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
-      <% content_for :title, rodauth.verify_login_change_page_title %>
-
       <%= form_with url: rodauth.verify_login_change_path, method: :post, data: { turbo: false } do |form| %>
         <div class="form-group mb-3">
           <%= form.submit rodauth.verify_login_change_button, class: "btn btn-primary" %>
@@ -100,8 +98,6 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator %w[verify_login_change --name admin]
 
     assert_file "app/views/admin/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
-      <% content_for :title, rodauth(:admin).verify_login_change_page_title %>
-
       <%= form_with url: rodauth(:admin).verify_login_change_path, method: :post, data: { turbo: false } do |form| %>
         <div class="form-group mb-3">
           <%= form.submit rodauth(:admin).verify_login_change_button, class: "btn btn-primary" %>
@@ -133,8 +129,6 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       run_generator %w[close_account remember logout]
 
       assert_file "app/views/rodauth/close_account.html.erb", <<-ERB.strip_heredoc
-        <% content_for :title, rodauth.close_account_page_title %>
-
         <%= form_tag rodauth.close_account_path, method: :post, data: { turbo: false } do %>
           <% if rodauth.close_account_requires_password? %>
             <div class="form-group mb-3">
@@ -151,8 +145,6 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       ERB
 
       assert_file "app/views/rodauth/remember.html.erb", <<-ERB.strip_heredoc
-        <% content_for :title, rodauth.remember_page_title %>
-
         <%= form_tag rodauth.remember_path, method: :post, data: { turbo: false } do %>
           <fieldset class="form-group mb-3">
             <div class="form-check">
@@ -178,13 +170,11 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
       ERB
 
       assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
-        <% content_for :title, rodauth.logout_page_title %>
-
         <%= form_tag rodauth.logout_path, method: :post, data: { turbo: false } do %>
           <% if rodauth.features.include?(:active_sessions) %>
             <div class="form-group mb-3">
               <div class="form-check">
-                <%= check_box_tag rodauth.global_logout_param, "t", false, id: "global-logout", class: "form-check-input" %>
+                <%= check_box_tag rodauth.global_logout_param, "t", false, id: "global-logout", class: "form-check-input", include_hidden: false %>
                 <%= label_tag "global-logout", rodauth.global_logout_label, class: "form-check-label" %>
               </div>
             </div>
@@ -210,6 +200,13 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "invalid features" do
+    output = run_generator %w[otp active_sessions]
+
+    assert_equal "No available view template for feature(s): active_sessions\n", output
+    assert_no_file "app/views/rodauth/otp_auth.html.erb"
+  end
+
 private
 
   def tailwind_logout_file
@@ -229,5 +226,4 @@ private
                 <% end %>
               ERB
   end
-
 end

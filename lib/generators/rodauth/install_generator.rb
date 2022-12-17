@@ -63,10 +63,23 @@ module Rodauth
         end
 
         def create_mailer
+          return unless defined?(ActionMailer)
+
           template "app/mailers/rodauth_mailer.rb"
 
           MAILER_VIEWS.each do |view|
             copy_file "app/views/rodauth_mailer/#{view}.text.erb"
+          end
+        end
+
+        def create_fixtures
+          test_unit_options = ::Rails.application.config.generators.options[:test_unit]
+          if test_unit_options[:fixture] && test_unit_options[:fixture_replacement].nil?
+            if ::Rails.application.config.generators.options[:rails][:test_framework] == :rspec
+              template "test/fixtures/accounts.yml", "spec/fixtures/accounts.yml"
+            else
+              template "test/fixtures/accounts.yml", "test/fixtures/accounts.yml"
+            end
           end
         end
 
@@ -77,8 +90,8 @@ module Rodauth
         private
 
         def migration_features
-          features = [:base, :reset_password, :verify_account, :verify_login_change]
-          features << :remember unless jwt?
+          features = ["base", "reset_password", "verify_account", "verify_login_change"]
+          features << "remember" unless jwt?
           features
         end
 

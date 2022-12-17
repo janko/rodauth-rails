@@ -1,5 +1,8 @@
 <% if db.database_type == :postgres -%>
-enable_extension "citext"
+begin
+  run "CREATE EXTENSION IF NOT EXISTS citext"
+rescue NoMethodError # migration is being reverted
+end
 
 <% end -%>
 create_table :accounts do
@@ -10,16 +13,11 @@ create_table :accounts do
 <% else -%>
   String :email, null: false
 <% end -%>
-  String :status, null: false, default: "unverified"
+  Integer :status, null: false, default: 1
 <% if db.supports_partial_indexes? -%>
-  index :email, unique: true, where: { status: ["unverified", "verified"] }
+  index :email, unique: true, where: { status: [1, 2] }
 <% else -%>
   index :email, unique: true
 <% end -%>
-end
-
-# Used if storing password hashes in a separate table (default)
-create_table :account_password_hashes do
-  foreign_key :id, :accounts, primary_key: true, type: :Bignum
-  String :password_hash, null: false
+  String :password_hash
 end

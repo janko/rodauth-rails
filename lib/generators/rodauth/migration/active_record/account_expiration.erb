@@ -1,5 +1,6 @@
 # Used by the account expiration feature
-create_table :account_activity_times<%= primary_key_type %> do |t|
+create_table :account_activity_times, id: false do |t|
+  t.<%= primary_key_type(nil) %> :id, primary_key: true
   t.foreign_key :accounts, column: :id
   t.datetime :last_activity_at, null: false
   t.datetime :last_login_at, null: false

@@ -1,5 +1,3 @@
-<% content_for :title, rodauth.verify_account_page_title %>
-
 <%= form_with url: rodauth.verify_account_path, method: :post, data: { turbo: false } do |form| %>
   <% if rodauth.verify_account_set_password? %>
     <div class="form-group mb-3">

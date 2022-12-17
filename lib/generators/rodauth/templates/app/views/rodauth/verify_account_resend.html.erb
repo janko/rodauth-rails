@@ -1,5 +1,3 @@
-<% content_for :title, rodauth.resend_verify_account_page_title %>
-
 <%= form_with url: rodauth.verify_account_resend_path, method: :post, data: { turbo: false } do |form| %>
   <%== rodauth.verify_account_resend_explanatory_text %>
 

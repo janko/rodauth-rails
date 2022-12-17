@@ -2,13 +2,16 @@ module Rodauth
   module Rails
     module Feature
       module Render
-        def self.included(feature)
-          feature.auth_methods :rails_render
+        extend ActiveSupport::Concern
+
+        included do
+          auth_methods :rails_render
         end
 
         # Renders templates with layout. First tries to render a user-defined
         # template, otherwise falls back to Rodauth's template.
-        def view(page, *)
+        def view(page, title)
+          set_title(title)
           rails_render(action: page.tr("-", "_"), layout: true) ||
             rails_render(html: super.html_safe, layout: true, formats: :html)
         end
@@ -49,6 +52,12 @@ module Rodauth
           html = super
           html = html.gsub(/<form(.+)>/, '<form\1 data-turbo="false">') if meth == :view
           html
+        end
+
+        def set_title(title)
+          if title_instance_variable
+            rails_controller_instance.instance_variable_set(title_instance_variable, title)
+          end
         end
       end
     end

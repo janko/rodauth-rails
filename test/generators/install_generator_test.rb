@@ -100,4 +100,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_file "app/views/rodauth_mailer/#{template}.text.erb"
     end
   end
+
+  test "fixtures" do
+    run_generator
+    
+    assert_file "test/fixtures/accounts.yml", /<%= BCrypt::Password/ # No tests for the rspec branch
+  end
 end

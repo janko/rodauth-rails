@@ -9,7 +9,7 @@ module Rodauth
       end
 
       def current_account(name = nil)
-        rodauth(name).rails_account || rodauth(name).login_required
+        rodauth(name).rails_account
       end
 
       def rodauth(name = nil)

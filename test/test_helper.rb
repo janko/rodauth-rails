@@ -3,11 +3,11 @@ ENV["RAILS_ENV"] = "test"
 if RUBY_VERSION >= "2.4"
   require "warning"
   Warning.ignore(:ambiguous_slash, __dir__)
+  Gem.path.each { |path| Warning.ignore(//, path) } # ignore warnings in dependencies
 end
 
 require "bundler/setup"
 require "i18n/backend"
-require "i18n/backend/simple" # workaround for https://github.com/jruby/jruby/issues/6547
 require_relative "rails_app/config/environment"
 require "rails/test_help"
 require "capybara/rails"
@@ -84,7 +84,7 @@ end
 if RUBY_VERSION >= "2.6" && ActionPack.version < Gem::Version.new("5.0")
   class ActionController::TestResponse < ActionDispatch::TestResponse
     def recycle!
-      if RUBY_VERSION >= "2.7" || RUBY_ENGINE == "jruby"
+      if RUBY_VERSION >= "2.7"
         @mon_data = nil
         @mon_data_owner_object_id = nil
       else

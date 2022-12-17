@@ -1,5 +1,3 @@
-<% content_for :title, rodauth.webauthn_auth_page_title %>
-
 <% cred = rodauth.webauth_credential_options_for_get %>
 
 <%= form_with url: rodauth.webauthn_auth_form_path, method: :post, id: "webauthn-auth-form", data: { credential_options: cred.as_json.to_json, turbo: false } do |form| %>

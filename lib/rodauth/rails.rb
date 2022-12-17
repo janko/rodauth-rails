@@ -16,7 +16,7 @@ module Rodauth
     @middleware = true
 
     class << self
-      def rodauth(name = nil, query: nil, form: nil, account: nil, **options)
+      def rodauth(name = nil, account: nil, **options)
         auth_class = app.rodauth!(name)
 
         unless auth_class.features.include?(:internal_request)

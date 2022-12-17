@@ -19,6 +19,7 @@ module Rodauth
 
       plugin :hooks
       plugin :render, layout: false
+      plugin :pass
 
       def self.configure(*args, **options, &block)
         auth_class = args.shift if args[0].is_a?(Class)
@@ -30,6 +31,7 @@ module Rodauth
 
         plugin :rodauth, auth_class: auth_class, name: name, csrf: false, flash: false, json: true, **options, &block
 
+        # we need to do it after request methods from rodauth have been included
         self::RodaRequest.include RequestMethods
       end
 
@@ -59,14 +61,22 @@ module Rodauth
         rodauth(name) or fail ArgumentError, "unknown rodauth configuration: #{name.inspect}"
       end
 
+      # The newrelic_rpm gem expects this when we pass the roda class as
+      # :controller in instrumentation payload.
+      def self.controller_path
+        name.underscore
+      end
+
       module RequestMethods
+        # Automatically route the prefix if it hasn't been routed already. This
+        # way people only have to update prefix in their Rodauth configurations.
         def rodauth(name = nil)
           prefix = scope.rodauth(name).prefix
 
           if prefix.present? && remaining_path == path_info
             on prefix[1..-1] do
               super
-              break # forward other `{prefix}/*` requests to the rails router
+              pass # forward other {prefix}/* requests downstream
             end
           else
             super

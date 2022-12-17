@@ -1,5 +1,6 @@
 # Used by the sms codes feature
-create_table :account_sms_codes<%= primary_key_type %> do |t|
+create_table :account_sms_codes, id: false do |t|
+  t.<%= primary_key_type(nil) %> :id, primary_key: true
   t.foreign_key :accounts, column: :id
   t.string :phone_number, null: false
   t.integer :num_failures

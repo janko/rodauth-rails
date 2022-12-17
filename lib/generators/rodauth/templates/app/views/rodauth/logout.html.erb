@@ -1,10 +1,8 @@
-<% content_for :title, rodauth.logout_page_title %>
-
 <%= form_with url: rodauth.logout_path, method: :post, data: { turbo: false } do |form| %>
   <% if rodauth.features.include?(:active_sessions) %>
     <div class="form-group mb-3">
       <div class="form-check">
-        <%= form.check_box rodauth.global_logout_param, id: "global-logout", class: "form-check-input" %>
+        <%= form.check_box rodauth.global_logout_param, id: "global-logout", class: "form-check-input", include_hidden: false %>
         <%= form.label "global-logout", rodauth.global_logout_label, class: "form-check-label" %>
       </div>
     </div>

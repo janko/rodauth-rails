@@ -14,6 +14,7 @@ Provides Rails integration for the [Rodauth] authentication framework.
 🎥 Screencasts:
 
 * [Rails Authentication with Rodauth](https://www.youtube.com/watch?v=2hDpNikacf0)
+* [Multifactor Authentication with Rodauth](https://www.youtube.com/watch?v=9ON-kgXpz2A&list=PLkGQXZLACDTGKsaRWstkHQdm2CUmT3SZ-) ([TOTP](https://youtu.be/9ON-kgXpz2A), [Recovery Codes](https://youtu.be/lkFCcE1Q5-w))
 
 📚 Articles:
 
@@ -21,6 +22,8 @@ Provides Rails integration for the [Rodauth] authentication framework.
 * [Rails Authentication with Rodauth](https://janko.io/adding-authentication-in-rails-with-rodauth/)
 * [Multifactor Authentication in Rails with Rodauth](https://janko.io/adding-multifactor-authentication-in-rails-with-rodauth/)
 * [How to build an OIDC provider using rodauth-oauth on Rails](https://honeyryderchuck.gitlab.io/httpx/2021/03/15/oidc-provider-on-rails-using-rodauth-oauth.html)
+* [What It Took to Build a Rails Integration for Rodauth](https://janko.io/what-it-took-to-build-a-rails-integration-for-rodauth/)
+* [Social Login in Rails with Rodauth](https://janko.io/social-login-in-rails-with-rodauth/)
 
 ## Why Rodauth?
 
@@ -39,26 +42,27 @@ of the advantages that stand out for me:
 * consistent before/after hooks around everything
 * dedicated object encapsulating all authentication logic
 
-One common concern is the fact that, unlike most other authentication
-frameworks for Rails, Rodauth uses [Sequel] for database interaction instead of
-Active Record. There are good reasons for this, and to make Rodauth work
-smoothly alongside Active Record, rodauth-rails configures Sequel to [reuse
-Active Record's database connection][sequel-activerecord_connection].
+### Sequel
+
+One common concern for people coming from other Rails authentication frameworks
+is the fact that Rodauth uses [Sequel] for database interaction instead of
+Active Record. Sequel has powerful APIs for building advanced queries,
+supporting complex SQL expressions, database-agnostic date arithmetic, SQL
+function calls and more, all without having to drop down to raw SQL.
+
+For Rails apps using Active Record, rodauth-rails configures Sequel to [reuse
+Active Record's database connection][sequel-activerecord_connection]. This
+makes it run smoothly alongside Active Record, even allowing calling Active
+Record code from within Rodauth configuration. So, for all intents and
+purposes, Sequel can be treated just as an implementation detail of Rodauth.
 
 ## Installation
 
-Add the gem to your Gemfile:
+Add the gem to your project:
 
-```rb
-gem "rodauth-rails", "~> 1.0"
-
-# gem "jwt",      require: false # for JWT feature
-# gem "rotp",     require: false # for OTP feature
-# gem "rqrcode",  require: false # for OTP feature
-# gem "webauthn", require: false # for WebAuthn feature
+```sh
+$ bundle add rodauth-rails
 ```
-
-Then run `bundle install`.
 
 Next, run the install generator:
 
@@ -66,7 +70,7 @@ Next, run the install generator:
 $ rails generate rodauth:install
 ```
 
-Or if you want Rodauth endpoints to be exposed via JSON API:
+Or if you want Rodauth endpoints to be exposed via [JSON API]:
 
 ```sh
 $ rails generate rodauth:install --json # regular authentication using the Rails session
@@ -91,18 +95,27 @@ default URL options in each environment. Here is a possible configuration for
 `config/environments/development.rb`:
 
 ```rb
-config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 ```
 
 ## Usage
 
+The Rodauth app will be called for each request before it reaches the Rails
+router. It handles requests to Rodauth endpoints, and allows you to call
+additional code before your main routes.
+
+```sh
+$ rails middleware
+# ...
+# use Rodauth::Rails::Middleware (calls your Rodauth app)
+# run YourApp::Application.routes
+```
+
 ### Routes
 
-Because requests to Rodauth endpoints are handled by a Rack middleware (and not
-a Rails controller), Rodauth routes will not show in `rails routes`.
-
-Use the `rodauth:routes` rake task to view the list of endpoints based on
-currently loaded features:
+Because requests to Rodauth endpoints are handled by Roda, Rodauth routes will
+not show in `rails routes`. You can use the `rodauth:routes` rake task to view
+the list of endpoints based on currently loaded features:
 
 ```sh
 $ rails rodauth:routes
@@ -110,18 +123,18 @@ $ rails rodauth:routes
 ```
 Routes handled by RodauthApp:
 
-  /login                   rodauth.login_path
-  /create-account          rodauth.create_account_path
-  /verify-account-resend   rodauth.verify_account_resend_path
-  /verify-account          rodauth.verify_account_path
-  /change-password         rodauth.change_password_path
-  /change-login            rodauth.change_login_path
-  /logout                  rodauth.logout_path
-  /remember                rodauth.remember_path
-  /reset-password-request  rodauth.reset_password_request_path
-  /reset-password          rodauth.reset_password_path
-  /verify-login-change     rodauth.verify_login_change_path
-  /close-account           rodauth.close_account_path
+  GET/POST  /login                   rodauth.login_path
+  GET/POST  /create-account          rodauth.create_account_path
+  GET/POST  /verify-account-resend   rodauth.verify_account_resend_path
+  GET/POST  /verify-account          rodauth.verify_account_path
+  GET/POST  /change-password         rodauth.change_password_path
+  GET/POST  /change-login            rodauth.change_login_path
+  GET/POST  /logout                  rodauth.logout_path
+  GET/POST  /remember                rodauth.remember_path
+  GET/POST  /reset-password-request  rodauth.reset_password_request_path
+  GET/POST  /reset-password          rodauth.reset_password_path
+  GET/POST  /verify-login-change     rodauth.verify_login_change_path
+  GET/POST  /close-account           rodauth.close_account_path
 ```
 
 Using this information, you can add some basic authentication links to your
@@ -142,36 +155,44 @@ authentication experience, and the forms use [Bootstrap] markup.
 
 ### Current account
 
-The `#current_account` method is defined in controllers and views, which
-returns the model instance of the currently logged in account. If the account
-doesn't exist in the database, the session will be cleared.
+The Rodauth object defines a `#rails_account` method, which returns a model
+instance of the currently logged in account. You can create a helper method for
+easy access from controllers and views:
+
+```rb
+class ApplicationController < ActionController::Base
+  private
+
+  def current_account
+    rodauth.rails_account
+  end
+  helper_method :current_account # skip if inheriting from ActionController::API
+end
+```
 
 ```rb
 current_account #=> #<Account id=123 email="user@example.com">
 current_account.email #=> "user@example.com"
 ```
 
-Pass the configuration name to retrieve accounts belonging to other Rodauth
-configurations:
-
-```rb
-current_account(:admin)
-```
-
-This just delegates to the `#rails_account` method on the Rodauth object.
+If the session is logged in, but the account doesn't exist in the database, the
+session will be reset.
 
 #### Custom account model
 
-The `#current_account` method will try to infer the account model class from
-the configured table name. If that fails, you can set the account model
-manually:
+The `#rails_account` method will try to infer the account model class from
+the configured table name. For example, if the `accounts_table` is set to
+`:users`, it will automatically assume the model class of `User`.
+
+However, if the model class cannot be inferred from the table name, you can
+configure it manually:
 
 ```rb
 # app/misc/rodauth_main.rb
 class RodauthMain < Rodauth::Rails::Auth
   configure do
     # ...
-    rails_account_model Authentication::Account # custom model name
+    rails_account_model { Authentication::Account } # custom model name
   end
 end
 ```
@@ -193,7 +214,7 @@ class RodauthApp < Rodauth::Rails::App
 
     # require authentication for /dashboard/* and /account/* routes
     if r.path.start_with?("/dashboard") || r.path.start_with?("/account")
-      rodauth.require_authentication # redirect to login page if not authenticated
+      rodauth.require_account # redirect to login page if not authenticated
     end
   end
 end
@@ -207,7 +228,7 @@ class ApplicationController < ActionController::Base
   private
 
   def authenticate
-    rodauth.require_authentication # redirect to login page if not authenticated
+    rodauth.require_account # redirect to login page if not authenticated
   end
 end
 ```
@@ -321,22 +342,47 @@ $ rails generate rodauth:views webauthn --name admin
 
 #### Page titles
 
-The generated view templates use `content_for(:title)` to store Rodauth's page
-titles, which you can then retrieve in your layout template to set the page
-title:
+The generated configuration sets `title_instance_variable` to make page titles
+available in your views via `@page_title` instance variable, which you can then
+use in your layout:
 
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    # ...
+    title_instance_variable :@page_title
+    # ...
+  end
+end
+```
 ```erb
 <!-- app/views/layouts/application.html.erb -->
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) %></title>
+    <title><%= @page_title || "Default title" %></title>
     <!-- ... -->
   </head>
   <body>
     <!-- ... -->
   </body>
 </html>
+```
+
+If you're already setting page titles via `content_for`, you can use it in
+generated Rodauth views, giving it the result of the corresponding
+`*_page_title` method:
+
+```erb
+<!-- app/views/rodauth/login.html.erb -->
+<%= content_for :page_title, rodauth.login_page_title %>
+<!-- ... -->
+```
+```erb
+<!-- app/views/rodauth/change_password.html.erb -->
+<%= content_for :page_title, rodauth.change_password_page_title %>
+<!-- ... -->
 ```
 
 #### Layout
@@ -356,6 +402,7 @@ class RodauthController < ApplicationController
     when rodauth.login_path,
          rodauth.create_account_path,
          rodauth.verify_account_path,
+         rodauth.verify_account_resend_path,
          rodauth.reset_password_path,
          rodauth.reset_password_request_path
       "authentication"
@@ -499,7 +546,7 @@ handles both storing the password hash in a column on the accounts table, or in
 a separate table.
 
 ```rb
-account = Account.create!(email: "user@example.com", password: "secret")
+account = Account.create!(email: "user@example.com", password: "secret123")
 
 # when password hash is stored in a column on the accounts table
 account.password_hash #=> "$2a$12$k/Ub1I2iomi84RacqY89Hu4.M0vK7klRnRtzorDyvOkVI.hKhkNw."
@@ -566,9 +613,9 @@ Then in your application you can reference the secondary Rodauth instance:
 rodauth(:admin).login_path #=> "/admin/login"
 ```
 
-You'll likely want to save the information of which account belongs to which
+*NOTE: You'll likely want to save the information of which account belongs to which
 configuration to the database. See [this guide][account types] on how you can do
-that.
+that.*
 
 ### Sharing configuration
 
@@ -622,7 +669,7 @@ end
 ```
 ```rb
 # primary configuration
-RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
+RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret123")
 RodauthApp.rodauth.verify_account(account_login: "user@example.com")
 
 # secondary configuration
@@ -692,24 +739,37 @@ Rodauth::Rails.rodauth(:admin, params: { "param" => "value" })
 ## Testing
 
 For system and integration tests, which run the whole middleware stack,
-authentication can be exercised normally via HTTP endpoints. See [this wiki
-page](https://github.com/janko/rodauth-rails/wiki/Testing) for some examples.
+authentication can be exercised normally via HTTP endpoints. For example, given
+a controller
 
-For controller tests, you can log in accounts by modifying the session:
 
 ```rb
 # app/controllers/articles_controller.rb
 class ArticlesController < ApplicationController
-  before_action -> { rodauth.require_authentication }
+  before_action -> { rodauth.require_account }
 
   def index
     # ...
   end
 end
 ```
+
+One can write `ActionDispatch::IntegrationTest` test helpers for `login` and
+`logout` by making requests to the rodauth endpoints
+
 ```rb
 # test/controllers/articles_controller_test.rb
-class ArticlesControllerTest < ActionController::TestCase
+class ArticlesControllerTest < ActionDispatch::IntegrationTest
+  def login(login, password)
+    post "/login", params: { login: login, password: password }
+    assert_redirected_to "/"
+  end
+
+  def logout
+    post "/logout"
+    assert_redirected_to "/"
+  end
+  
   test "required authentication" do
     get :index
 
@@ -717,8 +777,8 @@ class ArticlesControllerTest < ActionController::TestCase
     assert_redirected_to "/login"
     assert_equal "Please login to continue", flash[:alert]
 
-    account = Account.create!(email: "user@example.com", password: "secret", status: "verified")
-    login(account)
+    account = Account.create!(email: "user@example.com", password: "secret123", status: "verified")
+    login(account.email, "secret123")
 
     get :index
     assert_response 200
@@ -729,45 +789,11 @@ class ArticlesControllerTest < ActionController::TestCase
     assert_response 302
     assert_equal "Please login to continue", flash[:alert]
   end
-
-  private
-
-  # Manually modify the session into what Rodauth expects.
-  def login(account)
-    session[:account_id] = account.id
-    session[:authenticated_by] = ["password"] # or ["password", "totp"] for MFA
-  end
-
-  def logout
-    session.clear
-  end
 end
 ```
 
-If you're using multiple configurations with different session prefixes, you'll need
-to make sure to use those in controller tests as well:
-
-```rb
-class RodauthAdmin < Rodauth::Rails::Auth
-  configure do
-    session_key_prefix "admin_"
-  end
-end
-```
-```rb
-# in a controller test:
-session[:admin_account_id] = account.id
-session[:admin_authenticated_by] = ["password"]
-```
-
-If you want to access the Rodauth instance in controller tests, you can do so
-through the controller instance:
-
-```rb
-# in a controller test:
-@controller.rodauth         #=> #<RodauthMain ...>
-@controller.rodauth(:admin) #=> #<RodauthAdmin ...>
-```
+For more examples and information about testing with rodauth, see
+[this wiki page about testing](https://github.com/janko/rodauth-rails/wiki/Testing). 
 
 ## Configuring
 
@@ -831,6 +857,8 @@ helpers through `#rails_routes`:
 class RodauthMain < Rodauth::Rails::Auth
   configure do
     login_redirect { rails_routes.activity_path }
+    change_password_redirect { rails_routes.profile_path }
+    change_login_redirect { rails_routes.profile_path }
   end
 end
 ```
@@ -924,7 +952,7 @@ end
 
 In addition to Zeitwerk compatibility, this extra layer catches Rodauth redirects
 that happen on the controller level (e.g. when calling
-`rodauth.require_authentication` in a `before_action` filter).
+`rodauth.require_account` in a `before_action` filter).
 
 ### Roda app
 
@@ -1041,19 +1069,6 @@ end
 <% rodauth(:admin) #=> #<RodauthAdmin> (if using multiple configurations) %>
 ```
 
-### Sequel
-
-Rodauth uses the [Sequel] library for database interaction, which offers
-powerful APIs for building advanced queries (it supports SQL expressions,
-database-agnostic date arithmetic, SQL function calls).
-
-If you're using Active Record in your application, the `rodauth:install`
-generator automatically configures Sequel to reuse ActiveRecord's database
-connection, using the [sequel-activerecord_connection] gem.
-
-This means that, from the usage perspective, Sequel can be considered just
-as an implementation detail of Rodauth.
-
 ## Rodauth defaults
 
 rodauth-rails changes some of the default Rodauth settings for easier setup:
@@ -1153,7 +1168,7 @@ License](https://opensource.org/licenses/MIT).
 
 Everyone interacting in the rodauth-rails project's codebases, issue trackers,
 chat rooms and mailing lists is expected to follow the [code of
-conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
+conduct](CODE_OF_CONDUCT.md).
 
 [Rodauth]: https://github.com/jeremyevans/rodauth
 [Sequel]: https://github.com/jeremyevans/sequel
@@ -1189,3 +1204,4 @@ conduct](https://github.com/janko/rodauth-rails/blob/master/CODE_OF_CONDUCT.md).
 [custom mailer worker]: https://github.com/janko/rodauth-rails/wiki/Custom-Mailer-Worker
 [Turbo]: https://turbo.hotwired.dev/
 [rodauth-model]: https://github.com/janko/rodauth-model
+[JSON API]: https://github.com/janko/rodauth-rails/wiki/JSON-API

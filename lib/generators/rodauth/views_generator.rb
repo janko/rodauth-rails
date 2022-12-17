@@ -50,10 +50,7 @@ module Rodauth
         }
 
         def create_views
-          views = features.inject([]) do |list, feature|
-            list |= VIEWS[feature] || []
-            list |= VIEWS[DEPENDENCIES[feature]] || []
-          end
+          validate_features or return
 
           views.each do |view|
             copy_file file_source_location(view), "app/views/#{directory}/#{view}.html.erb" do |content|
@@ -67,13 +64,29 @@ module Rodauth
 
         private
 
+        def views
+          features.inject([]) do |list, feature|
+            list |= VIEWS.fetch(feature)
+            list |= VIEWS[DEPENDENCIES[feature]] || []
+          end
+        end
+
+        def validate_features
+          if (features - VIEWS.keys).any?
+            say "No available view template for feature(s): #{(features - VIEWS.keys).join(", ")}", :error
+            false
+          else
+            true
+          end
+        end
+
         def features
           if options[:all]
             VIEWS.keys
           elsif selected_features
             selected_features.map(&:to_sym)
           else
-            rodauth_configuration.features
+            rodauth_configuration.features & VIEWS.keys
           end
         end
 

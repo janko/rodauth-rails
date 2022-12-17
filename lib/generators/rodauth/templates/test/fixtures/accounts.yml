@@ -1,0 +1,10 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+one:
+  email: freddie@queen.com
+  password_hash: <%%= BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST) %>
+  status: verified
+
+two:
+  email: brian@queen.com
+  password_hash: <%%= BCrypt::Password.create("password", cost: BCrypt::Engine::MIN_COST) %>
+  status: verified

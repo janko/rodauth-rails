@@ -16,10 +16,10 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
     migration_file = "db/migrate/create_rodauth_otp_sms_codes_recovery_codes.rb"
 
     assert_migration migration_file, /class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration#{migration_version}/
-    assert_migration migration_file, /create_table :account_otp_keys do/
-    assert_migration migration_file, /create_table :account_sms_codes do/
+    assert_migration migration_file, /create_table :account_otp_keys, id: false do/
+    assert_migration migration_file, /create_table :account_sms_codes, id: false do/
     assert_migration migration_file, /create_table :account_recovery_codes, primary_key: \[:id, :code\] do/
-    assert_migration migration_file, /t\.column :id, :bigint/
+    assert_migration migration_file, /t\.integer :id, primary_key: true/
   end
 
   test "migration name" do
@@ -33,13 +33,11 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
       g.orm :active_record, primary_key_type: :uuid
     end
 
-    run_generator %w[otp sms_codes recovery_codes]
+    run_generator %w[otp]
 
-    migration_file = "db/migrate/create_rodauth_otp_sms_codes_recovery_codes.rb"
+    migration_file = "db/migrate/create_rodauth_otp.rb"
 
-    assert_migration migration_file, /create_table :account_otp_keys, id: :uuid do/
-    assert_migration migration_file, /create_table :account_sms_codes, id: :uuid do/
-    assert_migration migration_file, /t\.column :id, :uuid/
+    assert_migration migration_file, /t\.uuid :id, primary_key: true/
 
     Rails.application.config.generators.options[:active_record].delete(:primary_key_type)
   end
@@ -52,5 +50,19 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
     else
       assert_migration "db/migrate/create_rodauth_email_auth.rb", /default: OpenStruct\.new\(quoted_id: "CURRENT_TIMESTAMP"\)/
     end
+  end
+
+  test "no features" do
+    output = run_generator %w[]
+
+    assert_equal "No features specified!\n", output
+    assert_no_file "db/migrate/create_rodauth_.rb"
+  end
+
+  test "invalid features" do
+    output = run_generator %w[sms_codes active_session totp]
+
+    assert_equal "No available migration for feature(s): active_session, totp\n", output
+    assert_no_file "db/migrate/create_rodauth_otp.rb"
   end
 end

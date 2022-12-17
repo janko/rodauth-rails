@@ -1,3 +1,89 @@
+## 1.6.4 (2022-11-24)
+
+* Make `#rails_account` work on directly allocated Rodauth object with `@account` set (@janko)
+
+* Add commented out email configuration for `password_reset_notify` feature (@janko)
+
+* Design generated mailer in a way that exposes the Rodauth object (@janko)
+
+* Fix generated logout page always logging out globally when using active sessions feature (@janko)
+
+## 1.6.3 (2022-11-15)
+
+* Suggest passing an integer to `verify_account_grace_period` instead of `ActiveSupport::Duration` (@vlado)
+
+* Use `pass` plugin for forwarding other `{prefix}/*` requests when automatically routing the prefix (@janko)
+
+* Set minimum password length to 8 in the generated configuration, as per OWASP recommendation (@janko)
+
+* Set maximum password bytesize to 72 in the generated configuration, as bcrypt truncates inputs longer than 72 bytes (@janko)
+
+## 1.6.2 (2022-09-19)
+
+* Use matching precision for current timestamp default values in Active Record 7.0+ migrations on MySQL (@janko)
+
+## 1.6.1 (2022-09-19)
+
+* Fix argument error when calling `RodauthMailer` in default configuration (@janko)
+
+## 1.6.0 (2022-09-14)
+
+* Avoid creating IDENTITY columns for primary foreign keys on SQL Server with Active Record (@janko)
+
+* Make configuration name argument required in generated `RodauthMailer` (@janko)
+
+* Make the Rails integration work without Action Mailer loaded (@janko)
+
+* Don't redirect to login page when account is missing in `current_account` method (@janko)
+
+## 1.5.5 (2022-08-04)
+
+* Don't raise `ArgumentError` when calling `#current_account` without being logged in (@benkoshy)
+
+* Abort `rodauth:views` generator when unknown feature was specified (@janko)
+
+* Abort `rodauth:migration` generator when unknown feature was specified (@janko)
+
+## 1.5.4 (2022-07-21)
+
+* Generate account fixtures in `spec/fixtures` directory when using RSpec (@benkoshy)
+
+* Generate account fixtures in `test/fixtures` directory instead of `app/test/fixtures` (@benkoshy)
+
+* Use string status column values in generated accounts fixture (@janko)
+
+* Create integer status column in generated Sequel migration (@janko)
+
+* Store password hash in accounts table in generated Sequel migration (@janko)
+
+## 1.5.3 (2022-07-21)
+
+*Yanked*
+
+## 1.5.2 (2022-07-03)
+
+* Bump Rodauth dependency version to 2.25+ (@janko)
+
+* Generate fixture file for accounts on `rodauth:install` (@benkoshy)
+
+* Fix error about undefined `controller_path` method in `newrelic_rpm` gem instrumentation (@janko)
+
+* Don't display disabled routes in `rodauth:routes` (@janko)
+
+* Display HTTP verbs of endpoints in `rodauth:routes` rake task (@janko)
+
+## 1.5.1 (2022-06-19)
+
+* Fix syntax for creating `citext` PG extension in Sequel base migration (@Empact)
+
+## 1.5.0 (2022-06-11)
+
+* Remove `content_for` calls from generated view templates (@janko)
+
+* Set title instance variable to `@page_title` in generated configuration (@janko)
+
+* Set title instance variable on the controller when `title_instance_variable` is set (@HoneyryderChuck)
+
 ## 1.4.2 (2022-05-15)
 
 * Stop passing email addresses in mailer arguments on verifying login change (@janko)
