@@ -1,6 +1,6 @@
-## HEAD
+## 1.7.0 (2022-12-21)
 
-* Add view templates that use Tailwind CSS (@benkoshy, @janko)
+* Add Tailwind CSS templates to `rodauth:views` generator via the `--css=tailwind` option (@benkoshy, @janko)
 
 ## 1.6.4 (2022-11-24)
 
