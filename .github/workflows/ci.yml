@@ -47,8 +47,6 @@ jobs:
           - ruby: "jruby-9.4"
             gemfile: "rails-main"
           - ruby: "jruby-9.4"
-            gemfile: "rails-7.0"
-          - ruby: "jruby-9.4"
             gemfile: "rails-5.2"
           - ruby: "jruby-9.4"
             gemfile: "rails-5.1"
