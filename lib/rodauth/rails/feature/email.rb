@@ -22,8 +22,8 @@ module Rodauth
 
         # ActionMailer subclass for correct email delivering.
         class Mailer < ActionMailer::Base
-          def create_email(**options)
-            mail(**options)
+          def create_email(options)
+            mail(options)
           end
         end
       end
