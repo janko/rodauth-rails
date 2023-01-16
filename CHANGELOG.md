@@ -1,3 +1,7 @@
+## HEAD
+
+* Fix loading JavaScript for WebAuthn in generated view templates (@janko)
+
 ## 1.7.0 (2022-12-21)
 
 * Add Tailwind CSS templates to `rodauth:views` generator via the `--css=tailwind` option (@benkoshy, @janko)
