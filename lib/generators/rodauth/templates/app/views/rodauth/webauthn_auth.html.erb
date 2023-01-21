@@ -4,7 +4,7 @@
   <%= form.hidden_field rodauth.login_param, value: params[rodauth.login_param] %>
   <%= form.hidden_field rodauth.webauthn_auth_challenge_param, value: cred.challenge %>
   <%= form.hidden_field rodauth.webauthn_auth_challenge_hmac_param, value: rodauth.compute_hmac(cred.challenge) %>
-  <%= form.text_field rodauth.webauthn_auth_param, value: "", id: "webauthn-auth", aria: { hidden: "true" } %>
+  <%= form.text_field rodauth.webauthn_auth_param, value: "", id: "webauthn-auth", class: "d-none", aria: { hidden: "true" } %>
   <div id="webauthn-auth-button">
     <div class="form-group mb-3">
       <%= form.submit rodauth.webauthn_auth_button, class: "btn btn-primary" %>
