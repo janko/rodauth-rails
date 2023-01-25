@@ -1,6 +1,18 @@
-## HEAD
+## 1.7.1 (2023-01-25)
 
-* Fix loading JavaScript for WebAuthn in generated view templates (@janko)
+* Make internal_request integration work on Rack 3.x (@janko)
+
+* Add missing Tailwind templates for WebAuthn feature (@janko)
+
+* Use renamed `webauthn_credential_options_for_get` method in generated `webauthn_auth` template (@janko)
+
+* Fix generated `webauthn_setup` template not working with webauthn_verify_account feature (@janko)
+
+* Hide text fields in generated `webauthn_{setup,auth}` templates (@janko)
+
+* Fix loading JavaScript for WebAuthn in generated `webauthn_{setup,auth}` templates (@janko)
+
+* Make built-in mailer work in Rails 6.x on Ruby 3.2 (@janko)
 
 ## 1.7.0 (2022-12-21)
 
