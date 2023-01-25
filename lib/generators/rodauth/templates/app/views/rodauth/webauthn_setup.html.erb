@@ -1,6 +1,6 @@
 <% cred = rodauth.new_webauthn_credential %>
 
-<%= form_with url: rodauth.webauthn_setup_path, method: :post, id: "webauthn-setup-form", data: { credential_options: cred.as_json.to_json, turbo: false } do |form| %>
+<%= form_with url: request.path, method: :post, id: "webauthn-setup-form", data: { credential_options: cred.as_json.to_json, turbo: false } do |form| %>
   <%= form.hidden_field rodauth.webauthn_setup_challenge_param, value: cred.challenge %>
   <%= form.hidden_field rodauth.webauthn_setup_challenge_hmac_param, value: rodauth.compute_hmac(cred.challenge) %>
   <%= form.text_field rodauth.webauthn_setup_param, value: "", id: "webauthn-setup", class: "d-none", aria: { hidden: "true" } %>
@@ -13,7 +13,7 @@
     </div>
   <% end %>
 
-  <div id="webauthn-setup-button"> 
+  <div id="webauthn-setup-button">
     <div class="form-group mb-3">
       <%= form.submit rodauth.webauthn_setup_button, class: "btn btn-primary" %>
     </div>
