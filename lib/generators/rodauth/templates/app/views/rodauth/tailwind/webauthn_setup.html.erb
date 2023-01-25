@@ -1,0 +1,21 @@
+<% cred = rodauth.new_webauthn_credential %>
+
+<%= form_with url: request.path, method: :post, id: "webauthn-setup-form", data: { credential_options: cred.as_json.to_json, turbo: false }, class: "w-full max-w-sm" do |form| %>
+  <%= form.hidden_field rodauth.webauthn_setup_challenge_param, value: cred.challenge %>
+  <%= form.hidden_field rodauth.webauthn_setup_challenge_hmac_param, value: rodauth.compute_hmac(cred.challenge) %>
+  <%= form.text_field rodauth.webauthn_setup_param, value: "", id: "webauthn-setup", class: "hidden", aria: { hidden: "true" } %>
+
+  <% if rodauth.two_factor_modifications_require_password? %>
+    <div class="mb-6">
+      <%= form.label "password", rodauth.password_label, class: "block text-sm font-semibold" %>
+      <%= form.password_field rodauth.password_param, value: "", id: "password", autocomplete: rodauth.password_field_autocomplete_value, required: true, class: "mt-2 text-sm w-full px-3 py-2 border rounded-md dark:bg-gray-900 dark:text-gray-100 dark:focus:bg-gray-800 #{rodauth.field_error(rodauth.password_param) ? "border-red-600 focus:ring-red-600 focus:border-red-600 dark:border-red-400 dark:focus:ring-red-400" : "border-gray-300 dark:border-gray-700 dark:focus:border-emerald-400 dark:focus:ring-emerald-400" }", aria: ({ invalid: true, describedby: "password_error_message" } if rodauth.field_error(rodauth.password_param)) %>
+      <%= content_tag(:span, rodauth.field_error(rodauth.password_param), class: "block mt-1 text-red-600 text-xs dark:text-red-400", id: "password_error_message") if rodauth.field_error(rodauth.password_param) %>
+    </div>
+  <% end %>
+
+  <div id="webauthn-setup-button">
+    <%= form.submit rodauth.webauthn_setup_button, class: "w-full px-8 py-3 cursor-pointer font-semibold text-sm rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 dark:bg-emerald-400 dark:hover:bg-emerald-500 dark:text-gray-900 dark:focus:ring-emerald-400 dark:focus:ring-offset-current" %>
+  </div>
+<% end %>
+
+<%= javascript_include_tag rodauth.webauthn_setup_js_path, extname: false %>

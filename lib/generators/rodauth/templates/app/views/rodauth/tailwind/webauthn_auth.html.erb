@@ -1,0 +1,13 @@
+<% cred = rodauth.webauthn_credential_options_for_get %>
+
+<%= form_with url: rodauth.webauthn_auth_form_path, method: :post, id: "webauthn-auth-form", data: { credential_options: cred.as_json.to_json, turbo: false }, class: "w-full max-w-sm" do |form| %>
+  <%= form.hidden_field rodauth.login_param, value: params[rodauth.login_param] %>
+  <%= form.hidden_field rodauth.webauthn_auth_challenge_param, value: cred.challenge %>
+  <%= form.hidden_field rodauth.webauthn_auth_challenge_hmac_param, value: rodauth.compute_hmac(cred.challenge) %>
+  <%= form.text_field rodauth.webauthn_auth_param, value: "", id: "webauthn-auth", class: "hidden", aria: { hidden: "true" } %>
+  <div id="webauthn-auth-button">
+    <%= form.submit rodauth.webauthn_auth_button, class: "w-full px-8 py-3 cursor-pointer font-semibold text-sm rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 dark:bg-emerald-400 dark:hover:bg-emerald-500 dark:text-gray-900 dark:focus:ring-emerald-400 dark:focus:ring-offset-current" %>
+  </div>
+<% end %>
+
+<%= javascript_include_tag rodauth.webauthn_auth_js_path, extname: false %>
