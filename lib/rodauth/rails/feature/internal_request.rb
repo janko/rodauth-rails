@@ -41,7 +41,7 @@ module Rodauth
         # Checks whether we're in an internal request and host was not set,
         # or the request doesn't exist such as with path_class_methods feature.
         def missing_host?
-          internal_request? && request.host == INVALID_DOMAIN || scope.nil?
+          internal_request? && (request.host.nil? || request.host == INVALID_DOMAIN) || scope.nil?
         end
 
         def rails_url_options
