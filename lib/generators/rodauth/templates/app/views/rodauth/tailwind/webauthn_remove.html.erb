@@ -8,13 +8,13 @@
   <% end %>
 
   <fieldset class="mb-6">
-    <% (usage = rodauth.account_webauthn_usage).each do |id, last_use| %>
+    <% rodauth.account_webauthn_usage.each do |id, last_use| %>
       <div class="flex items-center space-x-2">
         <%= form.radio_button rodauth.webauthn_remove_param, id, id: "webauthn-remove-#{id}", class: "dark:bg-gray-900 dark:border-gray-600 dark:checked:bg-current dark:checked:border-current dark:checked:text-emerald-400 dark:focus:ring-emerald-400 dark:focus:ring-offset-gray-900" %>
         <%= form.label "webauthn-remove-#{id}", "Last use: #{last_use}", class: "text-sm" %>
-        <%= content_tag(:span, rodauth.field_error(rodauth.webauthn_remove_param), class: "block mt-1 text-red-600 text-xs dark:text-red-400", id: "webauthn_remove_error_message") if rodauth.field_error(rodauth.webauthn_remove_param) && id == usage.keys.last %>
       </div>
     <% end %>
+    <%= content_tag(:span, rodauth.field_error(rodauth.webauthn_remove_param), class: "block mt-1 text-red-600 text-xs dark:text-red-400", id: "webauthn_remove_error_message") if rodauth.field_error(rodauth.webauthn_remove_param) %>
   </fieldset>
 
   <%= form.submit rodauth.webauthn_remove_button, class: "w-full px-8 py-3 cursor-pointer font-semibold text-sm rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 dark:bg-emerald-400 dark:hover:bg-emerald-500 dark:text-gray-900 dark:focus:ring-emerald-400 dark:focus:ring-offset-current" %>
