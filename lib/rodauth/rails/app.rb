@@ -83,6 +83,15 @@ module Rodauth
           end
         end
 
+        # The Rack input might not be rewindable, so ensure we parse the JSON
+        # request body in Rails, and avoid parsing it again in Roda.
+        def POST
+          if content_type =~ /json/
+            env["roda.json_params"] = scope.rails_request.POST.to_hash
+          end
+          super
+        end
+
         unless ActionPack.version < Gem::Version.new("5.0")
           # When calling a Rodauth method that redirects inside the Rails
           # router, Roda's after hook that commits the flash would never get

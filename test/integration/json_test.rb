@@ -22,4 +22,20 @@ class JsonTest < IntegrationTest
     email = ActionMailer::Base.deliveries.last
     assert_match "Someone has created an account with this email address", email.body.to_s
   end
+
+  test "works with non-rewindable rack inputs (e.g. Falcon)" do
+    input = StringIO.new({ "login" => "user@example.com", "password" => "secret", "password-confirm" => "secret" }.to_json)
+    input.singleton_class.send(:define_method, :rewind) {} # no-op
+
+    page.driver.browser.post "/json/create-account", nil, {
+      "CONTENT_TYPE" => "application/json",
+      "HTTP_ACCEPT" => "application/json",
+      input: input
+    }
+
+    assert_equal %({"success":"An email has been sent to you with a link to verify your account"}), page.html
+
+    email = ActionMailer::Base.deliveries.last
+    assert_match "Someone has created an account with this email address", email.body.to_s
+  end
 end
