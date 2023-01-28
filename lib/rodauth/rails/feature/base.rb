@@ -60,16 +60,6 @@ module Rodauth
 
         private
 
-        unless ActionPack.version < Gem::Version.new("5.0")
-          # When calling a Rodauth method that redirects inside the Rails
-          # router, Roda's after hook that commits the flash would never get
-          # called, so we make sure to commit the flash beforehand.
-          def redirect(*)
-            rails_request.commit_flash
-            super
-          end
-        end
-
         def instantiate_rails_account
           if defined?(ActiveRecord::Base) && rails_account_model < ActiveRecord::Base
             rails_account_model.instantiate(account.stringify_keys)

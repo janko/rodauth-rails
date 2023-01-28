@@ -82,6 +82,16 @@ module Rodauth
             super
           end
         end
+
+        unless ActionPack.version < Gem::Version.new("5.0")
+          # When calling a Rodauth method that redirects inside the Rails
+          # router, Roda's after hook that commits the flash would never get
+          # called, so we make sure to commit the flash beforehand.
+          def redirect(*)
+            scope.rails_request.commit_flash
+            super
+          end
+        end
       end
     end
   end
