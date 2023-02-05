@@ -4,7 +4,7 @@ class RodauthMain < Rodauth::Rails::Auth
     enable :create_account, :verify_account, :verify_account_grace_period,
       :login, :logout<%= ", :remember" unless jwt? %><%= ", :json" if json? %><%= ", :jwt" if jwt? %>,
       :reset_password, :change_password, :change_password_notify,
-      :change_login, :verify_login_change, :close_account
+      :change_login, :verify_login_change, :close_account<%= ", :argon2" if argon2? %>
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -13,6 +13,11 @@ class RodauthMain < Rodauth::Rails::Auth
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
     # hmac_secret "<%= SecureRandom.hex(64) %>"
+<% if argon2? -%>
+
+    # Use a rotatable password pepper when hashing passwords with Argon2.
+    # argon2_secret "<SECRET_KEY>"
+<% end -%>
 <% if jwt? -%>
 
     # Set JWT secret, which is used to cryptographically protect the token.
@@ -39,11 +44,6 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Store password hash in a column instead of a separate table.
     account_password_hash_column :password_hash
-
-    # Passwords shorter than 8 characters are considered weak according to OWASP.
-    password_minimum_length 8
-    # bcrypt has a maximum input length of 72 bytes, truncating any extra bytes.
-    password_maximum_bytes 72
 
     # Set password when creating account instead of when verifying.
     verify_account_set_password? false
@@ -113,6 +113,16 @@ class RodauthMain < Rodauth::Rails::Auth
     # already_an_account_with_this_login_message "user with this email address already exists"
     # password_too_short_message { "needs to have at least #{password_minimum_length} characters" }
     # login_does_not_meet_requirements_message { "invalid email#{", #{login_requirement_message}" if login_requirement_message}" }
+
+    # Passwords shorter than 8 characters are considered weak according to OWASP.
+    password_minimum_length 8
+<% if argon2? -%>
+    # Having a maximum password length set prevents long password DoS attacks.
+    password_maximum_length 64
+<% else -%>
+    # bcrypt has a maximum input length of 72 bytes, truncating any extra bytes.
+    password_maximum_bytes 72
+<% end -%>
 
     # Custom password complexity requirements (alternative to password_complexity feature).
     # password_meets_requirements? do |password|

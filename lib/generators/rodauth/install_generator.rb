@@ -31,6 +31,7 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
 
+        class_option :argon2, type: :boolean, desc: "Use Argon2 for password hashing"
         class_option :json, type: :boolean, desc: "Configure JSON support"
         class_option :jwt, type: :boolean, desc: "Configure JWT support"
 
@@ -101,6 +102,10 @@ module Rodauth
 
         def jwt?
           options[:jwt] || api_only? && !session_store? && !options[:json]
+        end
+
+        def argon2?
+          options[:argon2]
         end
 
         def session_store?

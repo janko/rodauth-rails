@@ -79,6 +79,13 @@ $ rails generate rodauth:install --jwt # token authentication via the "Authoriza
 $ bundle add jwt
 ```
 
+To use Argon2 instead of bcrypt for password hashing:
+
+```sh
+$ rails generate rodauth:install --argon2
+$ bundle add argon2
+```
+
 This generator will create a Rodauth app and configuration with common
 authentication features enabled, a database migration with tables required by
 those features, a mailer with default templates, and a few other files.
