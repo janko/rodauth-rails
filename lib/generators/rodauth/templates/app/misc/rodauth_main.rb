@@ -28,10 +28,10 @@ class RodauthMain < Rodauth::Rails::Auth
     # require_login_confirmation? false
 <% end -%>
 
-    # Specify the controller used for view rendering and CSRF verification.
+    # Specify the controller used for view rendering, CSRF, and callbacks.
     rails_controller { RodauthController }
 
-    # Set on Rodauth controller with the title of the current page.
+    # Set in Rodauth controller instance with the title of the current page.
     title_instance_variable :@page_title
 
     # Store account status in an integer column without foreign key constraint.
@@ -47,6 +47,10 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Set password when creating account instead of when verifying.
     verify_account_set_password? false
+
+    # Change some default param keys.
+    # login_param "email"
+    # password_confirm_param "confirm_password"
 
     # Redirect back to originally requested location after authentication.
     # login_return_to_requested_location? true
@@ -110,8 +114,17 @@ class RodauthMain < Rodauth::Rails::Auth
     # password_too_short_message { "needs to have at least #{password_minimum_length} characters" }
     # login_does_not_meet_requirements_message { "invalid email#{", #{login_requirement_message}" if login_requirement_message}" }
 
-    # Change minimum number of password characters required when creating an account.
-    # password_minimum_length 8
+    # Custom password complexity requirements (alternative to password_complexity feature).
+    # password_meets_requirements? do |password|
+    #   super(password) && password_complex_enough?(password)
+    # end
+    # auth_class_eval do
+    #   def password_complex_enough?(password)
+    #     return true if password.match?(/\d/) && password.match?(/[^a-zA-Z\d]/)
+    #     set_password_requirement_error_message(:password_simple, "requires one number and one special character")
+    #     false
+    #   end
+    # end
 <% unless jwt? -%>
 
     # ==> Remember Feature
