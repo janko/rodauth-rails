@@ -17,6 +17,9 @@ class RodauthMain < Rodauth::Rails::Auth
 
     # Use a rotatable password pepper when hashing passwords with Argon2.
     # argon2_secret "<SECRET_KEY>"
+
+    # Since we're using argon2, prevent loading the bcrypt gem to save memory.
+    require_bcrypt? false
 <% end -%>
 <% if jwt? -%>
 
