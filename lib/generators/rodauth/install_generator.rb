@@ -43,13 +43,6 @@ module Rodauth
           template "config/initializers/rodauth.rb"
         end
 
-        def create_sequel_initializer
-          return unless defined?(ActiveRecord::Railtie)
-          return if defined?(Sequel) && !Sequel::DATABASES.empty?
-
-          template "config/initializers/sequel.rb"
-        end
-
         def create_rodauth_app
           template "app/misc/rodauth_app.rb"
           template "app/misc/rodauth_main.rb"
@@ -106,6 +99,11 @@ module Rodauth
 
         def argon2?
           options[:argon2]
+        end
+
+        def sequel_activerecord_integration?
+          defined?(ActiveRecord::Railtie) &&
+            (!defined?(Sequel) || Sequel::DATABASES.empty?)
         end
 
         def session_store?

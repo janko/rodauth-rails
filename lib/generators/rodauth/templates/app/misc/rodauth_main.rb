@@ -1,3 +1,5 @@
+require "sequel/core"
+
 class RodauthMain < Rodauth::Rails::Auth
   configure do
     # List of authentication features that are loaded.
@@ -10,6 +12,11 @@ class RodauthMain < Rodauth::Rails::Auth
     # http://rodauth.jeremyevans.net/documentation.html
 
     # ==> General
+<% if sequel_activerecord_integration? -%>
+    # Initialize Sequel and have it reuse Active Record's database connection.
+    db Sequel.connect("<%= sequel_uri_scheme %>://", extensions: :activerecord_connection, keep_reference: false)
+
+<% end -%>
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
     # hmac_secret "<%= SecureRandom.hex(64) %>"

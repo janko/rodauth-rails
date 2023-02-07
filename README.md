@@ -1110,11 +1110,17 @@ require "rodauth/migrations"
 
 class CreateRodauthDatabaseFunctions < ActiveRecord::Migration
   def up
-    Rodauth.create_database_authentication_functions(DB)
+    Rodauth.create_database_authentication_functions(db)
   end
 
   def down
-    Rodauth.drop_database_authentication_functions(DB)
+    Rodauth.drop_database_authentication_functions(db)
+  end
+
+  private
+
+  def db
+    RodauthMain.allocate.db
   end
 end
 ```
