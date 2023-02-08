@@ -187,9 +187,10 @@ session will be reset.
 
 #### Custom account model
 
-The `#rails_account` method will try to infer the account model class from
-the configured table name. For example, if the `accounts_table` is set to
-`:users`, it will automatically assume the model class of `User`.
+The `#rails_account` method will try to infer the account model class from the
+configured table name. For example, if you have `accounts_table :users` set in
+your Rodauth configuration, it will automatically assume the model class of
+`User`.
 
 However, if the model class cannot be inferred from the table name, you can
 configure it manually:
