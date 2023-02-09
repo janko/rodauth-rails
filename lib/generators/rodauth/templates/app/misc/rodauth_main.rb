@@ -14,7 +14,11 @@ class RodauthMain < Rodauth::Rails::Auth
     # ==> General
 <% if sequel_activerecord_integration? -%>
     # Initialize Sequel and have it reuse Active Record's database connection.
-    db Sequel.connect("<%= sequel_uri_scheme %>://", extensions: :activerecord_connection, keep_reference: false)
+<% if RUBY_ENGINE == "jruby" -%>
+    db Sequel.connect("jdbc:<%= sequel_adapter %>://", extensions: :activerecord_connection, keep_reference: false)
+<% else -%>
+    db Sequel.<%= sequel_adapter %>(extensions: :activerecord_connection, keep_reference: false)
+<% end -%>
 
 <% end -%>
     # The secret key used for hashing public-facing tokens for various features.

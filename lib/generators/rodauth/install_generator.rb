@@ -5,19 +5,13 @@ module Rodauth
   module Rails
     module Generators
       class InstallGenerator < ::Rails::Generators::Base
-        if RUBY_ENGINE == "jruby"
-          SEQUEL_ADAPTERS = {
-            "sqlite3"         => "sqlite",
-            "oracle_enhanced" => "oracle", # https://github.com/rsim/oracle-enhanced
-            "sqlserver"       => "mssql",
-          }
-        else
-          SEQUEL_ADAPTERS = {
-            "sqlite3"         => "sqlite",
-            "oracle_enhanced" => "oracle", # https://github.com/rsim/oracle-enhanced
-            "sqlserver"       => "tinytds", # https://github.com/rails-sqlserver/activerecord-sqlserver-adapter
-          }
-        end
+        SEQUEL_ADAPTERS = {
+          "postgresql"      => RUBY_ENGINE == "jruby" ? "postgresql" : "postgres",
+          "mysql2"          => RUBY_ENGINE == "jruby" ? "mysql" : "mysql2",
+          "sqlite3"         => "sqlite",
+          "oracle_enhanced" => "oracle",
+          "sqlserver"       => RUBY_ENGINE == "jruby" ? "mssql" : "tinytds",
+        }
 
         MAILER_VIEWS = %w[
           email_auth
@@ -114,10 +108,8 @@ module Rodauth
           Rodauth::Rails.api_only?
         end
 
-        def sequel_uri_scheme
-          scheme = SEQUEL_ADAPTERS[activerecord_adapter] || activerecord_adapter
-          scheme = "jdbc:#{scheme}" if RUBY_ENGINE == "jruby"
-          scheme
+        def sequel_adapter
+          SEQUEL_ADAPTERS[activerecord_adapter] || activerecord_adapter
         end
 
         def activerecord_adapter
