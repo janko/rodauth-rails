@@ -20,6 +20,9 @@ class RodauthMain < Rodauth::Rails::Auth
     db Sequel.<%= sequel_adapter %>(extensions: :activerecord_connection, keep_reference: false)
 <% end -%>
 
+    # Change prefix of all table and foreign key column names to "user"
+    # table_prefix :user
+
 <% end -%>
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.

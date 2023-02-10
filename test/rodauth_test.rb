@@ -89,4 +89,25 @@ class RodauthTest < UnitTest
     rodauth.instance_eval { @account = account_ds(account.id).first! }
     assert_equal account, rodauth.rails_account
   end
+
+  test "table_prefix renames table and foreign key column names" do
+    auth_class = Class.new(RodauthMain)
+    auth_class.configure do
+      table_prefix :user
+      enable :single_session
+    end
+    auth_class.allocate.post_configure
+
+    assert_equal :users, auth_class.allocate.accounts_table
+    assert_equal :user_verification_keys, auth_class.allocate.verify_account_table
+    assert_equal :user_session_keys, auth_class.allocate.single_session_table
+
+    auth_subclass = Class.new(auth_class)
+    auth_subclass.configure { enable :account_expiration }
+    auth_subclass.allocate.post_configure
+
+    assert_equal :users, auth_subclass.allocate.accounts_table
+    assert_equal :user_verification_keys, auth_subclass.allocate.verify_account_table
+    assert_equal :user_activity_times, auth_subclass.allocate.account_activity_table
+  end
 end

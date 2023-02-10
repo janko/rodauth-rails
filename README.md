@@ -539,6 +539,38 @@ class CreateAccountEmailAuthKeys < ActiveRecord::Migration
 end
 ```
 
+#### Changing table names
+
+You can use different table and column names in your migrations, you just need
+to update the corresponding `*_table` and `*_column` configuration methods to
+match the actual schema.
+
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    accounts_table :users
+    verify_account_table :user_verification_keys
+    reset_password_table :user_password_reset_keys
+    # ...
+    active_sessions_account_id_column :user_id
+    # ...
+  end
+end
+```
+
+If all you want to change is the table prefix (as shown above), rodauth-rails
+provides a shorthand for that:
+
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    table_prefix :user
+  end
+end
+```
+
 ## Model
 
 The [rodauth-model] gem provides a `Rodauth::Model` mixin that can be included
