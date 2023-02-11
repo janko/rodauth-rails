@@ -65,7 +65,7 @@ module Rodauth
             methods.grep(/_(table|account_id_column)$/) do |method_name|
               next unless method(method_name).owner.is_a?(Rodauth::Feature)
               renamed_table = send(method_name).to_s.sub("account", table_prefix.to_s).to_sym
-              self.class.define_method(method_name) { renamed_table }
+              self.class.send(:define_method, method_name) { renamed_table }
             end
           end
         end
