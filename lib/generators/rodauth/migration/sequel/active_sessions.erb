@@ -1,8 +1,8 @@
 # Used by the active sessions feature
-create_table :account_active_session_keys do
-  foreign_key :account_id, :accounts, type: :Bignum
+create_table :<%= table_prefix %>_active_session_keys do
+  foreign_key :<%= table_prefix %>_id, :<%= table_prefix %>s, type: :Bignum
   String :session_id
   Time :created_at, null: false, default: Sequel::CURRENT_TIMESTAMP
   Time :last_use, null: false, default: Sequel::CURRENT_TIMESTAMP
-  primary_key [:account_id, :session_id]
+  primary_key [:<%= table_prefix %>_id, :session_id]
 end

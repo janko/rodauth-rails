@@ -1,7 +1,7 @@
 # Used by the verify login change feature
-create_table :account_login_change_keys, id: false do |t|
+create_table :<%= table_prefix %>_login_change_keys, id: false do |t|
   t.<%= primary_key_type(nil) %> :id, primary_key: true
-  t.foreign_key :accounts, column: :id
+  t.foreign_key :<%= table_prefix %>s, column: :id
   t.string :key, null: false
   t.string :login, null: false
   t.datetime :deadline, null: false

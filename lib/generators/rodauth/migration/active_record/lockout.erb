@@ -1,12 +1,12 @@
 # Used by the lockout feature
-create_table :account_login_failures, id: false do |t|
+create_table :<%= table_prefix %>_login_failures, id: false do |t|
   t.<%= primary_key_type(nil) %> :id, primary_key: true
-  t.foreign_key :accounts, column: :id
+  t.foreign_key :<%= table_prefix %>s, column: :id
   t.integer :number, null: false, default: 1
 end
-create_table :account_lockouts, id: false do |t|
+create_table :<%= table_prefix %>_lockouts, id: false do |t|
   t.<%= primary_key_type(nil) %> :id, primary_key: true
-  t.foreign_key :accounts, column: :id
+  t.foreign_key :<%= table_prefix %>s, column: :id
   t.string :key, null: false
   t.datetime :deadline, null: false
   t.datetime :email_last_sent

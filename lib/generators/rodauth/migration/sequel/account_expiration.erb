@@ -1,6 +1,6 @@
 # Used by the account expiration feature
-create_table :account_activity_times do
-  foreign_key :id, :accounts, primary_key: true, type: :Bignum
+create_table :<%= table_prefix %>_activity_times do
+  foreign_key :id, :<%= table_prefix %>s, primary_key: true, type: :Bignum
   DateTime :last_activity_at, null: false
   DateTime :last_login_at, null: false
   DateTime :expired_at

@@ -1,6 +1,6 @@
 # Used by the active sessions feature
-create_table :account_active_session_keys, primary_key: [:account_id, :session_id] do |t|
-  t.references :account, foreign_key: true<%= primary_key_type(:type) %>
+create_table :<%= table_prefix %>_active_session_keys, primary_key: [:<%= table_prefix %>_id, :session_id] do |t|
+  t.references :<%= table_prefix %>, foreign_key: true<%= primary_key_type(:type) %>
   t.string :session_id
   t.datetime :created_at, null: false, default: <%= current_timestamp %>
   t.datetime :last_use, null: false, default: <%= current_timestamp %>

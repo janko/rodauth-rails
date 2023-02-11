@@ -1,7 +1,7 @@
 # Used by the jwt refresh feature
-create_table :account_jwt_refresh_keys<%= primary_key_type %> do |t|
-  t.references :account, foreign_key: true, null: false<%= primary_key_type(:type) %>
+create_table :<%= table_prefix %>_jwt_refresh_keys<%= primary_key_type %> do |t|
+  t.references :<%= table_prefix %>, foreign_key: true, null: false<%= primary_key_type(:type) %>
   t.string :key, null: false
   t.datetime :deadline, null: false
-  t.index :account_id, name: "account_jwt_rk_account_id_idx"
+  t.index :<%= table_prefix %>_id, name: "<%= table_prefix %>_jwt_rk_<%= table_prefix %>_id_idx"
 end

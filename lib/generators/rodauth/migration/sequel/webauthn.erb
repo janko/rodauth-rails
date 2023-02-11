@@ -1,13 +1,13 @@
 # Used by the webauthn feature
-create_table :account_webauthn_user_ids do
-  foreign_key :id, :accounts, primary_key: true, type: :Bignum
+create_table :<%= table_prefix %>_webauthn_user_ids do
+  foreign_key :id, :<%= table_prefix %>s, primary_key: true, type: :Bignum
   String :webauthn_id, null: false
 end
-create_table :account_webauthn_keys do
-  foreign_key :account_id, :accounts, type: :Bignum
+create_table :<%= table_prefix %>_webauthn_keys do
+  foreign_key :<%= table_prefix %>_id, :<%= table_prefix %>s, type: :Bignum
   String :webauthn_id
   String :public_key, null: false
   Integer :sign_count, null: false
   Time :last_use, null: false, default: Sequel::CURRENT_TIMESTAMP
-  primary_key [:account_id, :webauthn_id]
+  primary_key [:<%= table_prefix %>_id, :webauthn_id]
 end

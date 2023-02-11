@@ -523,6 +523,22 @@ class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration
 end
 ```
 
+#### Migration table prefix
+
+You can tell the migration generator to use a different prefix for table names
+than the default `account` (complements the `table_prefix` configuration):
+
+```sh
+$ rails generate rodauth:migration active_sessions --prefix user
+```
+```rb
+class CreateRodauthUserActiveSessions < ActiveRecord::Migration
+  def change
+    create_table :user_active_session_keys do |t| ... end
+  end
+end
+```
+
 #### Custom migration name
 
 You can change the default migration name:

@@ -1,6 +1,6 @@
 # Used by the remember me feature
-create_table :account_remember_keys do
-  foreign_key :id, :accounts, primary_key: true, type: :Bignum
+create_table :<%= table_prefix %>_remember_keys do
+  foreign_key :id, :<%= table_prefix %>s, primary_key: true, type: :Bignum
   String :key, null: false
   DateTime :deadline, null: false
 end

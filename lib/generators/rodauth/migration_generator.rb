@@ -13,6 +13,9 @@ module Rodauth
           desc: "Rodauth features to create tables for (otp, sms_codes, single_session, account_expiration etc.)",
           default: %w[]
 
+        class_option :prefix, optional: true, type: :string,
+          desc: "Change prefix for generated tables (default: account)"
+
         class_option :name, optional: true, type: :string,
           desc: "Name of the generated migration file"
 
@@ -25,7 +28,7 @@ module Rodauth
         private
 
         def migration_name
-          options[:name] || "create_rodauth_#{features.join("_")}"
+          options[:name] || ["create_rodauth", *options[:prefix], *features].join("_")
         end
 
         def migration_content
@@ -62,6 +65,10 @@ module Rodauth
 
         def valid_features
           Dir["#{MIGRATION_DIR}/*.erb"].map { |filename| File.basename(filename, ".erb") }
+        end
+
+        def table_prefix
+          options[:prefix] || "account"
         end
 
         if defined?(::ActiveRecord::Railtie) # Active Record
