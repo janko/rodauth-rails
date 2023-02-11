@@ -20,10 +20,15 @@ class RodauthMain < Rodauth::Rails::Auth
     db Sequel.<%= sequel_adapter %>(extensions: :activerecord_connection, keep_reference: false)
 <% end -%>
 
+<% end -%>
+<% if table.underscore.pluralize == "accounts" -%>
     # Change prefix of all table and foreign key column names to "user"
     # table_prefix :user
-
+<% else -%>
+    # Change prefix of all table and foreign key column names to "<%= table.underscore.singularize %>"
+    table_prefix :<%= table.underscore.singularize %>
 <% end -%>
+
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
     # hmac_secret "<%= SecureRandom.hex(64) %>"

@@ -25,12 +25,18 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
 
+        argument :table, optional: true, type: :string,
+          desc: "Name of the accounts table",
+          default: "accounts"
+
         class_option :argon2, type: :boolean, desc: "Use Argon2 for password hashing"
         class_option :json, type: :boolean, desc: "Configure JSON support"
         class_option :jwt, type: :boolean, desc: "Configure JWT support"
 
         def create_rodauth_migration
-          invoke "rodauth:migration", migration_features, name: "create_rodauth"
+          invoke "rodauth:migration", migration_features,
+            name: "create_rodauth",
+            prefix: table.underscore.singularize
         end
 
         def create_rodauth_initializer
@@ -47,7 +53,7 @@ module Rodauth
         end
 
         def create_account_model
-          template "app/models/account.rb"
+          template "app/models/account.rb", "app/models/#{table.underscore.singularize}.rb"
         end
 
         def create_mailer
@@ -61,13 +67,10 @@ module Rodauth
         end
 
         def create_fixtures
-          test_unit_options = ::Rails.application.config.generators.options[:test_unit]
-          if test_unit_options[:fixture] && test_unit_options[:fixture_replacement].nil?
-            if ::Rails.application.config.generators.options[:rails][:test_framework] == :rspec
-              template "test/fixtures/accounts.yml", "spec/fixtures/accounts.yml"
-            else
-              template "test/fixtures/accounts.yml", "test/fixtures/accounts.yml"
-            end
+          generator_options = ::Rails.application.config.generators.options
+          if generator_options[:test_unit][:fixture] && generator_options[:test_unit][:fixture_replacement].nil?
+            test_dir = generator_options[:rails][:test_framework] == :rspec ? "spec" : "test"
+            template "test/fixtures/accounts.yml", "#{test_dir}/fixtures/#{table.underscore.pluralize}.yml"
           end
         end
 

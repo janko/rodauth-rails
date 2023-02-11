@@ -1,5 +1,5 @@
 <% if defined?(ActiveRecord::Railtie) -%>
-class Account < ApplicationRecord
+class <%= table.classify %> < ApplicationRecord
   include Rodauth::Rails.model
 <% if ActiveRecord.version >= Gem::Version.new("7.0") -%>
   enum :status, unverified: 1, verified: 2, closed: 3
@@ -8,7 +8,7 @@ class Account < ApplicationRecord
 <% end -%>
 end
 <% else -%>
-class Account < Sequel::Model
+class <%= table.classify %> < Sequel::Model
   include Rodauth::Rails.model
   plugin :enum
   enum :status, unverified: 1, verified: 2, closed: 3

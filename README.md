@@ -70,7 +70,13 @@ Next, run the install generator:
 $ rails generate rodauth:install
 ```
 
-Or if you want Rodauth endpoints to be exposed via [JSON API]:
+You can use a different table name than `accounts`:
+
+```sh
+$ rails generate rodauth:install users
+```
+
+If you want Rodauth endpoints to be exposed via [JSON API]:
 
 ```sh
 $ rails generate rodauth:install --json # regular authentication using the Rails session
@@ -188,12 +194,8 @@ session will be reset.
 #### Custom account model
 
 The `#rails_account` method will try to infer the account model class from the
-configured table name. For example, if you have `accounts_table :users` set in
-your Rodauth configuration, it will automatically assume the model class of
-`User`.
-
-However, if the model class cannot be inferred from the table name, you can
-configure it manually:
+configured accounts table name. However, if the model class cannot be inferred
+from the table name, you can configure it manually:
 
 ```rb
 # app/misc/rodauth_main.rb
@@ -523,10 +525,30 @@ class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration
 end
 ```
 
-#### Migration table prefix
+#### Table prefix
 
-You can tell the migration generator to use a different prefix for table names
-than the default `account` (complements the `table_prefix` configuration):
+The `table_prefix` configuration provided by rodauth-rails is a shorthand for
+changing the prefix of all tables from default `account`:
+
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    table_prefix :user
+
+    # the above is a shorthand for:
+    # accounts_table :users
+    # remember_table :user_remember_keys
+    # verify_account_table :user_verification_keys
+    # reset_password_table :user_password_reset_keys
+    # verify_login_change_table :user_login_change_keys
+    # ...
+  end
+end
+```
+
+When generating new migrations, you'd then tell the generator to create table
+definitions with that prefix:
 
 ```sh
 $ rails generate rodauth:migration active_sessions --prefix user
@@ -551,38 +573,6 @@ $ rails generate rodauth:migration email_auth --name create_account_email_auth_k
 class CreateAccountEmailAuthKeys < ActiveRecord::Migration
   def change
     create_table :account_email_auth_keys do |t| ... end
-  end
-end
-```
-
-#### Changing table names
-
-You can use different table and column names in your migrations, you just need
-to update the corresponding `*_table` and `*_column` configuration methods to
-match the actual schema.
-
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    accounts_table :users
-    verify_account_table :user_verification_keys
-    reset_password_table :user_password_reset_keys
-    # ...
-    active_sessions_account_id_column :user_id
-    # ...
-  end
-end
-```
-
-If all you want to change is the table prefix (as shown above), rodauth-rails
-provides a shorthand for that:
-
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    table_prefix :user
   end
 end
 ```
@@ -870,6 +860,7 @@ methods:
 | `rails_controller_instance` | Instance of the controller with the request env context.           |
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 | `rails_account_model`       | Model class connected with the accounts table.                     |
+| `table_prefix`              | Custom prefix for database tables (defaults to `:account`).        |
 
 For the list of configuration methods provided by Rodauth, see the [feature
 documentation].
