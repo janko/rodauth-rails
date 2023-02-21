@@ -70,7 +70,7 @@ Next, run the install generator:
 $ rails generate rodauth:install
 ```
 
-You can use a different table name than `accounts`:
+This will use the `accounts` table. If you want a different table name:
 
 ```sh
 $ rails generate rodauth:install users
@@ -527,28 +527,8 @@ end
 
 #### Table prefix
 
-The `table_prefix` configuration provided by rodauth-rails is a shorthand for
-changing the prefix of all tables from default `account`:
-
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    table_prefix :user
-
-    # the above is a shorthand for:
-    # accounts_table :users
-    # remember_table :user_remember_keys
-    # verify_account_table :user_verification_keys
-    # reset_password_table :user_password_reset_keys
-    # verify_login_change_table :user_login_change_keys
-    # ...
-  end
-end
-```
-
-When generating new migrations, you'd then tell the generator to create table
-definitions with that prefix:
+If you're storing account records in a table other than `accounts`, you'll want
+to specify the corresponding table prefix when generating new migrations:
 
 ```sh
 $ rails generate rodauth:migration active_sessions --prefix user
@@ -860,7 +840,6 @@ methods:
 | `rails_controller_instance` | Instance of the controller with the request env context.           |
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 | `rails_account_model`       | Model class connected with the accounts table.                     |
-| `table_prefix`              | Custom prefix for database tables (defaults to `:account`).        |
 
 For the list of configuration methods provided by Rodauth, see the [feature
 documentation].

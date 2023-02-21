@@ -1,7 +1,7 @@
 # Used by the email auth feature
 create_table :<%= table_prefix %>_email_auth_keys, id: false do |t|
   t.<%= primary_key_type(nil) %> :id, primary_key: true
-  t.foreign_key :<%= table_prefix %>s, column: :id
+  t.foreign_key :<%= table_prefix.pluralize %>, column: :id
   t.string :key, null: false
   t.datetime :deadline, null: false
   t.datetime :email_last_sent, null: false, default: <%= current_timestamp %>

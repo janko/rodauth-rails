@@ -1,6 +1,6 @@
 # Used by the account verification feature
 create_table :<%= table_prefix %>_verification_keys do
-  foreign_key :id, :<%= table_prefix %>s, primary_key: true, type: :Bignum
+  foreign_key :id, :<%= table_prefix.pluralize %>, primary_key: true, type: :Bignum
   String :key, null: false
   DateTime :requested_at, null: false, default: Sequel::CURRENT_TIMESTAMP
   DateTime :email_last_sent, null: false, default: Sequel::CURRENT_TIMESTAMP

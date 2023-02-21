@@ -1,6 +1,6 @@
 # Used by the recovery codes feature
 create_table :<%= table_prefix %>_recovery_codes do
-  foreign_key :id, :<%= table_prefix %>s, type: :Bignum
+  foreign_key :id, :<%= table_prefix.pluralize %>, type: :Bignum
   String :code
   primary_key [:id, :code]
 end

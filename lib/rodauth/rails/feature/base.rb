@@ -8,7 +8,6 @@ module Rodauth
 
         included do
           auth_methods :rails_controller
-          auth_value_method :table_prefix, nil
           auth_value_methods :rails_account_model
           auth_cached_method :rails_controller_instance
         end
@@ -55,19 +54,6 @@ module Rodauth
           table.to_s.classify.constantize
         rescue NameError
           raise Error, "cannot infer account model, please set `rails_account_model` in your rodauth configuration"
-        end
-
-        def post_configure
-          super
-
-          if table_prefix
-            # change table and foreign key column names to use the table prefix
-            methods.grep(/_(table|account_id_column)$/) do |method_name|
-              next unless method(method_name).owner.is_a?(Rodauth::Feature)
-              renamed_table = send(method_name).to_s.sub("account", table_prefix.to_s).to_sym
-              self.class.send(:define_method, method_name) { renamed_table }
-            end
-          end
         end
 
         delegate :rails_routes, :rails_request, to: :scope

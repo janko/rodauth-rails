@@ -1,5 +1,5 @@
 # Used by the single session feature
 create_table :<%= table_prefix %>_session_keys do
-  foreign_key :id, :<%= table_prefix %>s, primary_key: true, type: :Bignum
+  foreign_key :id, :<%= table_prefix.pluralize %>, primary_key: true, type: :Bignum
   String :key, null: false
 end

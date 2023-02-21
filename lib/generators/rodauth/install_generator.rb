@@ -25,10 +25,9 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
 
-        argument :table, optional: true, type: :string,
-          desc: "Name of the accounts table",
-          default: "accounts"
+        argument :table, optional: true, type: :string, desc: "Name of the accounts table"
 
+        class_option :prefix, type: :string, desc: "Change name for account tables"
         class_option :argon2, type: :boolean, desc: "Use Argon2 for password hashing"
         class_option :json, type: :boolean, desc: "Configure JSON support"
         class_option :jwt, type: :boolean, desc: "Configure JWT support"
@@ -36,7 +35,7 @@ module Rodauth
         def create_rodauth_migration
           invoke "rodauth:migration", migration_features,
             name: "create_rodauth",
-            prefix: table.underscore.singularize
+            prefix: table_prefix
         end
 
         def create_rodauth_initializer
@@ -53,7 +52,7 @@ module Rodauth
         end
 
         def create_account_model
-          template "app/models/account.rb", "app/models/#{table.underscore.singularize}.rb"
+          template "app/models/account.rb", "app/models/#{table_prefix}.rb"
         end
 
         def create_mailer
@@ -70,7 +69,7 @@ module Rodauth
           generator_options = ::Rails.application.config.generators.options
           if generator_options[:test_unit][:fixture] && generator_options[:test_unit][:fixture_replacement].nil?
             test_dir = generator_options[:rails][:test_framework] == :rspec ? "spec" : "test"
-            template "test/fixtures/accounts.yml", "#{test_dir}/fixtures/#{table.underscore.pluralize}.yml"
+            template "test/fixtures/accounts.yml", "#{test_dir}/fixtures/#{table_prefix.pluralize}.yml"
           end
         end
 
@@ -84,6 +83,10 @@ module Rodauth
           features = ["base", "reset_password", "verify_account", "verify_login_change"]
           features << "remember" unless jwt?
           features
+        end
+
+        def table_prefix
+          table&.underscore&.singularize || "account"
         end
 
         def json?

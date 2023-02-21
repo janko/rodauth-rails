@@ -1,6 +1,6 @@
 # Used by the recovery codes feature
 create_table :<%= table_prefix %>_recovery_codes, primary_key: [:id, :code] do |t|
   t.<%= primary_key_type(nil) %> :id
-  t.foreign_key :<%= table_prefix %>s, column: :id
+  t.foreign_key :<%= table_prefix.pluralize %>, column: :id
   t.string :code
 end

@@ -30,8 +30,10 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
 
   test "prefix" do
     run_generator %w[active_sessions --prefix user]
-
     assert_migration "db/migrate/create_rodauth_user_active_sessions.rb", /create_table :user_active_session_keys/
+
+    run_generator %w[remember --prefix admins]
+    assert_migration "db/migrate/create_rodauth_admins_remember.rb", /create_table :admin_remember_keys/
   end
 
   test "migration uuid" do

@@ -68,7 +68,7 @@ module Rodauth
         end
 
         def table_prefix
-          options[:prefix] || "account"
+          options[:prefix]&.singularize || "account"
         end
 
         if defined?(::ActiveRecord::Railtie) # Active Record

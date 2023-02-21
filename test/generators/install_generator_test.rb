@@ -55,7 +55,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/misc/rodauth_main.rb", /flash_notice_key/
     assert_file "app/misc/rodauth_main.rb", /Remember Feature/
     assert_file "app/misc/rodauth_main.rb", /logout_redirect/
-    assert_file "app/misc/rodauth_main.rb", /# table_prefix :user/
+    assert_file "app/misc/rodauth_main.rb", /# accounts_table :users/
   end
 
   test "app with --json option" do
@@ -115,14 +115,16 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "test/fixtures/accounts.yml", /password_hash/ # No tests for the rspec branch
   end
 
-  test "table" do
-    ["users", "user", "User"].each do |argument|
+  test "prefix" do
+    %w[admins admin Admin].each do |argument|
       run_generator [argument]
 
-      assert_file "app/misc/rodauth_main.rb", /^\s+table_prefix :user$/
-      assert_migration "db/migrate/create_rodauth.rb", /create_table :users do/
-      assert_file "app/models/user.rb", /class User </
-      assert_file "test/fixtures/users.yml"
+      assert_file "app/misc/rodauth_main.rb", /^\s+accounts_table :admins$/
+      assert_file "app/misc/rodauth_main.rb", /^\s+remember_table :admin_remember_keys$/
+      assert_migration "db/migrate/create_rodauth.rb", /create_table :admins do/
+      assert_migration "db/migrate/create_rodauth.rb", /create_table :admin_remember_keys/
+      assert_file "app/models/admin.rb", /class Admin </
+      assert_file "test/fixtures/admins.yml"
 
       prepare_destination
     end

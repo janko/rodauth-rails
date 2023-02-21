@@ -5,7 +5,7 @@ rescue NoMethodError # migration is being reverted
 end
 
 <% end -%>
-create_table :<%= table_prefix %>s do
+create_table :<%= table_prefix.pluralize %> do
   primary_key :id, type: :Bignum
 <% if db.database_type == :postgres -%>
   citext :email, null: false

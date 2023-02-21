@@ -21,12 +21,23 @@ class RodauthMain < Rodauth::Rails::Auth
 <% end -%>
 
 <% end -%>
-<% if table.underscore.pluralize == "accounts" -%>
-    # Change prefix of all table and foreign key column names to "user"
-    # table_prefix :user
+    # Change prefix of table and foreign key column names from default "account"
+<% if table -%>
+    accounts_table :<%= table_prefix.pluralize %>
+    verify_account_table :<%= table_prefix %>_verification_keys
+    verify_login_change_table :<%= table_prefix %>_login_change_keys
+    reset_password_table :<%= table_prefix %>_password_reset_keys
+<% unless jwt? -%>
+    remember_table :<%= table_prefix %>_remember_keys
+<% end -%>
 <% else -%>
-    # Change prefix of all table and foreign key column names to "<%= table.underscore.singularize %>"
-    table_prefix :<%= table.underscore.singularize %>
+    # accounts_table :users
+    # verify_account_table :user_verification_keys
+    # verify_login_change_table :user_login_change_keys
+    # reset_password_table :user_password_reset_keys
+<% unless jwt? -%>
+    # remember_table :user_remember_keys
+<% end -%>
 <% end -%>
 
     # The secret key used for hashing public-facing tokens for various features.
