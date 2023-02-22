@@ -32,7 +32,7 @@ module Rodauth
         class_option :json, type: :boolean, desc: "Configure JSON support"
         class_option :jwt, type: :boolean, desc: "Configure JWT support"
 
-        def create_rodauth_migration
+        def generate_rodauth_migration
           invoke "rodauth:migration", migration_features,
             name: "create_rodauth",
             prefix: table_prefix

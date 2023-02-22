@@ -115,9 +115,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "test/fixtures/accounts.yml", /password_hash/ # No tests for the rspec branch
   end
 
-  test "prefix" do
+  test "table" do
     %w[admins admin Admin].each do |argument|
-      run_generator [argument]
+      output = run_generator [argument]
 
       assert_file "app/misc/rodauth_main.rb", /^\s+accounts_table :admins$/
       assert_file "app/misc/rodauth_main.rb", /^\s+remember_table :admin_remember_keys$/
@@ -125,6 +125,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_migration "db/migrate/create_rodauth.rb", /create_table :admin_remember_keys/
       assert_file "app/models/admin.rb", /class Admin </
       assert_file "test/fixtures/admins.yml"
+      refute_includes output, "Rodauth configuration"
 
       prepare_destination
     end

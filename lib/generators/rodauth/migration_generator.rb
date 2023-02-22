@@ -25,6 +25,20 @@ module Rodauth
           migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "#{migration_name}.rb")
         end
 
+        def show_instructions
+          # skip if called from install generator, it already adds configuration
+          return if current_command_chain.include?(:generate_rodauth_migration)
+          return unless options[:prefix] && behavior == :invoke
+
+          configuration = CONFIGURATION.values_at(*features.map(&:to_sym))
+            .flat_map(&:to_a)
+            .map { |config, format| "#{config} :#{format % { plural: table_prefix.pluralize, singular: table_prefix }}" }
+            .join("\n")
+            .indent(2)
+
+          say "\nAdd the following to your Rodauth configuration:\n\n#{configuration}"
+        end
+
         private
 
         def migration_name
@@ -70,6 +84,27 @@ module Rodauth
         def table_prefix
           options[:prefix]&.singularize || "account"
         end
+
+        CONFIGURATION = {
+          base: { accounts_table: "%{plural}" },
+          remember: { remember_table: "%{singular}_remember_keys" },
+          verify_account: { verify_account_table: "%{singular}_verification_keys" },
+          verify_login_change: { verify_login_change_table: "%{singular}_login_change_keys" },
+          reset_password: { reset_password_table: "%{singular}_password_reset_keys" },
+          email_auth: { email_auth_table: "%{singular}_email_auth_keys" },
+          otp: { otp_keys_table: "%{singular}_otp_keys" },
+          sms_codes: { sms_codes_table: "%{singular}_sms_codes" },
+          recovery_codes: { recovery_codes_table: "%{singular}_recovery_codes" },
+          webauthn: { webauthn_keys_table: "%{singular}_webauthn_keys", webauthn_user_ids_table: "%{singular}_webauthn_user_ids", webauthn_keys_account_id_column: "%{singular}_id" },
+          lockout: { account_login_failures_table: "%{singular}_login_failures", account_lockouts_table: "%{singular}_lockouts" },
+          active_sessions: { active_sessions_table: "%{singular}_active_session_keys", active_sessions_account_id_column: "%{singular}_id" },
+          account_expiration: { account_activity_table: "%{singular}_activity_times" },
+          password_expiration: { password_expiration_table: "%{singular}_password_change_times" },
+          single_session: { single_session_table: "%{singular}_session_keys" },
+          audit_logging: { audit_logging_table: "%{singular}_authentication_audit_logs", audit_logging_account_id_column: "%{singular}_id" },
+          disallow_password_reuse: { previous_password_hash_table: "%{singular}_previous_password_hashes", previous_password_account_id_column: "%{singular}_id" },
+          jwt_refresh: { jwt_refresh_token_table: "%{singular}_jwt_refresh_keys", jwt_refresh_token_account_id_column: "%{singular}_id" },
+        }
 
         if defined?(::ActiveRecord::Railtie) # Active Record
           include ::ActiveRecord::Generators::Migration

@@ -509,7 +509,7 @@ page][custom mailer worker] on how to set it up.
 
 The install generator will create a migration for tables used by the Rodauth
 features enabled by default. For any additional features, you can use the
-migration generator to create the corresponding tables:
+migration generator for creating the required tables:
 
 ```sh
 $ rails generate rodauth:migration otp sms_codes recovery_codes
@@ -528,14 +528,22 @@ end
 #### Table prefix
 
 If you're storing account records in a table other than `accounts`, you'll want
-to specify the corresponding table prefix when generating new migrations:
+to specify the correct table prefix when generating new migrations:
 
 ```sh
-$ rails generate rodauth:migration active_sessions --prefix user
+$ rails generate rodauth:migration base active_sessions --prefix user
+
+# Add the following to your Rodauth configuration:
+#
+#   accounts_table :users
+#   active_sessions_table :user_active_session_keys
+#   active_sessions_account_id_column :user_id
 ```
 ```rb
-class CreateRodauthUserActiveSessions < ActiveRecord::Migration
+# db/migration/*_create_rodauth_user_base_active_sessions.rb
+class CreateRodauthUserBaseActiveSessions < ActiveRecord::Migration
   def change
+    create_table :users do |t| ... end
     create_table :user_active_session_keys do |t| ... end
   end
 end

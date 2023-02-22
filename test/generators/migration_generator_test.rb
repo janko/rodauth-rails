@@ -7,7 +7,7 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
   setup :prepare_destination
 
   test "migration" do
-    run_generator %w[otp sms_codes recovery_codes]
+    output = run_generator %w[otp sms_codes recovery_codes]
 
     if ActiveRecord.version >= Gem::Version.new("5.0")
       migration_version = Regexp.escape("[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]")
@@ -20,6 +20,8 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
     assert_migration migration_file, /create_table :account_sms_codes, id: false do/
     assert_migration migration_file, /create_table :account_recovery_codes, primary_key: \[:id, :code\] do/
     assert_migration migration_file, /t\.integer :id, primary_key: true/
+
+    refute_includes output, "Rodauth configuration"
   end
 
   test "migration name" do
@@ -29,8 +31,13 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
   end
 
   test "prefix" do
-    run_generator %w[active_sessions --prefix user]
-    assert_migration "db/migrate/create_rodauth_user_active_sessions.rb", /create_table :user_active_session_keys/
+    output = run_generator %w[active_sessions base --prefix user]
+    assert_migration "db/migrate/create_rodauth_user_active_sessions_base.rb", /create_table :user_active_session_keys/
+    assert_includes output, <<-EOS
+  active_sessions_table :user_active_session_keys
+  active_sessions_account_id_column :user_id
+  accounts_table :users
+    EOS
 
     run_generator %w[remember --prefix admins]
     assert_migration "db/migrate/create_rodauth_admins_remember.rb", /create_table :admin_remember_keys/
