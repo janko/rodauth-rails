@@ -1,3 +1,21 @@
+## 1.8.0 (2023-02-25)
+
+* Add table argument to `rodauth:install` generator (@janko)
+
+* Add `--prefix` option to `rodauth:migration` generator for choosing table prefix (@janko)
+
+* Add `--argon2` option to `rodauth:install` generator for configuring password hashing using Argon2 (@janko)
+
+* Move generated Sequel setup from initializer into the Rodauth configuration for faster boot time (@janko)
+
+* Use `email_to` and `email_from` Rodauth methods in generated mailer (@janko)
+
+* Add missing foreign key constraint in `email_auth` Active Record migration (@janko)
+
+* Correctly retrieve JSON request body when using Falcon (@janko)
+
+* Render validation error correctly in generated `webauthn_remove` Tailwind template (@janko)
+
 ## 1.7.1 (2023-01-25)
 
 * Make internal_request integration work on Rack 3.x (@janko)
