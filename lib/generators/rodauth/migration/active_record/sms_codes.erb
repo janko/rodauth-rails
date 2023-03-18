@@ -5,5 +5,5 @@ create_table :<%= table_prefix %>_sms_codes, id: false do |t|
   t.string :phone_number, null: false
   t.integer :num_failures
   t.string :code
-  t.datetime :code_issued_at, null: false, default: <%= current_timestamp %>
+  t.datetime :code_issued_at, null: false, default: -> { "<%= current_timestamp %>" }
 end

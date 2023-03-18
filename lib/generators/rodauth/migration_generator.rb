@@ -111,18 +111,6 @@ module Rodauth
 
           MIGRATION_DIR = "#{__dir__}/migration/active_record"
 
-          def db_migrate_path
-            return "db/migrate" unless ActiveRecord.version >= Gem::Version.new("5.0")
-
-            super
-          end
-
-          def migration_version
-            return unless ActiveRecord.version >= Gem::Version.new("5.0")
-
-            "[#{ActiveRecord::Migration.current_version}]"
-          end
-
           def activerecord_adapter
             if ActiveRecord::Base.respond_to?(:connection_db_config)
               ActiveRecord::Base.connection_db_config.adapter
@@ -150,17 +138,9 @@ module Rodauth
             end
           end
 
-          def current_timestamp
-            if ActiveRecord.version >= Gem::Version.new("5.0")
-              %(-> { "#{current_timestamp_literal}" })
-            else
-              %(OpenStruct.new(quoted_id: "#{current_timestamp_literal}"))
-            end
-          end
-
           # Active Record 7+ sets default precision to 6 for timestamp columns,
           # so we need to ensure we match this when setting the default value.
-          def current_timestamp_literal
+          def current_timestamp
             if ActiveRecord.version >= Gem::Version.new("7.0") && activerecord_adapter == "mysql2" && ActiveRecord::Base.connection.supports_datetime_with_precision?
               "CURRENT_TIMESTAMP(6)"
             else

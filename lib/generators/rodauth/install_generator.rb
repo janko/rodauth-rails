@@ -111,7 +111,7 @@ module Rodauth
         end
 
         def api_only?
-          Rodauth::Rails.api_only?
+          ::Rails.application.config.api_only
         end
 
         def sequel_adapter

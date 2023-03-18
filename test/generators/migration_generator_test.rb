@@ -9,11 +9,8 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
   test "migration" do
     output = run_generator %w[otp sms_codes recovery_codes]
 
-    if ActiveRecord.version >= Gem::Version.new("5.0")
-      migration_version = Regexp.escape("[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]")
-    end
-
     migration_file = "db/migrate/create_rodauth_otp_sms_codes_recovery_codes.rb"
+    migration_version = Regexp.escape("[#{ActiveRecord::VERSION::MAJOR}.#{ActiveRecord::VERSION::MINOR}]")
 
     assert_migration migration_file, /class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration#{migration_version}/
     assert_migration migration_file, /create_table :account_otp_keys, id: false do/
@@ -60,11 +57,7 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
   test "current timestamp column default" do
     run_generator %w[email_auth]
 
-    if ActiveRecord.version >= Gem::Version.new("5.0")
-      assert_migration "db/migrate/create_rodauth_email_auth.rb", /default: -> { "CURRENT_TIMESTAMP" }/
-    else
-      assert_migration "db/migrate/create_rodauth_email_auth.rb", /default: OpenStruct\.new\(quoted_id: "CURRENT_TIMESTAMP"\)/
-    end
+    assert_migration "db/migrate/create_rodauth_email_auth.rb", /default: -> { "CURRENT_TIMESTAMP" }/
   end
 
   test "no features" do

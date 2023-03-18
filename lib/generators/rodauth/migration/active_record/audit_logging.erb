@@ -1,7 +1,7 @@
 # Used by the audit logging feature
 create_table :<%= table_prefix %>_authentication_audit_logs<%= primary_key_type %> do |t|
   t.references :<%= table_prefix %>, foreign_key: true, null: false<%= primary_key_type(:type) %>
-  t.datetime :at, null: false, default: <%= current_timestamp %>
+  t.datetime :at, null: false, default: -> { "<%= current_timestamp %>" }
   t.text :message, null: false
 <% case activerecord_adapter -%>
 <% when "postgresql" -%>

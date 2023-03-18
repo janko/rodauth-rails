@@ -4,5 +4,5 @@ create_table :<%= table_prefix %>_otp_keys, id: false do |t|
   t.foreign_key :<%= table_prefix.pluralize %>, column: :id
   t.string :key, null: false
   t.integer :num_failures, null: false, default: 0
-  t.datetime :last_use, null: false, default: <%= current_timestamp %>
+  t.datetime :last_use, null: false, default: -> { "<%= current_timestamp %>" }
 end

@@ -32,7 +32,7 @@ module Rodauth
 
         # Calls the Rails renderer, returning nil if a template is missing.
         def rails_render(*args)
-          return if rails_api_controller?
+          return if rails_controller <= ActionController::API
 
           rails_controller_instance.render_to_string(*args)
         rescue ActionView::MissingTemplate

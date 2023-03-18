@@ -41,7 +41,7 @@ module Rodauth
         end
 
         def rails_controller
-          if only_json? && Rodauth::Rails.api_only?
+          if only_json? && ::Rails.application.config.api_only
             ActionController::API
           else
             ActionController::Base
@@ -70,27 +70,12 @@ module Rodauth
           end
         end
 
-        # Instances of the configured controller with current request's env hash.
+        # Instance of the configured controller with current request's env hash.
         def _rails_controller_instance
           controller = rails_controller.new
-          prepare_rails_controller(controller, rails_request)
+          controller.set_request! rails_request
+          controller.set_response! rails_controller.make_response!(rails_request)
           controller
-        end
-
-        if ActionPack.version >= Gem::Version.new("5.0")
-          def prepare_rails_controller(controller, rails_request)
-            controller.set_request! rails_request
-            controller.set_response! rails_controller.make_response!(rails_request)
-          end
-        else
-          def prepare_rails_controller(controller, rails_request)
-            controller.send(:set_response!, rails_request)
-            controller.instance_variable_set(:@_request, rails_request)
-          end
-        end
-
-        def rails_api_controller?
-          defined?(ActionController::API) && rails_controller <= ActionController::API
         end
       end
     end

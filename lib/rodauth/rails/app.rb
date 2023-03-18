@@ -43,7 +43,7 @@ module Rodauth
 
       after do
         rails_request.commit_flash
-      end unless ActionPack.version < Gem::Version.new("5.0")
+      end
 
       def flash
         rails_request.flash
@@ -92,14 +92,12 @@ module Rodauth
           super
         end
 
-        unless ActionPack.version < Gem::Version.new("5.0")
-          # When calling a Rodauth method that redirects inside the Rails
-          # router, Roda's after hook that commits the flash would never get
-          # called, so we make sure to commit the flash beforehand.
-          def redirect(*)
-            scope.rails_request.commit_flash
-            super
-          end
+        # When calling a Rodauth method that redirects inside the Rails
+        # router, Roda's after hook that commits the flash would never get
+        # called, so we make sure to commit the flash beforehand.
+        def redirect(*)
+          scope.rails_request.commit_flash
+          super
         end
       end
     end

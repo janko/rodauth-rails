@@ -3,6 +3,6 @@ create_table :<%= table_prefix %>_verification_keys, id: false do |t|
   t.<%= primary_key_type(nil) %> :id, primary_key: true
   t.foreign_key :<%= table_prefix.pluralize %>, column: :id
   t.string :key, null: false
-  t.datetime :requested_at, null: false, default: <%= current_timestamp %>
-  t.datetime :email_last_sent, null: false, default: <%= current_timestamp %>
+  t.datetime :requested_at, null: false, default: -> { "<%= current_timestamp %>" }
+  t.datetime :email_last_sent, null: false, default: -> { "<%= current_timestamp %>" }
 end
