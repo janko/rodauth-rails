@@ -74,7 +74,7 @@ module Rodauth
         def _rails_controller_instance
           controller = rails_controller.new
           controller.set_request! rails_request
-          controller.set_response! rails_controller.make_response!(rails_request)
+          controller.set_response! rails_controller.make_response!(controller.request)
           controller
         end
       end
