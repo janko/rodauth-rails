@@ -855,32 +855,27 @@ documentation].
 ### Defining custom methods
 
 All Rodauth configuration methods are just syntax sugar for defining instance
-methods on the auth class. You can also define your own custom methods on the
-auth class:
+methods on the auth class. You can also define your own custom methods:
 
 ```rb
 class RodauthMain < Rodauth::Rails::Auth
   configure do
-    # ...
     password_match? { |password| ldap_valid?(password) }
-    # ...
   end
 
-  # Example external identities table
-  def identities
-    db[:account_identities].where(account_id: account_id).all
+  def admin?
+    rails_account.admin?
   end
 
   private
 
-  # Example LDAP authentication
   def ldap_valid?(password)
     SimpleLdapAuthenticator.valid?(account[:email], password)
   end
 end
 ```
 ```rb
-rodauth.identities #=> [{ provider: "facebook", uid: "abc123", ... }, ...]
+rodauth.admin? #=> true
 ```
 
 ### Rails URL helpers
