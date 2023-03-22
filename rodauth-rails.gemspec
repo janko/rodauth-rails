@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "railties", ">= 5.0", "< 8"
-  spec.add_dependency "rodauth", "~> 2.28"
+  spec.add_dependency "rodauth", "~> 2.29"
   spec.add_dependency "roda", "~> 3.55"
   spec.add_dependency "sequel-activerecord_connection", "~> 1.1"
   spec.add_dependency "rodauth-model", "~> 0.2"

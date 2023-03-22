@@ -13,16 +13,7 @@ module Rodauth
         end
 
         def rails_account
-          return unless account || logged_in?
-
-          account_from_session unless account
-
-          unless account
-            clear_session
-            return
-          end
-
-          @rails_account ||= instantiate_rails_account
+          @rails_account ||= instantiate_rails_account if account!
         end
 
         # Reset Rails session to protect from session fixation attacks.
