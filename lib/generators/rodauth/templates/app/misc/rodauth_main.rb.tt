@@ -85,7 +85,7 @@ class RodauthMain < Rodauth::Rails::Auth
     verify_account_set_password? false
 
     # Change some default param keys.
-    # login_param "email"
+    login_param "email"
     # password_confirm_param "confirm_password"
 
     # Redirect back to originally requested location after authentication.
