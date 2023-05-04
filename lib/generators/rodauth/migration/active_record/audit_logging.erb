@@ -6,7 +6,7 @@ create_table :<%= table_prefix %>_authentication_audit_logs<%= primary_key_type 
 <% case activerecord_adapter -%>
 <% when "postgresql" -%>
   t.jsonb :metadata
-<% when "sqlite3", "mysql2" -%>
+<% when "sqlite3", "mysql2", "trilogy" -%>
   t.json :metadata
 <% else -%>
   t.string :metadata

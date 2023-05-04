@@ -141,7 +141,7 @@ module Rodauth
           # Active Record 7+ sets default precision to 6 for timestamp columns,
           # so we need to ensure we match this when setting the default value.
           def current_timestamp
-            if ActiveRecord.version >= Gem::Version.new("7.0") && activerecord_adapter == "mysql2" && ActiveRecord::Base.connection.supports_datetime_with_precision?
+            if ActiveRecord.version >= Gem::Version.new("7.0") && ["mysql2", "trilogy"].include?(activerecord_adapter) && ActiveRecord::Base.connection.supports_datetime_with_precision?
               "CURRENT_TIMESTAMP(6)"
             else
               "CURRENT_TIMESTAMP"
