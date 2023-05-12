@@ -31,16 +31,13 @@ There are already several popular authentication solutions for Rails (Devise,
 Sorcery, Clearance, Authlogic), so why would you choose Rodauth? Here are some
 of the advantages that stand out for me:
 
-* multifactor authentication ([TOTP][otp], [SMS codes][sms_codes], [recovery codes][recovery_codes], [WebAuthn][webauthn])
+* multifactor authentication ([TOTP][otp], [SMS codes][sms_codes], [recovery codes][recovery_codes], [Passkeys][webauthn])
 * standardized [JSON API support][json] for every feature (including [JWT][jwt])
 * enterprise security features ([password complexity][password_complexity], [disallow password reuse][disallow_password_reuse], [password expiration][password_expiration], [session expiration][session_expiration], [single session][single_session], [account expiration][account_expiration])
-* [email authentication][email_auth] (aka "passwordless")
-* [audit logging][audit_logging] (for any action)
+* passwordless authentication ([email][email_auth], [Passkeys][webauthn_login])
+* [audit logging][audit_logging] for any action
 * ability to protect password hashes even in case of SQL injection ([more details][password protection])
-* additional bruteforce protection for tokens ([more details][bruteforce tokens])
-* uniform configuration DSL (any setting can be static or dynamic)
-* consistent before/after hooks around everything
-* dedicated object encapsulating all authentication logic
+* uniform configuration DSL with before/after hooks around everything
 
 ### Sequel
 
@@ -1222,12 +1219,12 @@ conduct](CODE_OF_CONDUCT.md).
 [sms_codes]: http://rodauth.jeremyevans.net/rdoc/files/doc/sms_codes_rdoc.html
 [recovery_codes]: http://rodauth.jeremyevans.net/rdoc/files/doc/recovery_codes_rdoc.html
 [webauthn]: http://rodauth.jeremyevans.net/rdoc/files/doc/webauthn_rdoc.html
+[webauthn_login]: http://rodauth.jeremyevans.net/rdoc/files/doc/webauthn_login_rdoc.html
 [json]: http://rodauth.jeremyevans.net/rdoc/files/doc/json_rdoc.html
 [jwt]: http://rodauth.jeremyevans.net/rdoc/files/doc/jwt_rdoc.html
 [email_auth]: http://rodauth.jeremyevans.net/rdoc/files/doc/email_auth_rdoc.html
 [audit_logging]: http://rodauth.jeremyevans.net/rdoc/files/doc/audit_logging_rdoc.html
 [password protection]: https://github.com/jeremyevans/rodauth#label-Password+Hash+Access+Via+Database+Functions
-[bruteforce tokens]: https://github.com/jeremyevans/rodauth#label-Tokens
 [password_complexity]: http://rodauth.jeremyevans.net/rdoc/files/doc/password_complexity_rdoc.html
 [disallow_password_reuse]: http://rodauth.jeremyevans.net/rdoc/files/doc/disallow_password_reuse_rdoc.html
 [password_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/password_expiration_rdoc.html
