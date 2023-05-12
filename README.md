@@ -31,10 +31,10 @@ There are already several popular authentication solutions for Rails (Devise,
 Sorcery, Clearance, Authlogic), so why would you choose Rodauth? Here are some
 of the advantages that stand out for me:
 
-* multifactor authentication ([TOTP][otp], [SMS codes][sms_codes], [recovery codes][recovery_codes], [Passkeys][webauthn])
+* multifactor authentication ([TOTP][otp], [SMS codes][sms_codes], [recovery codes][recovery_codes], [passkeys][webauthn])
 * standardized [JSON API support][json] for every feature (including [JWT][jwt])
 * enterprise security features ([password complexity][password_complexity], [disallow password reuse][disallow_password_reuse], [password expiration][password_expiration], [session expiration][session_expiration], [single session][single_session], [account expiration][account_expiration])
-* passwordless authentication ([email][email_auth], [Passkeys][webauthn_login])
+* passwordless authentication ([email][email_auth], [passkeys][webauthn_login])
 * [audit logging][audit_logging] for any action
 * ability to protect password hashes even in case of SQL injection ([more details][password protection])
 * uniform configuration DSL with before/after hooks around everything
