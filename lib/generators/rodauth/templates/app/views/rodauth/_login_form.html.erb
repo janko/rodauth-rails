@@ -7,7 +7,7 @@
   <% else %>
     <div class="form-group mb-3">
       <%= form.label "login", rodauth.login_label, class: "form-label" %>
-      <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", autocomplete: "email", required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.login_param)}", aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>
+      <%= form.email_field rodauth.login_param, value: params[rodauth.login_param], id: "login", autocomplete: rodauth.login_field_autocomplete_value, required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.login_param)}", aria: ({ invalid: true, describedby: "login_error_message" } if rodauth.field_error(rodauth.login_param)) %>
       <%= content_tag(:span, rodauth.field_error(rodauth.login_param), class: "invalid-feedback", id: "login_error_message") if rodauth.field_error(rodauth.login_param) %>
     </div>
   <% end %>

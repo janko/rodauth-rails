@@ -346,7 +346,7 @@ $ rails generate rodauth:views --all
 Use `--name` to generate views for a different Rodauth configuration:
 
 ```sh
-$ rails generate rodauth:views webauthn --name admin
+$ rails generate rodauth:views webauthn two_factor_base --name admin
 ```
 
 #### Page titles

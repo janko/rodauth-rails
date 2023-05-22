@@ -23,7 +23,7 @@ module Rodauth
           default: nil
 
         VIEWS = {
-          login:               %w[_login_form _login_form_footer _login_form_header login multi_phase_login],
+          login:               %w[_login_form _login_form_footer login multi_phase_login],
           create_account:      %w[create_account],
           logout:              %w[logout],
           reset_password:      %w[reset_password_request reset_password],
@@ -40,13 +40,7 @@ module Rodauth
           sms_codes:           %w[sms_setup sms_confirm sms_auth sms_request sms_disable],
           recovery_codes:      %w[recovery_codes add_recovery_codes recovery_auth],
           webauthn:            %w[webauthn_setup webauthn_auth webauthn_remove],
-        }
-
-        DEPENDENCIES = {
-          otp:            :two_factor_base,
-          sms_codes:      :two_factor_base,
-          recovery_codes: :two_factor_base,
-          webauthn:       :two_factor_base,
+          webauthn_autofill:   %w[webauthn_autofill],
         }
 
         def create_views
@@ -65,10 +59,7 @@ module Rodauth
         private
 
         def views
-          features.inject([]) do |list, feature|
-            list |= VIEWS.fetch(feature)
-            list |= VIEWS[DEPENDENCIES[feature]] || []
-          end
+          features.flat_map { |feature| VIEWS.fetch(feature) }
         end
 
         def validate_features

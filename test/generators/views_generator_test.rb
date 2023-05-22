@@ -10,7 +10,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     run_generator
 
     templates = %w[
-      _login_form _login_form_footer _login_form_header login multi_phase_login
+      _login_form _login_form_footer login multi_phase_login
       logout create_account reset_password_request verify_account
       reset_password change_login verify_login_change change_password
       close_account
@@ -33,19 +33,6 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     assert_no_file "app/views/rodauth/create_account.html.erb"
   end
 
-  test "dependencies" do
-    run_generator %w[sms_codes]
-
-    templates = %w[
-      two_factor_manage two_factor_auth two_factor_disable
-      sms_setup sms_confirm sms_auth sms_request sms_disable
-    ]
-
-    templates.each do |template|
-      assert_file "app/views/rodauth/#{template}.html.erb"
-    end
-  end
-
   test "all features" do
     run_generator %w[--all]
 
@@ -63,7 +50,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   end
 
   test "specifying tailwind templates" do
-    run_generator %w[--css=tailwind]
+    run_generator %w[--css=tailwind --all]
 
     assert_file "app/views/rodauth/_login_form.html.erb", /dark:focus:ring-emerald-400/
   end
@@ -91,19 +78,25 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   end if ActionView.version >= Gem::Version.new("5.1")
 
   test "interpolating directory name" do
-    run_generator %w[login]
+    run_generator %w[recovery_codes]
 
-    assert_file "app/views/rodauth/_login_form_header.html.erb", <<-ERB.strip_heredoc
-      <% if rodauth.field_error(rodauth.password_param) && rodauth.features.include?(:reset_password) %>
-        <%= render template: "rodauth/reset_password_request", layout: false %>
+    assert_file "app/views/rodauth/add_recovery_codes.html.erb", <<-ERB.strip_heredoc
+      <pre id="recovery-codes"><%= rodauth.recovery_codes.map { |s| h(s) }.join("\\n\\n") %></pre>
+
+      <% if rodauth.can_add_recovery_codes? %>
+        <%== rodauth.add_recovery_codes_heading %>
+        <%= render template: "rodauth/recovery_codes", layout: false %>
       <% end %>
     ERB
 
-    run_generator %w[login --name admin]
+    run_generator %w[recovery_codes --name admin]
 
-    assert_file "app/views/admin/rodauth/_login_form_header.html.erb", <<-ERB.strip_heredoc
-      <% if rodauth(:admin).field_error(rodauth(:admin).password_param) && rodauth(:admin).features.include?(:reset_password) %>
-        <%= render template: "admin/rodauth/reset_password_request", layout: false %>
+    assert_file "app/views/admin/rodauth/add_recovery_codes.html.erb", <<-ERB.strip_heredoc
+      <pre id="recovery-codes"><%= rodauth(:admin).recovery_codes.map { |s| h(s) }.join("\\n\\n") %></pre>
+
+      <% if rodauth(:admin).can_add_recovery_codes? %>
+        <%== rodauth(:admin).add_recovery_codes_heading %>
+        <%= render template: "admin/rodauth/recovery_codes", layout: false %>
       <% end %>
     ERB
   end if ActionView.version >= Gem::Version.new("5.1")

@@ -1,0 +1,10 @@
+<% cred = rodauth.webauthn_credential_options_for_get %>
+
+<%= form_with url: rodauth.webauthn_login_path, method: :post, id: "webauthn-login-form", data: { credential_options: cred.as_json.to_json, turbo: false } do |form| %>
+  <%= form.hidden_field rodauth.webauthn_auth_challenge_param, value: cred.challenge %>
+  <%= form.hidden_field rodauth.webauthn_auth_challenge_hmac_param, value: rodauth.compute_hmac(cred.challenge) %>
+  <%= form.text_field rodauth.webauthn_auth_param, value: "", id: "webauthn-auth", class: "hidden", aria: { hidden: "true" } %>
+  <%= form.submit rodauth.webauthn_auth_button, class: "hidden" %>
+<% end %>
+
+<%= javascript_include_tag rodauth.webauthn_autofill_js_path, extname: false %>
