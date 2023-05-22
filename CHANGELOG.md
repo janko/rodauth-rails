@@ -1,3 +1,21 @@
+## 1.9.0 (2023-05-22)
+
+* Add support for webauthn_autofill feature to the views generator (@janko)
+
+* Generate view templates for two_factor_base feature only if explicitly specified (@janko)
+
+* Set `login_param "email"` in generated Rodauth configuration (@janko)
+
+* Handle Trilogy adapter in generators (@janko)
+
+* Use `email_subject_prefix` in generated mailer (@janko)
+
+* Fix typo in `unlock_account` email template (@zavan)
+
+* Retrieve current account using `account!` in `#rails_account` method (@janko)
+
+* Drop support for Rails 4.2 (@janko)
+
 ## 1.8.0 (2023-02-25)
 
 * Add table argument to `rodauth:install` generator (@janko)
