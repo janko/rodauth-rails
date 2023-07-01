@@ -185,9 +185,6 @@ current_account #=> #<Account id=123 email="user@example.com">
 current_account.email #=> "user@example.com"
 ```
 
-If the session is logged in, but the account doesn't exist in the database, the
-session will be reset.
-
 #### Custom account model
 
 The `#rails_account` method will try to infer the account model class from the
