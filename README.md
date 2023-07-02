@@ -185,22 +185,6 @@ current_account #=> #<Account id=123 email="user@example.com">
 current_account.email #=> "user@example.com"
 ```
 
-#### Custom account model
-
-The `#rails_account` method will try to infer the account model class from the
-configured accounts table name. However, if the model class cannot be inferred
-from the table name, you can configure it manually:
-
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    # ...
-    rails_account_model { Authentication::Account } # custom model name
-  end
-end
-```
-
 ### Requiring authentication
 
 You'll likely want to require authentication for certain parts of your app,
@@ -216,8 +200,8 @@ class RodauthApp < Rodauth::Rails::App
     # ...
     r.rodauth # route rodauth requests
 
-    # require authentication for /dashboard/* and /account/* routes
-    if r.path.start_with?("/dashboard") || r.path.start_with?("/account")
+    # require authentication for /dashboard/* routes
+    if r.path.start_with?("/dashboard")
       rodauth.require_account # redirect to login page if not authenticated
     end
   end
@@ -240,12 +224,6 @@ end
 # app/controllers/dashboard_controller.rb
 class DashboardController < ApplicationController
   before_action :authenticate
-end
-```
-```rb
-# app/controllers/posts_controller.rb
-class PostsController < ApplicationController
-  before_action :authenticate, except: [:index, :show]
 end
 ```
 
@@ -276,19 +254,7 @@ Rails.application.routes.draw do
 end
 ```
 
-The current account can be retrieved via the `#rails_account` method:
-
-```rb
-# config/routes.rb
-Rails.application.routes.draw do
-  # require user to be admin
-  constraints Rodauth::Rails.authenticated { |rodauth| rodauth.rails_account.admin? } do
-    # ...
-  end
-end
-```
-
-You can specify the Rodauth configuration by passing the configuration name:
+You can specify a different Rodauth configuration by passing the configuration name:
 
 ```rb
 # config/routes.rb
@@ -305,13 +271,66 @@ manually:
 ```rb
 # config/routes.rb
 Rails.application.routes.draw do
-  constraints -> (r) { !r.env["rodauth"].logged_in? } do # or "rodauth.admin"
+  constraints -> (r) { !r.env["rodauth"].logged_in? } do # or env["rodauth.admin"]
     # routes when the user is not logged in
   end
 end
 ```
 
-### Views
+### Controller
+
+Your Rodauth configuration is connected to a Rails controller (`RodauthController` by default), and
+it automatically executes any callbacks and rescue handlers defined on it (or the parent controller)
+around Rodauth endpoints.
+
+```rb
+class RodauthController < ApplicationController
+  before_action :set_locale # executes before Rodauth endpoints
+  rescue_from("MyApp::SomeError") { |exception| ... } # rescues around Rodauth endpoints
+end
+```
+
+#### Calling controller methods
+
+You can call any controller methods from your Rodauth configuration via `rails_controller_eval`:
+
+```rb
+# app/controllers/application_controller.rb
+class ApplicationController < ActionController::Base
+  private
+  def setup_tracking(account_id)
+    # ... some implementation ...
+  end
+end
+```
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    after_create_account do
+      rails_controller_eval { setup_tracking(account_id) }
+    end
+  end
+end
+```
+
+### Rails URL helpers
+
+Inside Rodauth configuration and the `route` block you can access Rails route
+helpers through `#rails_routes`:
+
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    login_redirect { rails_routes.activity_path }
+    change_password_redirect { rails_routes.profile_path }
+    change_login_redirect { rails_routes.profile_path }
+  end
+end
+```
+
+## Views
 
 The templates built into Rodauth are useful when getting started, but soon
 you'll want to start editing the markup. You can run the following command to
@@ -346,7 +365,7 @@ Use `--name` to generate views for a different Rodauth configuration:
 $ rails generate rodauth:views webauthn two_factor_base --name admin
 ```
 
-#### Page titles
+### Page titles
 
 The generated configuration sets `title_instance_variable` to make page titles
 available in your views via `@page_title` instance variable, which you can then
@@ -356,9 +375,7 @@ use in your layout:
 # app/misc/rodauth_main.rb
 class RodauthMain < Rodauth::Rails::Auth
   configure do
-    # ...
     title_instance_variable :@page_title
-    # ...
   end
 end
 ```
@@ -370,28 +387,11 @@ end
     <title><%= @page_title || "Default title" %></title>
     <!-- ... -->
   </head>
-  <body>
-    <!-- ... -->
-  </body>
+  <!-- ... -->
 </html>
 ```
 
-If you're already setting page titles via `content_for`, you can use it in
-generated Rodauth views, giving it the result of the corresponding
-`*_page_title` method:
-
-```erb
-<!-- app/views/rodauth/login.html.erb -->
-<%= content_for :page_title, rodauth.login_page_title %>
-<!-- ... -->
-```
-```erb
-<!-- app/views/rodauth/change_password.html.erb -->
-<%= content_for :page_title, rodauth.change_password_page_title %>
-<!-- ... -->
-```
-
-#### Layout
+### Layout
 
 To use different layouts for different Rodauth views, you can compare the
 request path in the layout method:
@@ -419,7 +419,7 @@ class RodauthController < ApplicationController
 end
 ```
 
-#### Turbo
+### Turbo
 
 [Turbo] has been disabled by default on all built-in and generated view
 templates, because some Rodauth actions (multi-phase login, adding recovery
@@ -428,7 +428,7 @@ codes) aren't Turbo-compatible, as they return 200 responses on POST requests.
 That being said, most of Rodauth *is* Turbo-compatible, so feel free to enable
 Turbo for actions where you want to use it.
 
-### Mailer
+## Mailer
 
 The install generator will create `RodauthMailer` with default email templates,
 and configure Rodauth features that send emails as part of the authentication
@@ -437,73 +437,45 @@ flow to use it.
 ```rb
 # app/mailers/rodauth_mailer.rb
 class RodauthMailer < ApplicationMailer
-  def verify_account(account_id, key)
-    # ...
-  end
-  def reset_password(account_id, key)
-    # ...
-  end
-  def verify_login_change(account_id, old_login, new_login, key)
-    # ...
-  end
-  def password_changed(account_id)
-    # ...
-  end
-  # def email_auth(account_id, key)
-  # ...
-  # end
-  # def unlock_account(account_id, key)
-  # ...
-  # end
+  def verify_account(account_id, key) ... end
+  def reset_password(account_id, key) ... end
+  def verify_login_change(account_id, old_login, new_login, key) ... end
+  def password_changed(account_id) ... end
+  # def email_auth(account_id, key) ... end
+  # def unlock_account(account_id, key) ... end
 end
 ```
 ```rb
 # app/misc/rodauth_main.rb
 class RodauthMain < Rodauth::Rails::Auth
   configure do
-    # ...
-    create_reset_password_email do
-      RodauthMailer.reset_password(account_id, reset_password_key_value)
-    end
-    create_verify_account_email do
-      RodauthMailer.verify_account(account_id, verify_account_key_value)
-    end
-    create_verify_login_change_email do |_login|
-      RodauthMailer.verify_login_change(account_id, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_key_value)
-    end
-    create_password_changed_email do
-      RodauthMailer.password_changed(account_id)
-    end
-    # create_email_auth_email do
-    #   RodauthMailer.email_auth(account_id, email_auth_key_value)
-    # end
-    # create_unlock_account_email do
-    #   RodauthMailer.unlock_account(account_id, unlock_account_key_value)
-    # end
+    create_reset_password_email { RodauthMailer.reset_password(account_id, reset_password_key_value) }
+    create_verify_account_email { RodauthMailer.verify_account(account_id, verify_account_key_value) }
+    create_verify_login_change_email { |_login| RodauthMailer.verify_login_change(account_id, verify_login_change_old_login, verify_login_change_new_login, verify_login_change_key_value) }
+    create_password_changed_email { RodauthMailer.password_changed(account_id) }
+    # create_email_auth_email { RodauthMailer.email_auth(account_id, email_auth_key_value) }
+    # create_unlock_account_email { RodauthMailer.unlock_account(account_id, unlock_account_key_value) }
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits
       db.after_commit { email.deliver_later }
     end
-    # ...
   end
 end
 ```
 
 This configuration calls `#deliver_later`, which uses Active Job to deliver
-emails in a background job. It's generally recommended to send emails
-asynchronously for better request throughput and the ability to retry
-deliveries. However, if you want to send emails synchronously, you can modify
-the configuration to call `#deliver_now` instead.
+emails in a background job. If you want to send emails synchronously, you can
+modify the configuration to call `#deliver_now` instead.
 
 If you're using a background processing library without an Active Job adapter,
 or a 3rd-party service for sending transactional emails, see [this wiki
 page][custom mailer worker] on how to set it up.
 
-### Migrations
+## Migrations
 
 The install generator will create a migration for tables used by the Rodauth
 features enabled by default. For any additional features, you can use the
-migration generator for creating the required tables:
+migration generator to create the required tables:
 
 ```sh
 $ rails generate rodauth:migration otp sms_codes recovery_codes
@@ -519,10 +491,10 @@ class CreateRodauthOtpSmsCodesRecoveryCodes < ActiveRecord::Migration
 end
 ```
 
-#### Table prefix
+### Table prefix
 
 If you're storing account records in a table other than `accounts`, you'll want
-to specify the correct table prefix when generating new migrations:
+to specify the appropriate table prefix when generating new migrations:
 
 ```sh
 $ rails generate rodauth:migration base active_sessions --prefix user
@@ -543,7 +515,7 @@ class CreateRodauthUserBaseActiveSessions < ActiveRecord::Migration
 end
 ```
 
-#### Custom migration name
+### Custom migration name
 
 You can change the default migration name:
 
@@ -567,36 +539,22 @@ tables used by enabled authentication features.
 
 ```rb
 class Account < ActiveRecord::Base # Sequel::Model
-  include Rodauth::Rails.model # or `Rodauth::Rails.model(:admin)`
+  include Rodauth::Rails.model # or Rodauth::Rails.model(:admin)
 end
 ```
-
-The password attribute can be used to set or clear the password hash. It
-handles both storing the password hash in a column on the accounts table, or in
-a separate table.
-
 ```rb
+# setting password hash
 account = Account.create!(email: "user@example.com", password: "secret123")
-
-# when password hash is stored in a column on the accounts table
 account.password_hash #=> "$2a$12$k/Ub1I2iomi84RacqY89Hu4.M0vK7klRnRtzorDyvOkVI.hKhkNw."
 
-# when password hash is stored in a separate table
-account.password_hash #=> #<Account::PasswordHash...> (record from `account_password_hashes` table)
-account.password_hash.password_hash #=> "$2a$12$k/Ub1..." (inaccessible when using database authentication functions)
-
-account.password = nil # clears password hash
+# clearing password hash
+account.password = nil
 account.password_hash #=> nil
-```
 
-The associations are defined for tables used by enabled authentication features:
-
-```rb
+# associations
 account.remember_key #=> #<Account::RememberKey> (record from `account_remember_keys` table)
 account.active_session_keys #=> [#<Account::ActiveSessionKey>,...] (records from `account_active_session_keys` table)
 ```
-
-See the [rodauth-model] documentation for more details.
 
 ## Multiple configurations
 
@@ -643,43 +601,9 @@ Then in your application you can reference the secondary Rodauth instance:
 rodauth(:admin).login_path #=> "/admin/login"
 ```
 
-*NOTE: You'll likely want to save the information of which account belongs to which
-configuration to the database. See [this guide][account types] on how you can do
-that.*
-
-### Sharing configuration
-
-If there are common settings that you want to share between Rodauth
-configurations, you can do so via inheritance:
-
-```rb
-# app/misc/rodauth_base.rb
-class RodauthBase < Rodauth::Rails::Auth
-  # common settings that are shared between multiple configurations
-  configure do
-    enable :login, :logout
-    login_return_to_requested_location? true
-    logout_redirect "/"
-    # ...
-  end
-end
-```
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < RodauthBase # inherit common settings
-  configure do
-    # ... customize main ...
-  end
-end
-```
-```rb
-# app/misc/rodauth_admin.rb
-class RodauthAdmin < RodauthBase # inherit common settings
-  configure do
-    # ... customize admin ...
-  end
-end
-```
+You'll likely want to save the information of which account belongs to which
+configuration to the database, see [this guide][account types] on how you can do
+that. Note that you can also [share configuration via inheritance][inheritance].
 
 ## Outside of a request
 
@@ -785,13 +709,13 @@ end
 ```
 
 One can write `ActionDispatch::IntegrationTest` test helpers for `login` and
-`logout` by making requests to the rodauth endpoints
+`logout` by making requests to the Rodauth endpoints:
 
 ```rb
 # test/controllers/articles_controller_test.rb
 class ArticlesControllerTest < ActionDispatch::IntegrationTest
-  def login(login, password)
-    post "/login", params: { login: login, password: password }
+  def login(email, password)
+    post "/login", params: { email: email, password: password }
     assert_redirected_to "/"
   end
 
@@ -843,6 +767,15 @@ methods:
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 | `rails_account_model`       | Model class connected with the accounts table.                     |
 
+```rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    rails_controller { Authentication::RodauthController }
+    rails_account_model { Authentication::Account }
+  end
+end
+```
+
 For the list of configuration methods provided by Rodauth, see the [feature
 documentation].
 
@@ -872,53 +805,10 @@ end
 rodauth.admin? #=> true
 ```
 
-### Rails URL helpers
-
-Inside Rodauth configuration and the `route` block you can access Rails route
-helpers through `#rails_routes`:
-
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    login_redirect { rails_routes.activity_path }
-    change_password_redirect { rails_routes.profile_path }
-    change_login_redirect { rails_routes.profile_path }
-  end
-end
-```
-
-### Calling controller methods
-
-When using Rodauth before/after hooks or generally overriding your Rodauth
-configuration, in some cases you might want to call methods defined on your
-controllers. You can do so with `rails_controller_eval`, for example:
-
-```rb
-# app/controllers/application_controller.rb
-class ApplicationController < ActionController::Base
-  private
-  def setup_tracking(account_id)
-    # ... some implementation ...
-  end
-end
-```
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    after_create_account do
-      rails_controller_eval { setup_tracking(account_id) }
-    end
-  end
-end
-```
-
 ### Single-file configuration
 
-If you would prefer to have all Rodauth logic contained inside a single file,
-you call `Rodauth::Rails::App.configure` with a block, which will create an
-anonymous auth class.
+If you would prefer, you can have all your Rodauth logic contained inside the
+Rodauth app class:
 
 ```rb
 # app/misc/rodauth_app.rb
@@ -941,6 +831,19 @@ class RodauthApp < Rodauth::Rails::App
 end
 ```
 
+### Manually inserting middleware
+
+You can choose to insert the Rodauth middleware somewhere earlier than
+in front of the Rails router:
+
+```rb
+Rodauth::Rails.configure do |config|
+  config.middleware = false # disable auto-insertion
+end
+
+Rails.application.config.middleware.insert_before AnotherMiddleware, Rodauth::Rails::Middleware
+```
+
 ## How it works
 
 ### Rack middleware
@@ -953,16 +856,6 @@ $ rails middleware
 # ...
 # use Rodauth::Rails::Middleware
 # run MyApp::Application.routes
-```
-
-It can be inserted at any point in the middleware stack:
-
-```rb
-Rodauth::Rails.configure do |config|
-  config.middleware = false # disable auto-insertion
-end
-
-Rails.application.config.middleware.insert_before AnotherMiddleware, Rodauth::Rails::Middleware
 ```
 
 The middleware retrieves the Rodauth app via `Rodauth::Rails.app`, which is
@@ -1236,3 +1129,4 @@ conduct](CODE_OF_CONDUCT.md).
 [Turbo]: https://turbo.hotwired.dev/
 [rodauth-model]: https://github.com/janko/rodauth-model
 [JSON API]: https://github.com/janko/rodauth-rails/wiki/JSON-API
+[inheritance]: http://rodauth.jeremyevans.net/rdoc/files/doc/guides/share_configuration_rdoc.html
