@@ -1,3 +1,7 @@
+## HEAD
+
+* Add `Rodauth::Rails.lib` for easier usage of Rodauth as a library in Rails apps (@janko)
+
 ## 1.9.0 (2023-05-22)
 
 * Add support for webauthn_autofill feature to the views generator (@janko)

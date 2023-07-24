@@ -89,4 +89,16 @@ class RodauthTest < UnitTest
     rodauth.instance_eval { @account = account_ds(account.id).first! }
     assert_equal account, rodauth.rails_account
   end
+
+  test "allows using as a library" do
+    rodauth = Rodauth::Rails.lib { enable :login }
+
+    Account.create!(email: "user@example.com", password: "secret", status: "verified")
+
+    rodauth.login(login: "user@example.com", password: "secret")
+
+    assert_raises Rodauth::InternalRequestError do
+      rodauth.login(login: "unknown@example.com", password: "secret")
+    end
+  end
 end

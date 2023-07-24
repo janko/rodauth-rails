@@ -16,6 +16,16 @@ module Rodauth
     @middleware = true
 
     class << self
+      def lib(**options, &block)
+        c = Class.new(Rodauth::Rails::App)
+        c.configure do
+          enable :internal_request
+          instance_exec(&block)
+        end
+        c.freeze
+        c.rodauth
+      end
+
       def rodauth(name = nil, account: nil, **options)
         auth_class = app.rodauth!(name)
 
