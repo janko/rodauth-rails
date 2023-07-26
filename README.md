@@ -693,7 +693,7 @@ Rodauth::Rails.rodauth(:admin, params: { "param" => "value" })
 
 ### Using as a library
 
-Rodauth offers a `Rodauth.lib` method for configuring Rodauth so that it can be used as a library, instead of routing requests. This gem provides a `Rodauth::Rails.lib` counterpart that does the same but with Rails integration:
+Rodauth offers a `Rodauth.lib` method for configuring Rodauth so that it can be used as a library, instead of routing requests (see [internal_request] feature). This gem provides a `Rodauth::Rails.lib` counterpart that does the same but with Rails integration:
 
 ```rb
 # app/misc/rodauth_main.rb
@@ -701,10 +701,15 @@ require "rodauth/rails"
 require "sequel/core"
 
 RodauthMain = Rodauth::Rails.lib do
-  enable :login, :logout, :webauthn, ...
+  enable :create_account, :login, :close_account
   db Sequel.postgres(extensions: :activerecord_connection, keep_reference: false)
   # ...
 end
+```
+```rb
+RodauthMain.create_account(login: "email@example.com", password: "secret123")
+RodauthMain.login(login: "email@example.com", password: "secret123")
+RodauthMain.close_account(account_login: "email@example.com")
 ```
 
 Note that you'll want to skip requiring `rodauth-rails` on Rails boot, so that it doesn't insert the middleware automatically, and remove the initializer.

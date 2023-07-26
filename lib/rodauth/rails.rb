@@ -16,9 +16,9 @@ module Rodauth
     @middleware = true
 
     class << self
-      def lib(**options, &block)
+      def lib(&block)
         c = Class.new(Rodauth::Rails::App)
-        c.configure do
+        c.configure(json: false) do
           enable :internal_request
           instance_exec(&block)
         end
