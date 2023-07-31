@@ -91,15 +91,15 @@ class RodauthTest < UnitTest
   end
 
   test "allows using as a library" do
-    rodauth = Rodauth::Rails.lib { enable :login }
-
     Account.create!(email: "user@example.com", password: "secret", status: "verified")
 
+    rodauth = Rodauth::Rails.lib(render: false) { enable :login }
     rodauth.login(login: "user@example.com", password: "secret")
-
     assert_raises Rodauth::InternalRequestError do
       rodauth.login(login: "unknown@example.com", password: "secret")
     end
+
+    refute_includes rodauth.roda_class.instance_methods, :render
   end
 
   test "allows skipping render plugin" do
