@@ -101,4 +101,11 @@ class RodauthTest < UnitTest
       rodauth.login(login: "unknown@example.com", password: "secret")
     end
   end
+
+  test "allows skipping render plugin" do
+    app = Class.new(Rodauth::Rails::App)
+    app.configure(render: false) {  }
+
+    refute_includes app.instance_methods, :render
+  end
 end

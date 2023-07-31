@@ -929,7 +929,7 @@ class RodauthApp < Rodauth::Rails::App
   configure(:admin) { ... }
 
   # plugin options
-  configure(RodauthMain, json: :only)
+  configure(RodauthMain, json: :only, render: false)
 end
 ```
 

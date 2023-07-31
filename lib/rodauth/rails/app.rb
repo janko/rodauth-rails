@@ -18,16 +18,17 @@ module Rodauth
       end
 
       plugin :hooks
-      plugin :render, layout: false
       plugin :pass
 
       def self.configure(*args, **options, &block)
         auth_class = args.shift if args[0].is_a?(Class)
-        name       = args.shift if args[0].is_a?(Symbol)
+        auth_class ||= Class.new(Rodauth::Rails::Auth)
+        name = args.shift if args[0].is_a?(Symbol)
 
         fail ArgumentError, "need to pass optional Rodauth::Auth subclass and optional configuration name" if args.any?
 
-        auth_class ||= Class.new(Rodauth::Rails::Auth)
+        # we'll render Rodauth's built-in view templates within Rails layouts
+        plugin :render, layout: false unless options[:render] == false
 
         plugin :rodauth, auth_class: auth_class, name: name, csrf: false, flash: false, json: true, **options, &block
 

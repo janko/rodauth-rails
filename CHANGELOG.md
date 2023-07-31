@@ -1,3 +1,7 @@
+## HEAD
+
+* Support skipping loading Roda `render` plugin by passing `render: false` (@janko)
+
 ## 1.10.0 (2023-07-26)
 
 * Add `Rodauth::Rails.lib` for easier usage of Rodauth as a library in Rails apps (@janko)
