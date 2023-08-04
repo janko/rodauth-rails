@@ -50,33 +50,37 @@ class RodauthTest < UnitTest
     Rails.env = "test"
   end
 
-  test "builds authenticated constraint" do
-    Account.create!(email: "user@example.com", password: "secret")
+  test "builds authenticate constraint" do
+    account = Account.create!(email: "user@example.com", password: "secret", status: "verified")
 
     rodauth = Rodauth::Rails.rodauth
     rodauth.scope.env["rodauth"] = rodauth
+    request = rodauth.request
 
-    error = assert_raises(Rodauth::InternalRequestError) { Rodauth::Rails.authenticated.call(rodauth.request) }
+    error = assert_raises(Rodauth::InternalRequestError) { Rodauth::Rails.authenticate.call(request) }
     assert_equal :login_required, error.reason
 
     rodauth.account_from_login("user@example.com")
     rodauth.login_session("password")
-    assert_equal true, Rodauth::Rails.authenticated.call(rodauth.request)
+    assert_equal true, Rodauth::Rails.authenticate.call(request)
 
     rodauth.add_recovery_code
     rodauth.session.delete(:two_factor_auth_setup)
-    error = assert_raises(Rodauth::InternalRequestError) { Rodauth::Rails.authenticated.call(rodauth.request) }
+    error = assert_raises(Rodauth::InternalRequestError) { Rodauth::Rails.authenticate.call(request) }
     assert_equal :two_factor_need_authentication, error.reason
 
     rodauth.send(:two_factor_update_session, "recovery_codes")
-    assert_equal true, Rodauth::Rails.authenticated.call(rodauth.request)
+    assert_equal true, Rodauth::Rails.authenticate.call(request)
 
-    constraint = Rodauth::Rails.authenticated { |rodauth| rodauth.authenticated_by.include?("otp") }
-    assert_equal false, constraint.call(rodauth.request)
+    constraint = Rodauth::Rails.authenticate { |rodauth| rodauth.authenticated_by.include?("otp") }
+    assert_equal false, constraint.call(request)
 
     rodauth.scope.env["rodauth.admin"] = rodauth.scope.env.delete("rodauth")
-    constraint = Rodauth::Rails.authenticated(:admin)
-    assert_equal true, constraint.call(rodauth.request)
+    assert_equal true, Rodauth::Rails.authenticate(:admin).call(request)
+
+    capture_io { account.destroy } # silence composite primary key warnings
+    error = assert_raises(Rodauth::InternalRequestError) { Rodauth::Rails.authenticate(:admin).call(request) }
+    assert_equal :login_required, error.reason
   end
 
   test "returns current account if logged in" do

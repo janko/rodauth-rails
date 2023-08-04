@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     get :roda
   end
 
-  constraints Rodauth::Rails.authenticated do
+  constraints Rodauth::Rails.authenticate do
     get "/authenticated" => "test#root"
   end
 end

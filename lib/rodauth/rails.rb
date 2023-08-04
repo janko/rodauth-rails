@@ -57,8 +57,17 @@ module Rodauth
         Rodauth::Model.new(app.rodauth!(name), **options)
       end
 
-      # routing constraint that requires authentication
+      # Routing constraint that requires authenticated account.
+      def authenticate(name = nil, &condition)
+        lambda do |request|
+          rodauth = request.env.fetch ["rodauth", *name].join(".")
+          rodauth.require_account
+          condition.nil? || condition.call(rodauth)
+        end
+      end
+
       def authenticated(name = nil, &condition)
+        warn "Rodauth::Rails.authenticated has been deprecated in favor of Rodauth::Rails.authenticate, which additionally requires existence of the account record."
         lambda do |request|
           rodauth = request.env.fetch ["rodauth", *name].join(".")
           rodauth.require_authentication

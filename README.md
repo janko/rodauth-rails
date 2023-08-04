@@ -236,7 +236,7 @@ level. You can do this via the built-in `authenticated` routing constraint:
 ```rb
 # config/routes.rb
 Rails.application.routes.draw do
-  constraints Rodauth::Rails.authenticated do
+  constraints Rodauth::Rails.authenticate do
     # ... authenticated routes ...
   end
 end
@@ -249,7 +249,7 @@ called with the Rodauth instance:
 # config/routes.rb
 Rails.application.routes.draw do
   # require multifactor authentication to be setup
-  constraints Rodauth::Rails.authenticated { |rodauth| rodauth.uses_two_factor_authentication? } do
+  constraints Rodauth::Rails.authenticate { |rodauth| rodauth.uses_two_factor_authentication? } do
     # ...
   end
 end
@@ -260,7 +260,7 @@ You can specify a different Rodauth configuration by passing the configuration n
 ```rb
 # config/routes.rb
 Rails.application.routes.draw do
-  constraints Rodauth::Rails.authenticated(:admin) do
+  constraints Rodauth::Rails.authenticate(:admin) do
     # ...
   end
 end
