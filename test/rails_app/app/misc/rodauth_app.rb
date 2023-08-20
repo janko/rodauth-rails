@@ -12,7 +12,7 @@ class RodauthApp < Rodauth::Rails::App
   end
 
   configure(:json) do
-    enable :json, :create_account, :verify_account
+    enable :json, :create_account, :verify_account, :two_factor_base
     rails_controller { ActionController::API }
     only_json? true
     prefix "/json"

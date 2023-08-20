@@ -134,18 +134,18 @@ $ rails rodauth:routes
 ```
 Routes handled by RodauthApp:
 
-  GET/POST  /login                   rodauth.login_path
-  GET/POST  /create-account          rodauth.create_account_path
-  GET/POST  /verify-account-resend   rodauth.verify_account_resend_path
-  GET/POST  /verify-account          rodauth.verify_account_path
-  GET/POST  /change-password         rodauth.change_password_path
-  GET/POST  /change-login            rodauth.change_login_path
-  GET/POST  /logout                  rodauth.logout_path
-  GET/POST  /remember                rodauth.remember_path
-  GET/POST  /reset-password-request  rodauth.reset_password_request_path
-  GET/POST  /reset-password          rodauth.reset_password_path
-  GET/POST  /verify-login-change     rodauth.verify_login_change_path
-  GET/POST  /close-account           rodauth.close_account_path
+  GET|POST  /login                   rodauth.login_path
+  GET|POST  /create-account          rodauth.create_account_path
+  GET|POST  /verify-account-resend   rodauth.verify_account_resend_path
+  GET|POST  /verify-account          rodauth.verify_account_path
+  GET|POST  /change-password         rodauth.change_password_path
+  GET|POST  /change-login            rodauth.change_login_path
+  GET|POST  /logout                  rodauth.logout_path
+  GET|POST  /remember                rodauth.remember_path
+  GET|POST  /reset-password-request  rodauth.reset_password_request_path
+  GET|POST  /reset-password          rodauth.reset_password_path
+  GET|POST  /verify-login-change     rodauth.verify_login_change_path
+  GET|POST  /close-account           rodauth.close_account_path
 ```
 
 Using this information, you can add some basic authentication links to your
