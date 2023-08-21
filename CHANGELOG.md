@@ -1,4 +1,4 @@
-## HEAD
+## 1.11.0 (2023-08-21)
 
 * Exclude WebAuthn JS routes in `rodauth:routes`, since those stop being relevant with custom JS (@janko)
 
@@ -7,6 +7,8 @@
 * Include two factor manage & auth JSON POST routes in `rodauth:routes` task (@janko)
 
 * Make `rodauth:routes` rake task appear in `rails -T` list (@janko)
+
+* Accept plugin options in `Rodauth::Rails.lib` (@janko)
 
 * Support skipping loading Roda `render` plugin by passing `render: false` (@janko)
 
