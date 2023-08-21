@@ -8,7 +8,7 @@ class RakeTest < ActiveSupport::TestCase
       Rake::Task["rodauth:routes"].invoke
     end
 
-    assert_equal <<~EOS, stdout
+    expected_output = <<~EOS
       Routes handled by RodauthApp:
 
         GET|POST  /login                   rodauth.login_path
@@ -52,5 +52,11 @@ class RakeTest < ActiveSupport::TestCase
         POST  /json/multifactor-auth       rodauth(:json).two_factor_auth_path
         POST  /json/multifactor-disable    rodauth(:json).two_factor_disable_path
     EOS
+
+    if RUBY_ENGINE == "jruby"
+      expected_output.gsub!(/^.+webauthn.+$\n/, "")
+    end
+
+    assert_equal expected_output, stdout
   end
 end
