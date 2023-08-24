@@ -15,6 +15,7 @@ Provides Rails integration for the [Rodauth] authentication framework.
 
 * [Rails Authentication with Rodauth](https://www.youtube.com/watch?v=2hDpNikacf0)
 * [Multifactor Authentication with Rodauth](https://www.youtube.com/watch?v=9ON-kgXpz2A&list=PLkGQXZLACDTGKsaRWstkHQdm2CUmT3SZ-) ([TOTP](https://youtu.be/9ON-kgXpz2A), [Recovery Codes](https://youtu.be/lkFCcE1Q5-w))
+* [Add Admin Accounts](https://www.youtube.com/watch?v=N6z7AtKSpNI)
 
 📚 Articles:
 
