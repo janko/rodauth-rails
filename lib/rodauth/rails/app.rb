@@ -54,6 +54,10 @@ module Rodauth
         ::Rails.application.routes.url_helpers
       end
 
+      def rails_cookies
+        rails_request.cookie_jar
+      end
+
       def rails_request
         ActionDispatch::Request.new(env)
       end

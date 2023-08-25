@@ -332,6 +332,23 @@ class RodauthMain < Rodauth::Rails::Auth
 end
 ```
 
+### Rails request
+
+The `#request` method will return a Roda request object, for an `ActionDispath::Request` object use `#rails_request`:
+
+```rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    after_reset_password do
+      if rails_request.format.turbo_stream?
+        rails_render(turbo_stream: [...])
+      end
+    end
+  end
+end
+```
+
+Cookie jar can be retrieved using `#rails_cookies`, which is just a shorthand for `rails_request.cookie_jar`.
 ## Views
 
 The templates built into Rodauth are useful when getting started, but soon

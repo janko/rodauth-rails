@@ -47,7 +47,7 @@ module Rodauth
           raise Error, "cannot infer account model, please set `rails_account_model` in your rodauth configuration"
         end
 
-        delegate :rails_routes, :rails_request, to: :scope
+        delegate :rails_routes, :rails_cookies, :rails_request, to: :scope
 
         private
 

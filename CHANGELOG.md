@@ -1,3 +1,7 @@
+## HEAD
+
+* Add `#rails_cookies` method for accessing the Action Dispatch cookie jar (@janko)
+
 ## 1.11.0 (2023-08-21)
 
 * Exclude WebAuthn JS routes in `rodauth:routes`, since those stop being relevant with custom JS (@janko)
