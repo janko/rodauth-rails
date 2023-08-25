@@ -30,7 +30,6 @@ module Rodauth
             recovery_codes: { recovery_codes_table: "%{singular}_recovery_codes" },
             webauthn: { webauthn_keys_table: "%{singular}_webauthn_keys", webauthn_user_ids_table: "%{singular}_webauthn_user_ids", webauthn_keys_account_id_column: "%{singular}_id" },
             lockout: { account_login_failures_table: "%{singular}_login_failures", account_lockouts_table: "%{singular}_lockouts" },
-            unlock_account: { migrations: false },
             active_sessions: { active_sessions_table: "%{singular}_active_session_keys", active_sessions_account_id_column: "%{singular}_id" },
             account_expiration: { account_activity_table: "%{singular}_activity_times" },
             password_expiration: { password_expiration_table: "%{singular}_password_change_times" },

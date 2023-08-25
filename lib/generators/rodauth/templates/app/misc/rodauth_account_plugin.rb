@@ -113,7 +113,7 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
       Rodauth<%= table_prefix.classify %>Mailer.email_auth(self.class.configuration_name, account_id, email_auth_key_value)
     end
 <% end -%>
-<% if unlock_account? -%>
+<% if lockout? -%>
 
     create_unlock_account_email do
       Rodauth<%= table_prefix.classify %>Mailer.unlock_account(self.class.configuration_name, account_id, unlock_account_key_value)
