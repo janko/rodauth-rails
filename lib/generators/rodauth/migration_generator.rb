@@ -2,22 +2,27 @@ require "rails/generators/base"
 require "rails/generators/active_record/migration"
 require "erb"
 
+require "#{__dir__}/concerns/configuration"
+require "#{__dir__}/concerns/accepts_table"
+
 module Rodauth
   module Rails
     module Generators
       class MigrationGenerator < ::Rails::Generators::Base
+        include Concerns::Configuration
+        include Concerns::AcceptsTable
+
         source_root "#{__dir__}/templates"
         namespace "rodauth:migration"
 
-        argument :features, optional: true, type: :array,
+        desc "Generate migrations for specific features.\n\n" \
+             "Available features:\n" \
+             "=========================================\n" \
+             "#{CONFIGURATION.select{ |k, v| v[:migrations] != false }.keys.sort.map(&:to_s).join "\n"}"
+
+        class_option :features, optional: true, type: :array,
           desc: "Rodauth features to create tables for (otp, sms_codes, single_session, account_expiration etc.)",
           default: %w[]
-
-        class_option :prefix, optional: true, type: :string,
-          desc: "Change prefix for generated tables (default: account)"
-
-        class_option :name, optional: true, type: :string,
-          desc: "Name of the generated migration file"
 
         def create_rodauth_migration
           validate_features or return
@@ -25,24 +30,33 @@ module Rodauth
           migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "#{migration_name}.rb")
         end
 
-        def show_instructions
-          # skip if called from install generator, it already adds configuration
-          return if current_command_chain.include?(:generate_rodauth_migration)
-          return unless options[:prefix] && behavior == :invoke
+        def configure_rodauth_account
+          gsub_file "app/misc/rodauth_#{table_prefix}_plugin.rb", /.*# accounts_table.*\n/, '' if features.include? 'base'
 
-          configuration = CONFIGURATION.values_at(*features.map(&:to_sym))
-            .flat_map(&:to_a)
-            .map { |config, format| "#{config} :#{format % { plural: table_prefix.pluralize, singular: table_prefix }}" }
-            .join("\n")
-            .indent(2)
-
-          say "\nAdd the following to your Rodauth configuration:\n\n#{configuration}"
+          migration_overrides.reverse_each do |key, value|
+            override = indent "#{key}: '#{value}'\n", 4
+            insert_into_file "app/misc/rodauth_#{table_prefix}_plugin.rb", override,
+              after: /.*# Change prefix of table and.*\n/
+          end
         end
 
         private
 
         def migration_name
-          options[:name] || ["create_rodauth", *options[:prefix], *features].join("_")
+          options[:migration_name] || ["create_rodauth", table_prefix, *features].join("_")
+        end
+
+        def features
+          options[:features]
+        end
+
+        def migration_overrides
+          @migration_overrides ||= self.class::CONFIGURATION.values_at(*features.map(&:to_sym))
+            .flat_map(&:to_a)
+            .filter { |config, format| config.ends_with? "_table"  }
+            .map { |config, format| [config, (format % { plural: table_prefix.pluralize, singular: table_prefix })] }
+            .to_h
+            .compact
         end
 
         def migration_content
@@ -80,31 +94,6 @@ module Rodauth
         def valid_features
           Dir["#{MIGRATION_DIR}/*.erb"].map { |filename| File.basename(filename, ".erb") }
         end
-
-        def table_prefix
-          options[:prefix]&.singularize || "account"
-        end
-
-        CONFIGURATION = {
-          base: { accounts_table: "%{plural}" },
-          remember: { remember_table: "%{singular}_remember_keys" },
-          verify_account: { verify_account_table: "%{singular}_verification_keys" },
-          verify_login_change: { verify_login_change_table: "%{singular}_login_change_keys" },
-          reset_password: { reset_password_table: "%{singular}_password_reset_keys" },
-          email_auth: { email_auth_table: "%{singular}_email_auth_keys" },
-          otp: { otp_keys_table: "%{singular}_otp_keys" },
-          sms_codes: { sms_codes_table: "%{singular}_sms_codes" },
-          recovery_codes: { recovery_codes_table: "%{singular}_recovery_codes" },
-          webauthn: { webauthn_keys_table: "%{singular}_webauthn_keys", webauthn_user_ids_table: "%{singular}_webauthn_user_ids", webauthn_keys_account_id_column: "%{singular}_id" },
-          lockout: { account_login_failures_table: "%{singular}_login_failures", account_lockouts_table: "%{singular}_lockouts" },
-          active_sessions: { active_sessions_table: "%{singular}_active_session_keys", active_sessions_account_id_column: "%{singular}_id" },
-          account_expiration: { account_activity_table: "%{singular}_activity_times" },
-          password_expiration: { password_expiration_table: "%{singular}_password_change_times" },
-          single_session: { single_session_table: "%{singular}_session_keys" },
-          audit_logging: { audit_logging_table: "%{singular}_authentication_audit_logs", audit_logging_account_id_column: "%{singular}_id" },
-          disallow_password_reuse: { previous_password_hash_table: "%{singular}_previous_password_hashes", previous_password_account_id_column: "%{singular}_id" },
-          jwt_refresh: { jwt_refresh_token_table: "%{singular}_jwt_refresh_keys", jwt_refresh_token_account_id_column: "%{singular}_id" },
-        }
 
         if defined?(::ActiveRecord::Railtie) # Active Record
           include ::ActiveRecord::Generators::Migration

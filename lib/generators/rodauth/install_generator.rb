@@ -1,117 +1,72 @@
-require "rails/generators/base"
-require "securerandom"
+require 'rails/generators/base'
+require 'securerandom'
+
+require "#{__dir__}/concerns/accepts_table"
+require "#{__dir__}/concerns/feature_options"
 
 module Rodauth
   module Rails
     module Generators
       class InstallGenerator < ::Rails::Generators::Base
+        include Concerns::AcceptsTable
+
         SEQUEL_ADAPTERS = {
-          "postgresql"      => RUBY_ENGINE == "jruby" ? "postgresql" : "postgres",
-          "mysql2"          => RUBY_ENGINE == "jruby" ? "mysql" : "mysql2",
-          "sqlite3"         => "sqlite",
-          "oracle_enhanced" => "oracle",
-          "sqlserver"       => RUBY_ENGINE == "jruby" ? "mssql" : "tinytds",
+          'postgresql' => RUBY_ENGINE == 'jruby' ? 'postgresql' : 'postgres',
+          'mysql2' => RUBY_ENGINE == 'jruby' ? 'mysql' : 'mysql2',
+          'sqlite3' => 'sqlite',
+          'oracle_enhanced' => 'oracle',
+          'sqlserver' => RUBY_ENGINE == 'jruby' ? 'mssql' : 'tinytds'
         }
 
-        MAILER_VIEWS = %w[
-          email_auth
-          password_changed
-          reset_password
-          unlock_account
-          verify_account
-          verify_login_change
-        ]
-
         source_root "#{__dir__}/templates"
-        namespace "rodauth:install"
+        namespace 'rodauth:install'
 
-        argument :table, optional: true, type: :string, desc: "Name of the accounts table"
-
-        class_option :prefix, type: :string, desc: "Change name for account tables"
-        class_option :argon2, type: :boolean, desc: "Use Argon2 for password hashing"
-        class_option :json, type: :boolean, desc: "Configure JSON support"
-        class_option :jwt, type: :boolean, desc: "Configure JWT support"
-
-        def generate_rodauth_migration
-          invoke "rodauth:migration", migration_features,
-            name: "create_rodauth",
-            prefix: table_prefix
-        end
+        class_option :account, type: :boolean, default: true, desc: '[CONFIG] create an account'
+        # Include here to keep the account option above the feature options
+        include Concerns::FeatureOptions
 
         def create_rodauth_initializer
-          template "config/initializers/rodauth.rb"
+          template 'config/initializers/rodauth.rb'
         end
 
         def create_rodauth_app
-          template "app/misc/rodauth_app.rb"
-          template "app/misc/rodauth_main.rb"
+          template 'app/misc/rodauth_app.rb'
+          template 'app/misc/rodauth_base_plugin.rb'
         end
 
-        def create_rodauth_controller
-          template "app/controllers/rodauth_controller.rb"
-        end
+        def generate_rodauth_account
+          return unless options[:account]
 
-        def create_account_model
-          template "app/models/account.rb", "app/models/#{table_prefix}.rb"
+          invoke "rodauth:account", [table], **invoke_options,
+                                             migration_name: options[:migration_name]
         end
 
         def create_mailer
-          return unless defined?(ActionMailer)
+          return unless mails?
 
-          template "app/mailers/rodauth_mailer.rb"
-
-          MAILER_VIEWS.each do |view|
-            copy_file "app/views/rodauth_mailer/#{view}.text.erb"
-          end
+          copy_file 'app/mailers/rodauth_mailer.rb'
+          directory 'app/views/rodauth_mailer'
         end
 
-        def create_fixtures
-          generator_options = ::Rails.application.config.generators.options
-          if generator_options[:test_unit][:fixture] && generator_options[:test_unit][:fixture_replacement].nil?
-            test_dir = generator_options[:rails][:test_framework] == :rspec ? "spec" : "test"
-            template "test/fixtures/accounts.yml", "#{test_dir}/fixtures/#{table_prefix.pluralize}.yml"
-          end
+        def add_dev_config
+          insert_into_file 'config/environments/development.rb',
+                           "\n  config.action_mailer.default_url_options = { host: '127.0.0.1', port: ENV.fetch('PORT', 3000) }\n",
+                           before: /^end/
         end
 
         def show_instructions
-          readme "INSTRUCTIONS" if behavior == :invoke
+          readme 'INSTRUCTIONS' if behavior == :invoke
         end
 
         private
 
-        def migration_features
-          features = ["base", "reset_password", "verify_account", "verify_login_change"]
-          features << "remember" unless jwt?
-          features
-        end
-
-        def table_prefix
-          table&.underscore&.singularize || "account"
-        end
-
-        def json?
-          options[:json] || api_only? && session_store? && !options[:jwt]
-        end
-
-        def jwt?
-          options[:jwt] || api_only? && !session_store? && !options[:json]
-        end
-
-        def argon2?
-          options[:argon2]
+        def primary?
+          options[:primary] != false
         end
 
         def sequel_activerecord_integration?
           defined?(ActiveRecord::Railtie) &&
             (!defined?(Sequel) || Sequel::DATABASES.empty?)
-        end
-
-        def session_store?
-          !!::Rails.application.config.session_store
-        end
-
-        def api_only?
-          ::Rails.application.config.api_only
         end
 
         def sequel_adapter

@@ -1,16 +1,16 @@
 class RodauthApp < Rodauth::Rails::App
-  # primary configuration
-  configure RodauthMain
-
-  # secondary configuration
-  # configure RodauthAdmin, :admin
+  # auth configuration
+  # configure RodauthMain
 
   route do |r|
-<% unless jwt? -%>
-    rodauth.load_memory # autologin remembered users
+    # this block is running inside of a roda route
+    # see https://github.com/jeremyevans/roda#usage-
 
-<% end -%>
-    r.rodauth # route rodauth requests
+    # auth route configuration
+    # r.rodauth
+
+    # plugin route configuration
+    # rodauth.load_memory # autologin remembered users
 
     # ==> Authenticating requests
     # Call `rodauth.require_account` for requests that you want to
@@ -20,8 +20,5 @@ class RodauthApp < Rodauth::Rails::App
     # if r.path.start_with?("/dashboard") || r.path.start_with?("/account")
     #   rodauth.require_account
     # end
-
-    # ==> Secondary configurations
-    # r.rodauth(:admin) # route admin rodauth requests
   end
 end
