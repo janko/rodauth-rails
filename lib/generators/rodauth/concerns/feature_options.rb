@@ -1,4 +1,5 @@
 require "#{__dir__}/configuration"
+require "#{__dir__}/../views_generator"
 
 module Rodauth
   module Rails
@@ -54,7 +55,11 @@ module Rodauth
           end
 
           def migration_features
-            enabled_features.select{ |p| self.class::CONFIGURATION[p][:migrations] != false }.map(&:to_s)
+            enabled_features.select{ |feature| self.class::CONFIGURATION[feature][:migrations] != false }.map(&:to_s)
+          end
+
+          def view_features
+            enabled_features.select{ |feature| ViewsGenerator::VIEWS[feature] }.map(&:to_s)
           end
 
           def primary?
