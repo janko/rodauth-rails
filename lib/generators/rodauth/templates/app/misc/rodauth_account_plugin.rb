@@ -28,6 +28,11 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
 
     # Specify the controller used for view rendering, CSRF, and callbacks.
     rails_controller { <%= "#{table_prefix.classify}::" unless primary? %>RodauthController }
+<% if verify_account? -%>
+
+    # Set password when creating account instead of when verifying.
+    verify_account_set_password? false
+<% end -%>
 
     # Change some default param keys.
     # login_param "email"
@@ -65,7 +70,8 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
 <% else -%>
 
     # Accept both api and form requests
-    only_json? false
+    # Requires the JSON feature
+    <%= '# ' unless json? %>only_json? false
 <% end -%>
 <% if mails? -%>
 
@@ -142,6 +148,9 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
     # login_does_not_meet_requirements_message { "invalid email#{", #{login_requirement_message}" if login_requirement_message}" }
 
     # ==> Passwords
+
+    # Passwords shorter than 8 characters are considered weak according to OWASP.
+    <%= '# ' unless login? %>password_minimum_length 8
 
     # Custom password complexity requirements (alternative to password_complexity feature).
     # password_meets_requirements? do |password|

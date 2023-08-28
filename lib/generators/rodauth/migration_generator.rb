@@ -36,7 +36,7 @@ module Rodauth
           end
 
           migration_overrides.reverse_each do |key, value|
-            override = indent "#{key}: '#{value}'\n", 4
+            override = indent "#{key} :#{value}\n", 4
             insert_into_file "app/misc/rodauth_#{table_prefix}_plugin.rb", override,
               after: /.*# Change prefix of table and.*\n/
           end

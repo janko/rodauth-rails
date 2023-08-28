@@ -50,7 +50,7 @@ class RodauthPlugin < Rodauth::Rails::Auth
     account_password_hash_column :password_hash
 
     # Set password when creating account instead of when verifying.
-    verify_account_set_password? false
+    # verify_account_set_password? false
 
     # Change some default param keys.
     login_param "email"
@@ -77,6 +77,7 @@ class RodauthPlugin < Rodauth::Rails::Auth
     # ==> Api only
 
     # Accept only JSON requests.
+    # Requires the JSON feature
     # only_json? true
 
     # Handle login and password confirmation fields on the client side.
@@ -149,7 +150,7 @@ class RodauthPlugin < Rodauth::Rails::Auth
     # ==> Passwords
 
     # Passwords shorter than 8 characters are considered weak according to OWASP.
-    password_minimum_length 8
+    # password_minimum_length 8
 
     # Custom password complexity requirements (alternative to password_complexity feature).
     # password_meets_requirements? do |password|
