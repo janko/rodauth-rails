@@ -44,9 +44,16 @@ module Rodauth
         end
 
         def create_account_model
-          return unless base?
+          return unless create_account?
 
           template "app/models/account.rb", "app/models/#{table_prefix}.rb"
+        end
+
+        def create_mailer
+          return unless mails?
+
+          template 'app/mailers/rodauth_mailer.rb', "app/mailers/rodauth_#{table_prefix}_mailer.rb"
+          directory 'app/views/rodauth_mailer', "app/views/rodauth_#{table_prefix}_mailer"
         end
 
         def create_fixtures

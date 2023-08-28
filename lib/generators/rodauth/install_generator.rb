@@ -41,13 +41,6 @@ module Rodauth
                                              migration_name: options[:migration_name]
         end
 
-        def create_mailer
-          return unless mails?
-
-          copy_file 'app/mailers/rodauth_mailer.rb'
-          directory 'app/views/rodauth_mailer'
-        end
-
         def add_dev_config
           insert_into_file 'config/environments/development.rb',
                            "\n  config.action_mailer.default_url_options = { host: '127.0.0.1', port: ENV.fetch('PORT', 3000) }\n",

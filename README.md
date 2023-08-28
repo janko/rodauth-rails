@@ -459,7 +459,7 @@ class RodauthMailer < ApplicationMailer
   def verify_account(account_id, key) ... end
   def reset_password(account_id, key) ... end
   def verify_login_change(account_id, key) ... end
-  def password_changed(account_id) ... end
+  def change_password_notify(account_id) ... end
   # def email_auth(account_id, key) ... end
   # def unlock_account(account_id, key) ... end
 end
@@ -471,7 +471,7 @@ class RodauthMain < Rodauth::Rails::Auth
     create_reset_password_email { RodauthMailer.reset_password(account_id, reset_password_key_value) }
     create_verify_account_email { RodauthMailer.verify_account(account_id, verify_account_key_value) }
     create_verify_login_change_email { |_login| RodauthMailer.verify_login_change(account_id, verify_login_change_key_value) }
-    create_password_changed_email { RodauthMailer.password_changed(account_id) }
+    create_password_changed_email { RodauthMailer.change_password_notify(account_id) }
     # create_email_auth_email { RodauthMailer.email_auth(account_id, email_auth_key_value) }
     # create_unlock_account_email { RodauthMailer.unlock_account(account_id, unlock_account_key_value) }
     send_email do |email|

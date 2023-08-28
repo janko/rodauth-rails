@@ -31,7 +31,9 @@ module Rodauth
         end
 
         def configure_rodauth_account
-          gsub_file "app/misc/rodauth_#{table_prefix}_plugin.rb", /.*# accounts_table.*\n/, '' if features.include? 'base'
+          if features.include? 'create_account'
+            gsub_file "app/misc/rodauth_#{table_prefix}_plugin.rb", /.*# accounts_table.*\n/, ''
+          end
 
           migration_overrides.reverse_each do |key, value|
             override = indent "#{key}: '#{value}'\n", 4

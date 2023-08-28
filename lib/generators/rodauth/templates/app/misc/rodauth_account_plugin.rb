@@ -71,28 +71,49 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
 
     # ==> Emails
     # Use a custom mailer for delivering authentication emails.
+<% if reset_password? -%>
 
-    # create_reset_password_email do
-    #   RodauthMailer.reset_password(self.class.configuration_name, account_id, reset_password_key_value)
-    # end
-    # create_verify_account_email do
-    #   RodauthMailer.verify_account(self.class.configuration_name, account_id, verify_account_key_value)
-    # end
-    # create_verify_login_change_email do |_login|
-    #   RodauthMailer.verify_login_change(self.class.configuration_name, account_id, verify_login_change_key_value)
-    # end
-    # create_password_changed_email do
-    #   RodauthMailer.password_changed(self.class.configuration_name, account_id)
-    # end
-    # create_reset_password_notify_email do
-    #   RodauthMailer.reset_password_notify(self.class.configuration_name, account_id)
-    # end
-    # create_email_auth_email do
-    #   RodauthMailer.email_auth(self.class.configuration_name, account_id, email_auth_key_value)
-    # end
-    # create_unlock_account_email do
-    #   RodauthMailer.unlock_account(self.class.configuration_name, account_id, unlock_account_key_value)
-    # end
+    create_reset_password_email do
+      Rodauth<%= table_prefix.classify %>Mailer.reset_password(self.class.configuration_name, account_id, reset_password_key_value)
+    end
+<% end -%>
+<% if verify_account? -%>
+
+    create_verify_account_email do
+      Rodauth<%= table_prefix.classify %>Mailer.verify_account(self.class.configuration_name, account_id, verify_account_key_value)
+    end
+<% end -%>
+<% if verify_login_change? -%>
+
+    create_verify_login_change_email do |_login|
+      Rodauth<%= table_prefix.classify %>Mailer.verify_login_change(self.class.configuration_name, account_id, verify_login_change_key_value)
+    end
+<% end -%>
+<% if change_password_notify? -%>
+
+    create_password_changed_email do
+      Rodauth<%= table_prefix.classify %>Mailer.change_password_notify(self.class.configuration_name, account_id)
+    end
+<% end -%>
+<% if reset_password_notify? -%>
+
+    create_reset_password_notify_email do
+      Rodauth<%= table_prefix.classify %>Mailer.reset_password_notify(self.class.configuration_name, account_id)
+    end
+<% end -%>
+<% if email_auth? -%>
+
+    create_email_auth_email do
+      Rodauth<%= table_prefix.classify %>Mailer.email_auth(self.class.configuration_name, account_id, email_auth_key_value)
+    end
+<% end -%>
+<% if unlock_account? -%>
+
+    create_unlock_account_email do
+      Rodauth<%= table_prefix.classify %>Mailer.unlock_account(self.class.configuration_name, account_id, unlock_account_key_value)
+    end
+<% end -%>
+
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits
       db.after_commit { email.deliver_later }
