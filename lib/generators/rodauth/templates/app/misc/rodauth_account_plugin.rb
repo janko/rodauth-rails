@@ -12,7 +12,7 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
     # http://rodauth.jeremyevans.net/documentation.html
 
     # List of authentication features that are loaded.
-    enable <%= enabled_plugins.map(&:inspect).join ', ' %>
+    enable <%= enabled_features.map(&:inspect).join ', ' %>
 
     # ==> General
 

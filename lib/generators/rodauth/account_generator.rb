@@ -78,7 +78,12 @@ module Rodauth
         def create_views
           return if only_json?
 
-          invoke 'rodauth:views', [table], features: view_features
+          account_name = primary? ? nil : table_prefix
+          # Use generate here because invoke spawns in the same process
+          # Unfortunately, during the generation process, some new files are created which are not currently loaded,
+          #   causing an error.
+          # Generate spawns a separate process which loads the new files and works right
+          generate 'rodauth:views', account_name, "--features", *view_features
         end
 
         def create_fixtures

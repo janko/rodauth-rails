@@ -1,12 +1,19 @@
 require "rails/generators/base"
 
+require "#{__dir__}/concerns/configuration"
 require "#{__dir__}/concerns/accepts_table"
 
 module Rodauth
   module Rails
     module Generators
       class ViewsGenerator < ::Rails::Generators::Base
+        include Concerns::Configuration
         include Concerns::AcceptsTable
+
+        desc "Generate views for specific features.\n\n" \
+             "Features supporting views:\n" \
+             "=========================================\n" \
+             "#{VIEW_CONFIG.keys.sort.map(&:to_s).join "\n"}"
 
         source_root "#{__dir__}/templates"
         namespace "rodauth:views"
@@ -21,27 +28,6 @@ module Rodauth
         class_option :css, type: :string, enum: %w[bootstrap tailwind tailwindcss],
           desc: "CSS framework to generate views for",
           default: "bootstrap"
-
-        VIEWS = {
-          login:               %w[_login_form _login_form_footer login multi_phase_login],
-          create_account:      %w[create_account],
-          logout:              %w[logout],
-          reset_password:      %w[reset_password_request reset_password],
-          remember:            %w[remember],
-          change_login:        %w[change_login],
-          change_password:     %w[change_password],
-          close_account:       %w[close_account],
-          email_auth:          %w[_email_auth_request_form email_auth],
-          verify_account:      %w[verify_account_resend verify_account],
-          verify_login_change: %w[verify_login_change],
-          lockout:             %w[unlock_account_request unlock_account],
-          two_factor_base:     %w[two_factor_manage two_factor_auth two_factor_disable],
-          otp:                 %w[otp_setup otp_auth otp_disable],
-          sms_codes:           %w[sms_setup sms_confirm sms_auth sms_request sms_disable],
-          recovery_codes:      %w[recovery_codes add_recovery_codes recovery_auth],
-          webauthn:            %w[webauthn_setup webauthn_auth webauthn_remove],
-          webauthn_autofill:   %w[webauthn_autofill],
-        }
 
         def create_views
           validate_features
@@ -63,23 +49,23 @@ module Rodauth
         end
 
         def views
-          selected_features.flat_map { |feature| VIEWS.fetch(feature) }
+          selected_features.flat_map { |feature| view_config.fetch(feature) }
         end
 
         def validate_features
-          if (selected_features - VIEWS.keys).any?
-            say "No available view template for feature(s): #{(features - VIEWS.keys).join(", ")}", :red
+          if (selected_features - view_config.keys).any?
+            say "No available view template for feature(s): #{(features - view_config.keys).join(", ")}", :red
             exit(1)
           end
         end
 
         def selected_features
           if options[:all]
-            VIEWS.keys
+            view_config.keys
           elsif features
             features.map(&:to_sym)
           else
-            rodauth_configuration.features & VIEWS.keys
+            rodauth_configuration.features & view_config.keys
           end
         end
 
@@ -100,7 +86,7 @@ module Rodauth
         end
 
         def configuration_name
-          table_prefix.to_sym
+          table_prefix.to_sym if name
         end
 
         # We need to use the *_tag helpers on versions lower than Rails 5.1.

@@ -14,7 +14,7 @@ module Rodauth
             base.send :class_option, :mails, type: :boolean, default: true, desc: '[CONFIG] setup mails'
             base.send :class_option, :api_only, type: :boolean, default: false, desc: '[CONFIG] only'
 
-            base::CONFIGURATION.sort.each do |plugin, opts|
+            base::PLUGIN_CONFIG.sort.each do |plugin, opts|
               plugin = plugin.to_sym
               base.send :class_option, plugin, type: :boolean, default: opts[:default],
                                                desc: opts[:desc] || "[PLUGIN] #{plugin}"
@@ -34,7 +34,7 @@ module Rodauth
 
           def invoke_options
             extra_options = %i[primary argon2 mails kitchen_sink]
-            valid_options = self.class::CONFIGURATION.keys.map(&:to_sym).concat extra_options
+            valid_options = plugin_config.keys.map(&:to_sym).concat extra_options
 
             opts = valid_options.map {|opt| [opt, send("#{opt}?".to_sym)] }.to_h.compact
             %i[api_only force skip pretend quiet].each do |key|
@@ -47,19 +47,15 @@ module Rodauth
           end
 
           def enabled_features
-            @enabled_features ||= self.class::CONFIGURATION.keys.select { |feature| send("#{feature}?") }
-          end
-
-          def enabled_plugins
-            @enabled_plugins ||= enabled_features - %i[base]
+            plugin_config.keys.select { |feature| send("#{feature}?") }
           end
 
           def migration_features
-            enabled_features.select{ |feature| self.class::CONFIGURATION[feature][:migrations] != false }.map(&:to_s)
+            enabled_features.intersection(migration_config.keys).map(&:to_s)
           end
 
           def view_features
-            enabled_features.select{ |feature| ViewsGenerator::VIEWS[feature] }.map(&:to_s)
+            enabled_features.intersection(view_config.keys).map(&:to_s)
           end
 
           def primary?

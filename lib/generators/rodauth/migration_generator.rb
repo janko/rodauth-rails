@@ -16,9 +16,9 @@ module Rodauth
         namespace "rodauth:migration"
 
         desc "Generate migrations for specific features.\n\n" \
-             "Available features:\n" \
+             "Features supporting migrations:\n" \
              "=========================================\n" \
-             "#{CONFIGURATION.select{ |k, v| v[:migrations] != false }.keys.sort.map(&:to_s).join "\n"}"
+             "#{MIGRATION_CONFIG.keys.sort.map(&:to_s).join "\n"}"
 
         class_option :features, optional: true, type: :array,
           desc: "Rodauth features to create tables for (otp, sms_codes, single_session, account_expiration etc.)",
@@ -57,7 +57,7 @@ module Rodauth
         end
 
         def migration_overrides
-          @migration_overrides ||= self.class::CONFIGURATION.values_at(*features.map(&:to_sym))
+          @migration_overrides ||= plugin_config.values_at(*features.map(&:to_sym))
             .flat_map(&:to_a)
             .filter { |config, format| config.ends_with? "_table"  }
             .map { |config, format| [config, (format % { plural: table_prefix.pluralize, singular: table_prefix })] }
