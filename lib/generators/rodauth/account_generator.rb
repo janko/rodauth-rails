@@ -19,17 +19,23 @@ module Rodauth
         end
 
         def configure_rodauth_app
-          app_name = indent("configure Rodauth#{table_prefix.classify}Plugin#{", :#{table_prefix}" unless primary?}\n", 2)
+          plugin_name = indent("configure Rodauth#{table_prefix.classify}Plugin#{", :#{table_prefix}" unless primary?}\n", 2)
           gsub_file "app/misc/rodauth_app.rb", /.*# configure RodauthMain\n/, ''
-          insert_into_file "app/misc/rodauth_app.rb", app_name, after: "# auth configuration\n"
+          insert_into_file "app/misc/rodauth_app.rb", plugin_name, after: "# auth configuration\n"
 
-          route_name = indent("r.rodauth#{"(:#{table_prefix})" unless primary?}\n", 4)
+          route_config = indent("r.rodauth#{"(:#{table_prefix})" unless primary?}\n", 4)
           gsub_file "app/misc/rodauth_app.rb", /.*# r.rodauth\n/, ''
-          insert_into_file "app/misc/rodauth_app.rb", route_name, after: "# auth route configuration\n"
+          insert_into_file "app/misc/rodauth_app.rb", route_config, after: "# auth route configuration\n"
 
-          route_name = indent("rodauth#{"(:#{table_prefix})" unless primary?}.load_memory # autologin remembered #{table}\n", 4)
-          gsub_file "app/misc/rodauth_app.rb", /.*# rodauth.load_memory.*\n/, ''
-          insert_into_file "app/misc/rodauth_app.rb", route_name, after: "# plugin route configuration\n"
+          plugin_config = indent("rodauth#{"(:#{table_prefix})" unless primary?}.load_memory # autologin remembered #{table}\n", 4)
+          if remember?
+            gsub_file "app/misc/rodauth_app.rb", /.*# rodauth.load_memory.*\n/, ''
+            insert_into_file "app/misc/rodauth_app.rb", plugin_config, after: "# plugin route configuration\n"
+          else
+            gsub_file "app/misc/rodauth_app.rb", /.*#{plugin_config}.*\n/, ''
+            gsub_file "app/misc/rodauth_app.rb", /.*# rodauth.load_memory.*\n/, ''
+            insert_into_file "app/misc/rodauth_app.rb", indent("# rodauth.load_memory\n", 4), after: "# plugin route configuration\n"
+          end
         end
 
         def create_rodauth_controller
