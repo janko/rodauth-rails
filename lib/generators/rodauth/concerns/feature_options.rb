@@ -71,7 +71,7 @@ module Rodauth
           end
 
           def mails?
-            !!defined?(ActionMailer) || !options[:mails]
+            defined?(ActionMailer) && options[:mails]
           end
 
           def json?
