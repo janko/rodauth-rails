@@ -15,7 +15,7 @@ module Rodauth
         namespace "rodauth:account"
 
         def create_rodauth_app
-          template "app/misc/rodauth_plugin.rb", "app/misc/rodauth_#{table_prefix}_plugin.rb"
+          template "app/misc/rodauth_account_plugin.rb", "app/misc/rodauth_#{table_prefix}_plugin.rb"
         end
 
         def configure_rodauth_app

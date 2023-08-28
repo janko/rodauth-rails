@@ -31,7 +31,7 @@ module Rodauth
 
         def create_rodauth_app
           template 'app/misc/rodauth_app.rb'
-          template 'app/misc/rodauth_base_plugin.rb'
+          template 'app/misc/rodauth_plugin.rb'
         end
 
         def generate_rodauth_account

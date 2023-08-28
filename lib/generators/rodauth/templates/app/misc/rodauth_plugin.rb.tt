@@ -1,36 +1,59 @@
 require "sequel/core"
 
-class Rodauth<%= table_prefix.classify %>Plugin < RodauthBasePlugin
+class RodauthPlugin < Rodauth::Rails::Auth
   configure do
-    # This block is running inside of
-    #   plugin :rodauth do
-    #     ...
-    #   end
-
     # ==> Features
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
 
     # List of authentication features that are loaded.
-    enable <%= enabled_plugins.map(&:inspect).join ', ' %>
+    # enable :create_account, :verify_account, :verify_account_grace_period,
+    #   :reset_password, :change_password, :change_password_notify,
+    #   :login, :logout, :remember, :change_login, :verify_login_change, :close_account,
+    #   :json, :jwt
 
     # ==> General
 
+<% if sequel_activerecord_integration? -%>
+    # Initialize Sequel and have it reuse Active Record's database connection.
+<% if RUBY_ENGINE == "jruby" -%>
+    db Sequel.connect("jdbc:<%= sequel_adapter %>://", extensions: :activerecord_connection, keep_reference: false)
+<% else -%>
+    db Sequel.<%= sequel_adapter %>(extensions: :activerecord_connection, keep_reference: false)
+<% end -%>
+
+<% end -%>
     # Change prefix of table and foreign key column names from default "account"
-    # accounts_table: '<%= table %>'
+    # accounts_table :users
+    # verify_account_table :user_verification_keys
+    # verify_login_change_table :user_login_change_keys
+    # reset_password_table :user_password_reset_keys
+    # remember_table :user_remember_keys
 
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
     # hmac_secret "<SECRET_KEY>"
 
     # Use path prefix for all routes.
-    <%= '# ' if primary? %>prefix "/<%= table_prefix.pluralize %>"
+    # prefix "/accounts"
 
     # Specify the controller used for view rendering, CSRF, and callbacks.
-    rails_controller { <%= "#{table_prefix.classify}::" unless primary? %>RodauthController }
+    # rails_controller { RodauthController }
+
+    # Set in Rodauth controller instance with the title of the current page.
+    title_instance_variable :@page_title
+
+    # Store account status in an integer column without foreign key constraint.
+    account_status_column :status
+
+    # Store password hash in a column instead of a separate table.
+    account_password_hash_column :password_hash
+
+    # Set password when creating account instead of when verifying.
+    verify_account_set_password? false
 
     # Change some default param keys.
-    # login_param "email"
+    login_param "email"
     # password_confirm_param "confirm_password"
 
     # Redirect back to originally requested location after authentication.
@@ -45,32 +68,24 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthBasePlugin
 
     # Redirect to the app from login and registration pages if already logged in.
     # already_logged_in { redirect login_redirect }
-<% if jwt? -%>
 
     # ==> JWT
 
     # Set JWT secret, which is used to cryptographically protect the token.
-    jwt_secret Rails.application.credentials.secret_key_base
-<% end -%>
-<% if only_json? -%>
+    # jwt_secret Rails.application.credentials.secret_key_base
 
     # ==> Api only
 
     # Accept only JSON requests.
-    only_json? true
+    # only_json? true
 
     # Handle login and password confirmation fields on the client side.
-    require_password_confirmation? false
-    require_login_confirmation? false
-<% else -%>
-
-    # Accept both api and form requests
-    only_json? false
-<% end -%>
-<% if mails? -%>
+    # require_password_confirmation? false
+    # require_login_confirmation? false
 
     # ==> Emails
     # Use a custom mailer for delivering authentication emails.
+    # Requires ActionMailer
 
     # create_reset_password_email do
     #   RodauthMailer.reset_password(self.class.configuration_name, account_id, reset_password_key_value)
@@ -93,12 +108,17 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthBasePlugin
     # create_unlock_account_email do
     #   RodauthMailer.unlock_account(self.class.configuration_name, account_id, unlock_account_key_value)
     # end
+<% if mails? -%>
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits
       db.after_commit { email.deliver_later }
     end
+<% else -%>
+    # send_email do |email|
+    #   # queue email delivery on the mailer after the transaction commits
+    #   db.after_commit { email.deliver_later }
+    # end
 <% end -%>
-<% unless only_json? -%>
 
     # ==> Flash
     # Does not work with only_json?
@@ -111,7 +131,6 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthBasePlugin
     # create_account_notice_flash "Your account has been created. Please verify your account by visiting the confirmation link sent to your email address."
     # require_login_error_flash "Login is required for accessing this page"
     # login_notice_flash nil
-<% end -%>
 
     # ==> Validation
     # Override default validation error messages.
@@ -121,6 +140,9 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthBasePlugin
     # login_does_not_meet_requirements_message { "invalid email#{", #{login_requirement_message}" if login_requirement_message}" }
 
     # ==> Passwords
+
+    # Passwords shorter than 8 characters are considered weak according to OWASP.
+    password_minimum_length 8
 
     # Custom password complexity requirements (alternative to password_complexity feature).
     # password_meets_requirements? do |password|
@@ -133,38 +155,34 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthBasePlugin
     #     false
     #   end
     # end
-<% unless argon2? -%>
 
     # = bcrypt
 
     # bcrypt has a maximum input length of 72 bytes, truncating any extra bytes.
-    password_maximum_bytes 72
-<% else -%>
+    # password_maximum_bytes 72
 
     # = argon2
 
     # Use a rotatable password pepper when hashing passwords with Argon2.
-    argon2_secret "TODO: <SECRET_KEY>"
+    # argon2_secret "<SECRET_KEY>"
 
     # Since we're using argon2, prevent loading the bcrypt gem to save memory.
-    require_bcrypt? false
+    # require_bcrypt? false
 
     # Having a maximum password length set prevents long password DoS attacks.
-    password_maximum_length 64
-<% end -%>
-<% if remember? -%>
+    # password_maximum_length 64
 
     # ==> Remember Feature
+    # Does not work with only_json?
 
     # Remember all logged in users.
-    after_login { remember_login }
+    # after_login { remember_login }
 
     # Or only remember users that have ticked a "Remember Me" checkbox on login.
     # after_login { remember_login if param_or_nil("remember") }
 
     # Extend user's remember period when remembered via a cookie
-    extend_remember_deadline? true
-<% end -%>
+    # extend_remember_deadline? true
 
     # ==> Hooks
 
@@ -182,30 +200,29 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthBasePlugin
     # after_close_account do
     #   Profile.find_by!(account_id: account_id).destroy
     # end
-<% unless only_json? -%>
 
     # ==> Redirects
+    # Does not work with only_json?
 
     # Redirect to home page after logout.
-    logout_redirect "/"
+    # logout_redirect "/"
 
     # Redirect to wherever login redirects to after account verification.
-    verify_account_redirect { login_redirect }
+    # verify_account_redirect { login_redirect }
 
     # Redirect to login page after password reset.
-    reset_password_redirect { login_path }
+    # reset_password_redirect { login_path }
 
     # Ensure requiring login follows login route changes.
-    require_login_redirect { login_path }
-<% end -%>
+    # require_login_redirect { login_path }
 
     # ==> Deadlines
     # Change default deadlines for some actions.
     # verify_account_grace_period 3.days.to_i
     # reset_password_deadline_interval Hash[hours: 6]
     # verify_login_change_deadline_interval Hash[days: 2]
-<% unless only_json? -%>
+
+    # Does not work with only_json?
     # remember_deadline_interval Hash[days: 30]
-<% end -%>
   end
 end
