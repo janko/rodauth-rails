@@ -49,7 +49,11 @@ module Rodauth
         end
 
         def features
-          options[:features]
+          @features ||= begin
+            selected_features = options[:features]
+            selected_features.unshift 'create_account' if selected_features.delete 'create_account'
+            selected_features
+          end
         end
 
         def migration_overrides
