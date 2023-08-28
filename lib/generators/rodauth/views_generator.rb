@@ -44,7 +44,7 @@ module Rodauth
         }
 
         def create_views
-          validate_features or return
+          validate_features
 
           views.each do |view|
             copy_file view_location(view), "app/views/#{directory}/#{view}.html.erb" do |content|
@@ -64,10 +64,8 @@ module Rodauth
 
         def validate_features
           if (features - VIEWS.keys).any?
-            say "No available view template for feature(s): #{(features - VIEWS.keys).join(", ")}", :error
-            false
-          else
-            true
+            say "No available view template for feature(s): #{(features - VIEWS.keys).join(", ")}", :red
+            exit(1)
           end
         end
 

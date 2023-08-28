@@ -25,7 +25,7 @@ module Rodauth
           default: %w[]
 
         def create_rodauth_migration
-          validate_features or return
+          validate_features
 
           migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "#{migration_name}.rb")
         end
@@ -84,12 +84,10 @@ module Rodauth
         def validate_features
           if features.empty?
             say "No features specified!", :yellow
-            false
+            exit(1)
           elsif (features - valid_features).any?
             say "No available migration for feature(s): #{(features - valid_features).join(", ")}", :red
-            false
-          else
-            true
+            exit(1)
           end
         end
 
