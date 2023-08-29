@@ -45,7 +45,7 @@ module Rodauth
           return unless options[:account]
 
           invoke "rodauth:account", [table], **invoke_options,
-                                             migration_name: options[:migration_name]
+                                             migration_name: options[:migration_name] || "create_rodauth_#{table_prefix}"
         end
 
         def add_dev_config
