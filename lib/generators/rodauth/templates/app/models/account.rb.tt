@@ -1,6 +1,6 @@
 <% if defined?(ActiveRecord::Railtie) -%>
 class <%= table_prefix.camelize %> < ApplicationRecord
-  include Rodauth::Rails.model
+  include Rodauth::Model(RodauthMain)
 <% if ActiveRecord.version >= Gem::Version.new("7.0") -%>
   enum :status, unverified: 1, verified: 2, closed: 3
 <% else -%>
@@ -9,7 +9,7 @@ class <%= table_prefix.camelize %> < ApplicationRecord
 end
 <% else -%>
 class <%= table_prefix.camelize %> < Sequel::Model
-  include Rodauth::Rails.model
+  include Rodauth::Model(RodauthMain)
   plugin :enum
   enum :status, unverified: 1, verified: 2, closed: 3
 end

@@ -420,7 +420,7 @@ tables used by enabled authentication features.
 
 ```rb
 class Account < ActiveRecord::Base # Sequel::Model
-  include Rodauth::Rails.model # or Rodauth::Rails.model(:admin)
+  include Rodauth::Model(RodauthMain)
 end
 ```
 ```rb
