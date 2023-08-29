@@ -64,7 +64,9 @@ module Rodauth
 
           invoke 'rodauth:migration', [table], features: selected_migration_features,
                                                name: kitchen_sink? ? 'rodauth_kitchen_sink' : nil,
-                                               migration_name: options[:migration_name]
+                                               migration_name: options[:migration_name],
+                                               force: options[:force],
+                                               skip: options[:skip]
         end
 
         def create_account_model
