@@ -14,9 +14,9 @@ module Rodauth
           #            views(array) => a list of views to generate
           CONFIGURATION = {
             base: {
-              desc: '[FEATURE] create account table and model',
               default: true,
               feature: false,
+              desc: '[CONFIG] create account table and model',
               migrations: {
                 accounts_table: '%<plural>s'
               }
@@ -34,11 +34,11 @@ module Rodauth
             },
             logout: {
               default: true,
-              logout: %w[logout]
+              views: %w[logout]
             },
             create_account: {
               default: true,
-              views: %w[create_account],
+              views: %w[create_account]
             },
             verify_account: {
               default: true,
@@ -74,7 +74,9 @@ module Rodauth
               default: true,
               views: %w[change_password]
             },
-            change_password_notify: { default: true },
+            change_password_notify: {
+              default: true
+            },
             email_auth: {
               views: %w[_email_auth_request_form email_auth],
               migrations: {
@@ -94,7 +96,7 @@ module Rodauth
               }
             },
             recovery_codes: {
-              recovery_codes: %w[recovery_codes add_recovery_codes recovery_auth],
+              views: %w[recovery_codes add_recovery_codes recovery_auth],
               migrations: {
                 recovery_codes_table: '%<singular>s_recovery_codes'
               }

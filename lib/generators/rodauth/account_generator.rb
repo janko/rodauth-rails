@@ -21,7 +21,7 @@ module Rodauth
           template 'app/misc/rodauth_account_plugin.rb', "app/misc/rodauth_#{table_prefix}_plugin.rb"
         end
 
-        def configure_rodauth_app
+        def configure_rodauth_plugin
           plugin_name = indent(
             "configure ::Rodauth#{table_prefix.classify}Plugin#{", :#{table_prefix}" unless primary?}\n", 2
           )
@@ -29,13 +29,13 @@ module Rodauth
           insert_into_file 'app/misc/rodauth_app.rb', plugin_name, after: "# auth configuration\n"
         end
 
-        def configure_rodauth_route
+        def configure_rodauth_plugin_load_route
           route_config = indent("r.rodauth#{"(:#{table_prefix})" unless primary?}\n", 4)
           gsub_file 'app/misc/rodauth_app.rb', /.*# r\.rodauth\n/, ''
           insert_into_file 'app/misc/rodauth_app.rb', route_config, after: "# auth route configuration\n"
         end
 
-        def configure_rodauth_plugin
+        def configure_rodauth_plugin_load_memory
           plugin_config = indent(
             "rodauth#{"(:#{table_prefix})" unless primary?}.load_memory # autologin remembered #{table}\n", 4
           )
@@ -80,14 +80,22 @@ module Rodauth
           directory 'app/views/rodauth_mailer', "app/views/rodauth_#{table_prefix}_mailer"
         end
 
+        def install_required_gems
+          Bundler.with_unbundled_env do
+            # this is required for jwt
+            # if it is not installed, the subsequent view generation fails, since it actually loads rails
+            run "bundle add jwt" if jwt? || jwt_refresh?
+          end
+        end
+
         def create_views
           return if only_json? || selected_view_features.empty?
 
           account_name = primary? ? nil : table_prefix
           # Use generate here because invoke spawns in the same process
           # Unfortunately, during the generation process, some new files are created which are not currently loaded,
-          #   causing an error.
-          # Generate spawns a separate process which loads the new files and works right
+          #   causing an error when it attempts to load the rodauth config.
+          # Generate spawns a separate process which loads the new files and ensures it works correctly
           generate 'rodauth:views', account_name, "--features", *selected_view_features
         end
 

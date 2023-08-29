@@ -16,7 +16,7 @@ module Rodauth
              "=========================================\n" \
              "#{VIEW_CONFIG.keys.sort.map(&:to_s).join "\n"}"
 
-        argument :name, type: :string, optional: true,
+        argument :plugin_name, type: :string, optional: true,
                          desc: '[CONFIG] Name of the configured rodauth app. Leave blank to use the primary account.'
 
         class_option :features, optional: true, type: :array,
@@ -89,10 +89,14 @@ module Rodauth
 
         def rodauth_configuration
           Rodauth::Rails.app.rodauth!(configuration_name)
+        rescue Rodauth::Rails::Error => e
+          say 'An error occurred generating views for ' \
+              "#{configuration_name.present? ? "'#configuration_name'" : 'primary'} account:\n\n#{e}", :red
+          exit(1)
         end
 
         def configuration_name
-          name
+          plugin_name
         end
 
         # We need to use the *_tag helpers on versions lower than Rails 5.1.
