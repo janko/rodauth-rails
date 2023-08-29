@@ -15,11 +15,9 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
     enable <%= selected_features.map(&:inspect).join ', ' %>
 
     # ==> General
-<% if table_prefix != 'account' -%>
 
     # Change prefix of table and foreign key column names from default "account"
-    # accounts_table: '<%= table %>'
-<% end -%>
+    # accounts_table: 'players'
 
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.

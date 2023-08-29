@@ -21,8 +21,8 @@ module Rodauth
              "#{MIGRATION_CONFIG.keys.sort.map(&:to_s).join "\n"}"
 
         class_option :features, optional: true, type: :array,
-          desc: "Rodauth features to create tables for (otp, sms_codes, single_session, account_expiration etc.)",
-          default: %w[]
+                                desc: 'Rodauth features to create tables for (otp, sms_codes, single_session, account_expiration etc.)',
+                                default: %w[]
 
         def create_rodauth_migration
           return unless validate_selected_features
@@ -30,22 +30,42 @@ module Rodauth
           migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "#{migration_name}.rb")
         end
 
-        def configure_rodauth_account
-          if selected_features.include? :base
-            gsub_file "app/misc/rodauth_#{table_prefix}_plugin.rb", /.*# accounts_table.*\n/, ''
-          end
+        def configure_rodauth_plugin_tables
+          in_root do
+            break unless table_prefix != 'account' && File.exist?(plugin_filename)
 
-          migration_overrides.reverse_each do |key, value|
-            override = indent "#{key} :#{value}\n", 4
-            insert_into_file "app/misc/rodauth_#{table_prefix}_plugin.rb", override,
-              after: /.*# Change prefix of table and.*\n/
+            gsub_file plugin_filename, /.*# accounts_table.*\n/, '' if selected_features.include? :base
+
+            migration_overrides.sort.reverse_each do |key, value|
+              override = indent "#{key} :#{value}\n", 4
+              insert_into_file plugin_filename, override,
+                               after: /.*# Change prefix of table and.*\n/
+            end
+          end
+        end
+
+        def show_instructions
+          in_root do
+            break if table_prefix == 'account' || File.exist?(plugin_filename)
+
+            configuration = migration_overrides
+                            .map { |config, format| "#{config} :#{format}" }
+                            .join("\n")
+                            .indent(2)
+
+            say "\n\nAdd the following to your Rodauth plugin configure block:", :blue
+            say "\n\n#{configuration}\n\n\n\n", :magenta
           end
         end
 
         private
 
+        def plugin_filename
+          "app/misc/rodauth_#{table_prefix}_plugin.rb"
+        end
+
         def migration_name
-          options[:migration_name] || ["create_rodauth", table_prefix, *selected_features].join("_")
+          options[:migration_name] || ['create_rodauth', table_prefix, *selected_features].join('_')
         end
 
         def selected_features
@@ -87,10 +107,10 @@ module Rodauth
 
         def validate_selected_features
           if selected_features.empty?
-            say "No migration features specified!", :yellow
+            say 'No migration features specified!', :yellow
             false
           elsif (selected_features - valid_features).any?
-            say "No available migration for feature(s): #{(selected_features - valid_features).join(", ")}", :red
+            say "No available migration for feature(s): #{(selected_features - valid_features).join(', ')}", :red
             exit(1)
           else
             true
