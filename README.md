@@ -786,4 +786,4 @@ conduct](CODE_OF_CONDUCT.md).
 [JSON API]: https://github.com/janko/rodauth-rails/wiki/JSON-API
 [inheritance]: http://rodauth.jeremyevans.net/rdoc/files/doc/guides/share_configuration_rdoc.html
 [library]: https://github.com/jeremyevans/rodauth#label-Using+Rodauth+as+a+Library
-[restoring defaults]: 
+[restoring defaults]: https://github.com/janko/rodauth-rails/wiki/Restoring-Rodauth-Defaults
