@@ -264,15 +264,11 @@ class RodauthMain < Rodauth::Rails::Auth
   configure do
     # calling methods on the controller:
     after_create_account do
-      rails_controller_instance.send(:some_controller_method, account_id)
-      # or
       rails_controller_eval { some_controller_method(account_id) }
     end
 
     # accessing Rails URL helpers:
-    login_redirect { rails_routes.activity_path }
-    change_password_redirect { rails_routes.profile_path }
-    change_login_redirect { rails_routes.profile_path }
+    login_redirect { rails_routes.dashboard_path }
 
     # accessing Rails request object:
     after_reset_password do
