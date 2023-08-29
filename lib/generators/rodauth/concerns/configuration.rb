@@ -6,13 +6,21 @@ module Rodauth
           # Configuration map for the supported plugins
           # key: plugin name
           # value: hash that can contain the following keys
-          #           enabled(bool) => allow this feature to be selected. used to hide shared configuration features.
+          #           feature(bool) => enabled in the account plugin when selected. default: true.
           #           default(bool) => enable this plugin by default
           #            desc(string) => description for this plugin to be displayed in the cli help notes
           #        migrations(Hash) => map of table override setter to table name.
           #                            table name can contain the format strings: %{plural} and %{singluar}
           #            views(array) => a list of views to generate
           CONFIGURATION = {
+            base: {
+              desc: '[FEATURE] create account table and model',
+              default: true,
+              feature: false,
+              migrations: {
+                accounts_table: '%<plural>s'
+              }
+            },
             login: {
               default: true,
               views: %w[_login_form _login_form_footer login multi_phase_login]
@@ -29,12 +37,8 @@ module Rodauth
               logout: %w[logout]
             },
             create_account: {
-              desc: '[FEATURE] create account table and model',
               default: true,
               views: %w[create_account],
-              migrations: {
-                accounts_table: '%<plural>s'
-              }
             },
             verify_account: {
               default: true,

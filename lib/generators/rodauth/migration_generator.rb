@@ -25,13 +25,13 @@ module Rodauth
           default: %w[]
 
         def create_rodauth_migration
-          validate_features
+          return unless validate_selected_features
 
           migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "#{migration_name}.rb")
         end
 
         def configure_rodauth_account
-          if features.include? 'create_account'
+          if selected_features.include? :base
             gsub_file "app/misc/rodauth_#{table_prefix}_plugin.rb", /.*# accounts_table.*\n/, ''
           end
 
@@ -45,19 +45,19 @@ module Rodauth
         private
 
         def migration_name
-          options[:migration_name] || ["create_rodauth", table_prefix, *features].join("_")
+          options[:migration_name] || ["create_rodauth", table_prefix, *selected_features].join("_")
         end
 
-        def features
-          @features ||= begin
-            selected_features = options[:features]
-            selected_features.unshift 'create_account' if selected_features.delete 'create_account'
-            selected_features
+        def selected_features
+          @selected_features ||= begin
+            features = options[:features]
+            features.unshift 'base' if features.delete 'base'
+            features.map(&:to_sym)
           end
         end
 
         def migration_overrides
-          @migration_overrides ||= feature_config.values_at(*features.map(&:to_sym))
+          @migration_overrides ||= migration_config.values_at(*selected_features)
             .flat_map(&:to_a)
             .filter { |config, format| config.ends_with? "_table"  }
             .map { |config, format| [config, (format % { plural: table_prefix.pluralize, singular: table_prefix })] }
@@ -66,7 +66,7 @@ module Rodauth
         end
 
         def migration_content
-          features
+          selected_features
             .map { |feature| File.read(migration_chunk(feature)) }
             .map { |content| erb_eval(content) }
             .join("\n")
@@ -85,18 +85,20 @@ module Rodauth
           "#{MIGRATION_DIR}/#{feature}.erb"
         end
 
-        def validate_features
-          if features.empty?
-            say "No features specified!", :yellow
+        def validate_selected_features
+          if selected_features.empty?
+            say "No migration features specified!", :yellow
+            false
+          elsif (selected_features - valid_features).any?
+            say "No available migration for feature(s): #{(selected_features - valid_features).join(", ")}", :red
             exit(1)
-          elsif (features - valid_features).any?
-            say "No available migration for feature(s): #{(features - valid_features).join(", ")}", :red
-            exit(1)
+          else
+            true
           end
         end
 
         def valid_features
-          Dir["#{MIGRATION_DIR}/*.erb"].map { |filename| File.basename(filename, ".erb") }
+          Dir["#{MIGRATION_DIR}/*.erb"].map { |filename| File.basename(filename, ".erb").to_sym }
         end
 
         if defined?(::ActiveRecord::Railtie) # Active Record

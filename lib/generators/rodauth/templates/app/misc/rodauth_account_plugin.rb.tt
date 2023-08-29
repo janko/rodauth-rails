@@ -12,12 +12,14 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
     # http://rodauth.jeremyevans.net/documentation.html
 
     # List of authentication features that are loaded.
-    enable <%= enabled_features.map(&:inspect).join ', ' %>
+    enable <%= selected_features.map(&:inspect).join ', ' %>
 
     # ==> General
+<% if table_prefix != 'account' -%>
 
     # Change prefix of table and foreign key column names from default "account"
     # accounts_table: '<%= table %>'
+<% end -%>
 
     # The secret key used for hashing public-facing tokens for various features.
     # Defaults to Rails `secret_key_base`, but you can use your own secret key.
@@ -168,7 +170,7 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
     # = bcrypt
 
     # bcrypt has a maximum input length of 72 bytes, truncating any extra bytes.
-    password_maximum_bytes 72
+    password_maximum_bytes 72 if respond_to?(:password_maximum_bytes)
 <% else -%>
 
     # = argon2
@@ -180,7 +182,7 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
     require_bcrypt? false
 
     # Having a maximum password length set prevents long password DoS attacks.
-    password_maximum_length 64
+    password_maximum_length 64 if respond_to?(:password_maximum_length)
 <% end -%>
 <% if remember? -%>
 
@@ -215,15 +217,21 @@ class Rodauth<%= table_prefix.classify %>Plugin < RodauthPlugin
 <% unless only_json? -%>
 
     # ==> Redirects
+<% if logout? -%>
 
     # Redirect to home page after logout.
     logout_redirect "/"
+<% end -%>
+<% if verify_account? -%>
 
     # Redirect to wherever login redirects to after account verification.
     verify_account_redirect { login_redirect }
+<% end -%>
+<% if reset_password? -%>
 
     # Redirect to login page after password reset.
     reset_password_redirect { login_path }
+<% end -%>
 
     # Ensure requiring login follows login route changes.
     require_login_redirect { login_path }

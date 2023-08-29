@@ -17,7 +17,7 @@ module Rodauth
             base.send :class_option, :api_only, type: :boolean, default: false,
                                                 desc: '[CONFIG] configure only json api support'
 
-            base::FEATURE_CONFIG.sort.each do |feature, opts|
+            base::CONFIGURATION.sort.each do |feature, opts|
               feature = feature.to_sym
               modifier = "*" if opts[:default]
               default_description = "[FEATURE]#{modifier} #{feature}"
@@ -30,6 +30,8 @@ module Rodauth
 
             base.send :class_option, :kitchen_sink, type: :boolean, default: false,
                                                     desc: '[CONFIG] enable all supported features'
+            base.send :class_option, :defaults, type: :boolean, default: true,
+                                                      desc: '[CONFIG] enable default features (indicated with an asterisk *)'
           end
 
           private
@@ -37,7 +39,7 @@ module Rodauth
           def feature_selected?(feature)
             return true if kitchen_sink?
 
-            feature_selector = configuration[feature]
+            feature_options = configuration[feature]
             case feature
             when :json, :jwt
               return true if only_json?
@@ -45,15 +47,20 @@ module Rodauth
               return false if only_json?
             end
 
-            # if the feature option is not set, try to get the default.
-            options[feature].nil? ? feature_selector[:default] : options[feature]
+            return feature_options[:default] if defaults? && options[feature].nil?
+
+            options[feature]
           end
 
+          # Creates a hash of options to pass down options to an invoked sub generator
           def invoke_options
-            extra_options = %i[primary argon2 mails kitchen_sink]
-            valid_options = feature_config.keys.map(&:to_sym).concat extra_options
-
+            # These are custom options we want to track.
+            extra_options = %i[primary argon2 mails kitchen_sink defaults]
+            # Append them to all the available options from our configuration
+            valid_options = configuration.keys.map(&:to_sym).concat extra_options
+            # Index map the list with the selection value
             opts = valid_options.map {|opt| [opt, send("#{opt}?".to_sym)] }.to_h.compact
+            # True only options. We don't care if they are false.
             %i[api_only force skip pretend quiet].each do |key|
               next unless options[key]
 
@@ -63,16 +70,20 @@ module Rodauth
             opts
           end
 
-          def enabled_features
-            feature_config.keys.select { |feature| send("#{feature}?") }
+          def all_selected
+            @all_selected ||= configuration.keys.select { |feature| send("#{feature}?") }
           end
 
-          def migration_features
-            (enabled_features & migration_config.keys).map(&:to_s)
+          def selected_features
+            @selected_features ||= (all_selected & feature_config.keys)
           end
 
-          def view_features
-            (enabled_features & view_config.keys).map(&:to_s)
+          def selected_migration_features
+            @selected_migration_features ||= (all_selected & migration_config.keys).map(&:to_s)
+          end
+
+          def selected_view_features
+            @selected_view_features ||= (all_selected & view_config.keys).map(&:to_s)
           end
 
           def primary?
@@ -95,6 +106,10 @@ module Rodauth
 
           def kitchen_sink?
             options[:kitchen_sink]
+          end
+
+          def defaults?
+            options[:defaults]
           end
         end
       end

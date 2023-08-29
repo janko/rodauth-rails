@@ -31,7 +31,7 @@ module Rodauth
           default: "bootstrap"
 
         def create_views
-          validate_selected_features
+          return unless validate_selected_features
 
           views.each do |view|
             copy_file view_location(view), "app/views/#{directory}/#{view}.html.erb" do |content|
@@ -54,9 +54,14 @@ module Rodauth
         end
 
         def validate_selected_features
-          if (selected_features - view_config.keys).any?
+          if selected_features.empty?
+            say "No view features specified!", :yellow
+            false
+          elsif (selected_features - view_config.keys).any?
             say "No available view template for feature(s): #{(selected_features - view_config.keys).join(", ")}", :red
             exit(1)
+          else
+            true
           end
         end
 

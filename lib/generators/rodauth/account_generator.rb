@@ -60,13 +60,15 @@ module Rodauth
         end
 
         def generate_rodauth_migration
-          invoke 'rodauth:migration', [table], features: migration_features,
+          return if selected_migration_features.empty?
+
+          invoke 'rodauth:migration', [table], features: selected_migration_features,
                                                name: kitchen_sink? ? 'rodauth_kitchen_sink' : nil,
                                                migration_name: options[:migration_name]
         end
 
         def create_account_model
-          return unless create_account?
+          return unless base?
 
           template 'app/models/account.rb', "app/models/#{table_prefix}.rb"
         end
@@ -79,14 +81,14 @@ module Rodauth
         end
 
         def create_views
-          return if only_json?
+          return if only_json? || selected_view_features.empty?
 
           account_name = primary? ? nil : table_prefix
           # Use generate here because invoke spawns in the same process
           # Unfortunately, during the generation process, some new files are created which are not currently loaded,
           #   causing an error.
           # Generate spawns a separate process which loads the new files and works right
-          generate 'rodauth:views', account_name, "--features", *view_features
+          generate 'rodauth:views', account_name, "--features", *selected_view_features
         end
 
         def create_fixtures
