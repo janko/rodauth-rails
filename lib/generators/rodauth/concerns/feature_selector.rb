@@ -39,6 +39,9 @@ module Rodauth
           def feature_selected?(feature)
             return true if kitchen_sink?
 
+            # base is special. so long as it is not explicitly disabled, always allow it through
+            return true if feature == :base && options[:base] != false
+
             feature_options = configuration[feature]
             case feature
             when :json, :jwt
