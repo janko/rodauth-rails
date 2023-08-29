@@ -1,22 +1,23 @@
 require "rails/generators/base"
 
 require "#{__dir__}/concerns/configuration"
-require "#{__dir__}/concerns/accepts_table"
 
 module Rodauth
   module Rails
     module Generators
       class ViewsGenerator < ::Rails::Generators::Base
         include Concerns::Configuration
-        include Concerns::AcceptsTable
-
-        desc "Generate views for specific features.\n\n" \
-             "Features supporting views:\n" \
-             "=========================================\n" \
-             "#{VIEW_CONFIG.keys.sort.map(&:to_s).join "\n"}"
 
         source_root "#{__dir__}/templates"
         namespace "rodauth:views"
+
+        desc "Generate views for selected features.\n\n" \
+             "Supported Features:\n" \
+             "=========================================\n" \
+             "#{VIEW_CONFIG.keys.sort.map(&:to_s).join "\n"}"
+
+        argument :name, type: :string, optional: true,
+                         desc: '[CONFIG] Name of the configured rodauth app. Leave blank to use the primary account.'
 
         class_option :features, optional: true, type: :array,
           desc: "Rodauth features to generate views for (login, create_account, reset_password, verify_account etc.)"
@@ -30,7 +31,7 @@ module Rodauth
           default: "bootstrap"
 
         def create_views
-          validate_features
+          validate_selected_features
 
           views.each do |view|
             copy_file view_location(view), "app/views/#{directory}/#{view}.html.erb" do |content|
@@ -52,9 +53,9 @@ module Rodauth
           selected_features.flat_map { |feature| view_config.fetch(feature) }
         end
 
-        def validate_features
+        def validate_selected_features
           if (selected_features - view_config.keys).any?
-            say "No available view template for feature(s): #{(features - view_config.keys).join(", ")}", :red
+            say "No available view template for feature(s): #{(selected_features - view_config.keys).join(", ")}", :red
             exit(1)
           end
         end
@@ -86,7 +87,7 @@ module Rodauth
         end
 
         def configuration_name
-          table_prefix.to_sym if name
+          name
         end
 
         # We need to use the *_tag helpers on versions lower than Rails 5.1.

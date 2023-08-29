@@ -3,20 +3,20 @@ require "rails/generators/active_record/migration"
 require "erb"
 
 require "#{__dir__}/concerns/configuration"
-require "#{__dir__}/concerns/accepts_table"
+require "#{__dir__}/concerns/account_selector"
 
 module Rodauth
   module Rails
     module Generators
       class MigrationGenerator < ::Rails::Generators::Base
         include Concerns::Configuration
-        include Concerns::AcceptsTable
+        include Concerns::AccountSelector
 
         source_root "#{__dir__}/templates"
         namespace "rodauth:migration"
 
-        desc "Generate migrations for specific features.\n\n" \
-             "Features supporting migrations:\n" \
+        desc "Generate migrations for supported features.\n\n" \
+             "Supported Features:\n" \
              "=========================================\n" \
              "#{MIGRATION_CONFIG.keys.sort.map(&:to_s).join "\n"}"
 
@@ -57,7 +57,7 @@ module Rodauth
         end
 
         def migration_overrides
-          @migration_overrides ||= plugin_config.values_at(*features.map(&:to_sym))
+          @migration_overrides ||= feature_config.values_at(*features.map(&:to_sym))
             .flat_map(&:to_a)
             .filter { |config, format| config.ends_with? "_table"  }
             .map { |config, format| [config, (format % { plural: table_prefix.pluralize, singular: table_prefix })] }

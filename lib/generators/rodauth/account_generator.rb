@@ -1,18 +1,21 @@
 require 'rails/generators/base'
 require 'securerandom'
 
-require "#{__dir__}/concerns/accepts_table"
-require "#{__dir__}/concerns/feature_options"
+require "#{__dir__}/concerns/account_selector"
+require "#{__dir__}/concerns/feature_selector"
 
 module Rodauth
   module Rails
     module Generators
       class AccountGenerator < ::Rails::Generators::Base
-        include Concerns::AcceptsTable
-        include Concerns::FeatureOptions
+        include Concerns::AccountSelector
+        include Concerns::FeatureSelector
 
         source_root "#{__dir__}/templates"
         namespace 'rodauth:account'
+
+        desc "Generate a rodauth-rails account.\n\n" \
+             "Configures a basic set of features as well as migrations, a model, mailer and views."
 
         def create_rodauth_app
           template 'app/misc/rodauth_account_plugin.rb', "app/misc/rodauth_#{table_prefix}_plugin.rb"

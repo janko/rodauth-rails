@@ -29,7 +29,7 @@ module Rodauth
               logout: %w[logout]
             },
             create_account: {
-              desc: '[PLUGIN] create account table and model',
+              desc: '[FEATURE] create account table and model',
               default: true,
               views: %w[create_account],
               migrations: {
@@ -158,12 +158,12 @@ module Rodauth
             # TODO: this is an outlier.
             # Identify the 2fa plugins and figure out how to import this there.
             two_factor_base: {
-              enabled: false,
+              feature: false,
               views: %w[two_factor_manage two_factor_auth two_factor_disable]
             }
           }.freeze
 
-          PLUGIN_CONFIG = CONFIGURATION.select { |_k, v| v[:enabled] != false }
+          FEATURE_CONFIG = CONFIGURATION.select { |_k, v| v[:feature] != false }
                                        .freeze
 
           MIGRATION_CONFIG = CONFIGURATION.select { |_k, v| v[:migrations] }
@@ -182,8 +182,8 @@ module Rodauth
             CONFIGURATION
           end
 
-          def plugin_config
-            PLUGIN_CONFIG
+          def feature_config
+            FEATURE_CONFIG
           end
 
           def migration_config

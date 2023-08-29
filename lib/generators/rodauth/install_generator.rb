@@ -1,14 +1,14 @@
 require 'rails/generators/base'
 require 'securerandom'
 
-require "#{__dir__}/concerns/accepts_table"
-require "#{__dir__}/concerns/feature_options"
+require "#{__dir__}/concerns/account_selector"
+require "#{__dir__}/concerns/feature_selector"
 
 module Rodauth
   module Rails
     module Generators
       class InstallGenerator < ::Rails::Generators::Base
-        include Concerns::AcceptsTable
+        include Concerns::AccountSelector
 
         SEQUEL_ADAPTERS = {
           'postgresql' => RUBY_ENGINE == 'jruby' ? 'postgresql' : 'postgres',
@@ -21,9 +21,16 @@ module Rodauth
         source_root "#{__dir__}/templates"
         namespace 'rodauth:install'
 
-        class_option :account, type: :boolean, default: true, desc: '[CONFIG] create an account'
-        # Include here to keep the account option above the feature options
-        include Concerns::FeatureOptions
+        desc "Install rodauth-rails.\n\n" \
+             "Sets up rodauth-rails and generates a primary account, " \
+             "configuring a basic set of features as well as migrations, a model, mailer and views."
+
+        class_option :account, type: :boolean, default: true, desc: '[CONFIG] generate an account'
+
+        # Include here to keep the account options above the feature options
+        include Concerns::FeatureSelector
+        # Redefine the primary option
+        class_option :primary, type: :boolean, default: true, desc: '[CONFIG] generated account is primary'
 
         def create_rodauth_initializer
           template 'config/initializers/rodauth.rb'
@@ -52,10 +59,6 @@ module Rodauth
         end
 
         private
-
-        def primary?
-          options[:primary] != false
-        end
 
         def sequel_activerecord_integration?
           defined?(ActiveRecord::Railtie) &&
