@@ -28,6 +28,12 @@ module Rodauth
           super.html_safe
         end
 
+        if defined?(::Turbo)
+          def turbo_stream
+            rails_controller_instance.send(:turbo_stream)
+          end
+        end
+
         private
 
         # Calls the Rails renderer, returning nil if a template is missing.

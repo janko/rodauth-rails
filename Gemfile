@@ -6,6 +6,7 @@ gem "rake", "~> 13.0"
 gem "warning"
 
 gem "rails", ">= 4.2"
+gem "turbo-rails", "~> 1.4"
 gem "sqlite3", "~> 1.3",                platforms: [:mri, :truffleruby]
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 

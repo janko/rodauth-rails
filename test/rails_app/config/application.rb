@@ -5,6 +5,10 @@ require "active_job/railtie"
 require "rails/test_unit/railtie"
 
 require "rodauth-rails"
+begin
+  require "turbo-rails"
+rescue LoadError
+end
 
 module RailsApp
   class Application < Rails::Application

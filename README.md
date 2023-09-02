@@ -271,9 +271,9 @@ class RodauthMain < Rodauth::Rails::Auth
     login_redirect { rails_routes.dashboard_path }
 
     # accessing Rails request object:
-    after_reset_password do
+    after_change_password do
       if rails_request.format.turbo_stream?
-        rails_render(turbo_stream: [...])
+        return_response rails_render(turbo_stream: [turbo_stream.replace(...)])
       end
     end
 

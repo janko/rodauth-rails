@@ -27,6 +27,15 @@ class RodauthMain < Rodauth::Rails::Auth
     extend_remember_deadline? true
     max_invalid_logins 3
 
+    if defined?(::Turbo)
+      after_login_failure do
+        if rails_request.format.turbo_stream?
+          return_response rails_render(turbo_stream: [turbo_stream.append("login-form", %(<div id="turbo-stream">login failed</div>))])
+        end
+      end
+      check_csrf? { rails_request.format.turbo_stream? ? false : super() }
+    end
+
     after_login { remember_login }
 
     logout_redirect { rails_routes.root_path }

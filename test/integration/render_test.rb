@@ -86,10 +86,18 @@ class RenderTest < IntegrationTest
   end
 
   test "rendering built-in templates with alternative formats" do
-    Mime::Type.register "text/vnd.turbo-stream.html", :turbo_stream
-
     page.driver.browser.get "/login", {}, { "HTTP_ACCEPT" => "text/vnd.turbo-stream.html, text/html" }
 
     assert_includes page.html, "Login"
-  end if ActionView.version >= Gem::Version.new("6.0")
+  end if defined?(::Turbo)
+
+  test "rendering turbo streams" do
+    register(login: "user@example.com")
+
+    page.driver.browser.post "/login",
+      { login: "user@example.com" },
+      { "HTTP_ACCEPT" => "text/vnd.turbo-stream.html, text/html" }
+
+    assert_equal %(<turbo-stream action="append" target="login-form"><template><div id="turbo-stream">login failed</div></template></turbo-stream>), page.html
+  end if defined?(::Turbo)
 end
