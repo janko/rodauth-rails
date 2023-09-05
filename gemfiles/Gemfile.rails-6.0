@@ -2,9 +2,6 @@ source "https://rubygems.org"
 
 gemspec path: ".."
 
-# bigdecimal gem fails to compile on JRuby
-gem "sequel", "< 5.72" if RUBY_ENGINE == "jruby"
-
 gem "rake", "~> 12.0"
 gem "warning"
 
