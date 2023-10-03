@@ -67,7 +67,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     run_generator %w[--jwt]
 
     assert_file "app/misc/rodauth_main.rb", /:login, :logout, :jwt,$/
-    assert_file "app/misc/rodauth_main.rb", /jwt_secret "[a-z0-9]{128}"/
+    assert_file "app/misc/rodauth_main.rb", /jwt_secret /
   end
 
   test "app with --argon2 option" do
