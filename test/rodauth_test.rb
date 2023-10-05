@@ -35,8 +35,10 @@ class RodauthTest < UnitTest
   test "retrieves secret_key_base from env variable, credentials, or secrets" do
     Rails.env = "production"
 
-    Rails.application.secrets.secret_key_base = "secret"
-    assert_equal "secret", Rodauth::Rails.secret_key_base
+    if Rails.gem_version < Gem::Version.new("7.1.0")
+      Rails.application.secrets.secret_key_base = "secret"
+      assert_equal "secret", Rodauth::Rails.secret_key_base
+    end
 
     if Rails.gem_version >= Gem::Version.new("5.2.0")
       Rails.application.credentials.secret_key_base = "credential"
