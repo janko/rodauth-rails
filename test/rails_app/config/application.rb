@@ -16,7 +16,7 @@ module RailsApp
     config.secret_key_base = "a8457c8003e83577e92708bd56e19bdc4442c689f458f483a30e580611c578a3"
     config.logger = Logger.new(nil)
     config.eager_load = false
-    config.load_defaults "#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}"
+    config.load_defaults "#{Rails::VERSION::MAJOR}.#{Rails::VERSION::MINOR}" if Rails.gem_version >= Gem::Version.new("5.1")
     config.action_dispatch.show_exceptions = Rails.gem_version >= Gem::Version.new("7.1") ? :none : false
     config.action_mailer.delivery_method = :test
     config.action_mailer.default_url_options = { host: "example.com", protocol: "https" }
