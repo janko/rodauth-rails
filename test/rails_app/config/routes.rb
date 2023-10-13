@@ -10,6 +10,8 @@ Rails.application.routes.draw do
     get :roda
   end
 
+  get "/admin/custom" => "admin/rodauth#custom"
+
   constraints Rodauth::Rails.authenticate do
     get "/authenticated" => "test#root"
   end

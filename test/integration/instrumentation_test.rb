@@ -46,14 +46,6 @@ class InstrumentationTest < IntegrationTest
     assert_match /Completed 201 Created in \d+ms/, logged
   end
 
-  test "handles invalid HTTP verb" do
-    logged = capture_log do
-      page.driver.browser.head "/login"
-    end
-
-    assert_match /Completed 404 Not Found in \d+ms/, logged
-  end
-
   test "logs response status when redirecting inside controller" do
     logged = capture_log do
       visit "/auth2"

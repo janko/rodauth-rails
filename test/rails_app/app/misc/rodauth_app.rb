@@ -28,7 +28,6 @@ class RodauthApp < Rodauth::Rails::App
     r.on("json") { r.rodauth(:json) }
 
     r.on("assets") { "" }
-    r.get("admin/custom") { "Custom admin route" }
 
     if r.path == rails_routes.auth1_path
       rodauth.require_account

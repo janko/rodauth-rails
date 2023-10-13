@@ -19,10 +19,4 @@ class CallbacksTest < IntegrationTest
     assert_equal 201,            page.status_code
     assert_equal "true",         page.response_headers["X-Before-Action"]
   end
-
-  test "handles unsupported HTTP verbs" do
-    page.driver.browser.head "/login"
-
-    assert_equal 404, page.status_code
-  end
 end

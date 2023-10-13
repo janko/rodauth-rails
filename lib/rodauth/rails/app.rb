@@ -5,7 +5,7 @@ module Rodauth
   module Rails
     # The superclass for creating a Rodauth middleware.
     class App < Roda
-      plugin :middleware, forward_response_headers: true do |middleware|
+      plugin :middleware, forward_response_headers: true, next_if_not_found: true do |middleware|
         middleware.class_eval do
           def self.inspect
             "#{superclass}::Middleware"
@@ -81,7 +81,6 @@ module Rodauth
           if prefix.present? && remaining_path == path_info
             on prefix[1..-1] do
               super
-              pass # forward other {prefix}/* requests downstream
             end
           else
             super
