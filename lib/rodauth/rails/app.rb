@@ -81,6 +81,7 @@ module Rodauth
           if prefix.present? && remaining_path == path_info
             on prefix[1..-1] do
               super
+              pass
             end
           else
             super
