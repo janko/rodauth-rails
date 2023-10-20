@@ -1,4 +1,14 @@
-## HEAD
+## 1.12.0 (2023-10-20)
+
+* Allow generating view template for `confirm_password` feature (igor-alexandrov)
+
+* Forward all requests unhandled by the Rodauth app to the Rails router (@janko)
+
+* Use `Rodauth::Model()` directly for including in generated account model (@janko)
+
+* Set `{jwt,argon2}_secret` to `hmac_secret` on `rodauth:install` with `--{jwt,argon2}` (@janko)
+
+* Expose `#turbo_stream` method in `Rodauth::Rails::Auth` when using turbo-rails gem (@janko)
 
 * Add `#rails_cookies` method for accessing the Action Dispatch cookie jar (@janko)
 
