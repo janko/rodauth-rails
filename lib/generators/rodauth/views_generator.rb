@@ -41,6 +41,7 @@ module Rodauth
           recovery_codes:      %w[recovery_codes add_recovery_codes recovery_auth],
           webauthn:            %w[webauthn_setup webauthn_auth webauthn_remove],
           webauthn_autofill:   %w[webauthn_autofill],
+          confirm_password:    %w[confirm_password],
         }
 
         def create_views

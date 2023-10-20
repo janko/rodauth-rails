@@ -24,10 +24,11 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   end
 
   test "choosing features" do
-    run_generator %w[lockout]
+    run_generator %w[lockout confirm_password]
 
     assert_file "app/views/rodauth/unlock_account_request.html.erb"
     assert_file "app/views/rodauth/unlock_account.html.erb"
+    assert_file "app/views/rodauth/confirm_password.html.erb"
 
     assert_no_file "app/views/rodauth/login.html.erb"
     assert_no_file "app/views/rodauth/create_account.html.erb"
