@@ -49,6 +49,12 @@ module Rodauth
 
         delegate :rails_routes, :rails_cookies, :rails_request, to: :scope
 
+        def session
+          super
+        rescue Roda::RodaError
+          fail Rodauth::Rails::Error, "There is no session middleware configured, see instructions on how to add it: https://guides.rubyonrails.org/api_app.html#using-session-middlewares"
+        end
+
         private
 
         def instantiate_rails_account
