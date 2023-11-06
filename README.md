@@ -10,6 +10,7 @@ Provides Rails integration for the [Rodauth] authentication framework.
 * [Rails demo](https://github.com/janko/rodauth-demo-rails)
 * [JSON API guide](https://github.com/janko/rodauth-rails/wiki/JSON-API)
 * [OmniAuth guide](https://github.com/janko/rodauth-rails/wiki/OmniAuth)
+* [JSON Request Documentation for Rodauth](https://documenter.getpostman.com/view/26686011/2s9YC7SWn9)
 
 🎥 Screencasts:
 
