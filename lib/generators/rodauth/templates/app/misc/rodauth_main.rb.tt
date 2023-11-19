@@ -20,6 +20,8 @@ class RodauthMain < Rodauth::Rails::Auth
     db Sequel.<%= sequel_adapter %>(extensions: :activerecord_connection, keep_reference: false)
 <% end -%>
 
+    convert_token_id_to_integer? <%= primary_key_integer? %>
+
 <% end -%>
     # Change prefix of table and foreign key column names from default "account"
 <% if table -%>

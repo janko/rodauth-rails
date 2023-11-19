@@ -1,3 +1,7 @@
+## HEAD
+
+* Set `convert_token_id_to_integer?` in default configuration to avoid DB queries on boot (@janko)
+
 ## 1.12.0 (2023-10-20)
 
 * Allow generating view template for `confirm_password` feature (igor-alexandrov)
