@@ -66,7 +66,7 @@ module Rodauth
         end
 
         def create_fixtures
-          generator_options = ::Rails.application.config.generators.options
+          generator_options = ::Rails.configuration.generators.options
           if generator_options[:test_unit][:fixture] && generator_options[:test_unit][:fixture_replacement].nil?
             test_dir = generator_options[:rails][:test_framework] == :rspec ? "spec" : "test"
             template "test/fixtures/accounts.yml", "#{test_dir}/fixtures/#{table_prefix.pluralize}.yml"
@@ -107,11 +107,11 @@ module Rodauth
         end
 
         def session_store?
-          !!::Rails.application.config.session_store
+          !!::Rails.configuration.session_store
         end
 
         def api_only?
-          ::Rails.application.config.api_only
+          ::Rails.configuration.api_only
         end
 
         def sequel_adapter

@@ -41,7 +41,7 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
   end
 
   test "migration uuid" do
-    Rails.application.config.generators do |g|
+    Rails.configuration.generators do |g|
       g.orm :active_record, primary_key_type: :uuid
     end
 
@@ -51,7 +51,7 @@ class MigrationGeneratorTest < Rails::Generators::TestCase
 
     assert_migration migration_file, /t\.uuid :id, primary_key: true/
 
-    Rails.application.config.generators.options[:active_record].delete(:primary_key_type)
+    Rails.configuration.generators.options[:active_record].delete(:primary_key_type)
   end
 
   test "current timestamp column default" do

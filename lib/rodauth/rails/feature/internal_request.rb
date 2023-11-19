@@ -47,7 +47,7 @@ module Rodauth
         def rails_url_options
           return nil unless defined?(ActionMailer)
 
-          ::Rails.application.config.action_mailer.default_url_options or
+          ::Rails.configuration.action_mailer.default_url_options or
             fail Error, "There is no information to set the URL host from. Please set config.action_mailer.default_url_options in your Rails application, or configure #domain and #base_url in your Rodauth configuration."
         end
       end

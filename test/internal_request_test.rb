@@ -15,7 +15,7 @@ class InternalRequestTest < UnitTest
   end
 
   test "missing config.action_mailer.default_url_options" do
-    Rails.application.config.action_mailer.stub(:default_url_options, nil) do
+    Rails.configuration.action_mailer.stub(:default_url_options, nil) do
       assert_equal "/create-account", RodauthApp.rodauth.create_account_path
       assert_raises Rodauth::Rails::Error do
         RodauthApp.rodauth.create_account_url

@@ -644,7 +644,7 @@ Rodauth::Rails.configure do |config|
   config.middleware = false # disable auto-insertion
 end
 
-Rails.application.config.middleware.insert_before AnotherMiddleware, Rodauth::Rails::Middleware
+Rails.configuration.middleware.insert_before AnotherMiddleware, Rodauth::Rails::Middleware
 ```
 
 ## How it works

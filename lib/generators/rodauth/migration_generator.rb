@@ -120,7 +120,7 @@ module Rodauth
           end
 
           def primary_key_type(key = :id)
-            generators  = ::Rails.application.config.generators
+            generators  = ::Rails.configuration.generators
             column_type = generators.options[:active_record][:primary_key_type]
 
             if key

@@ -121,7 +121,7 @@ module Rodauth
         end
 
         def tailwind?
-          ::Rails.application.config.generators.options[:rails][:template_engine] == :tailwindcss ||
+          ::Rails.configuration.generators.options[:rails][:template_engine] == :tailwindcss ||
             options[:css]&.downcase&.start_with?("tailwind")
         end
       end

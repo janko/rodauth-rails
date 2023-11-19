@@ -32,7 +32,7 @@ module Rodauth
         end
 
         def rails_controller
-          if only_json? && ::Rails.application.config.api_only
+          if only_json? && ::Rails.configuration.api_only
             ActionController::API
           else
             ActionController::Base
