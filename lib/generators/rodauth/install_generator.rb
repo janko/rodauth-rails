@@ -102,7 +102,7 @@ module Rodauth
         end
 
         def primary_key_integer?
-          !::Rails.configuration.generators.options[:active_record][:primary_key_type]
+          !::Rails.configuration.generators.options.dig(:active_record, :primary_key_type)
         end
 
         def sequel_activerecord_integration?
