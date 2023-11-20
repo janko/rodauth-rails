@@ -34,8 +34,8 @@ module Rodauth
           request = rails_request
 
           raw_payload = {
-            controller: self.class.roda_class.name,
-            action: "call",
+            controller: rails_controller.name,
+            action: rails_path_parameters[:action],
             request: request,
             params: request.filtered_parameters,
             headers: request.headers,
