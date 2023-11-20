@@ -63,9 +63,9 @@ module Rodauth
         end
 
         def rails_path_parameters
-          controller = [rails_controller.module_parent_name&.underscore, rails_controller.controller_name].compact.join("/")
+          controller = rails_controller.name.delete_suffix("Controller").underscore
           route_method = self.class.route_hash.fetch(request.path.sub(/^#{prefix}/, ""))
-          action = route_method.to_s.sub(/^handle_/, "")
+          action = route_method.to_s.delete_prefix("handle_")
 
           { controller: controller, action: action }
         end
