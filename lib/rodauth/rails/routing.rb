@@ -9,7 +9,7 @@ module Rodauth
         controller = rodauth.rails_controller.controller_name
         namespace = rodauth.rails_controller.module_parent_name&.underscore
 
-        scope controller: controller, module: namespace, as: as do
+        scope controller: controller, module: namespace, as: as, format: false do
           auth_class.route_hash.each do |route_path, route_method|
             next if route_method.to_s.end_with?("_js")
 

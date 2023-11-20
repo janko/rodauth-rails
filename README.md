@@ -139,19 +139,19 @@ end
 $ rails routes -g rodauth
 ```
 ```
-                Prefix Verb     URI Pattern                       Controller#Action
-                 login GET|POST /login(.:format)                  rodauth#login
-        create_account GET|POST /create-account(.:format)         rodauth#create_account
- verify_account_resend GET|POST /verify-account-resend(.:format)  rodauth#verify_account_resend
-        verify_account GET|POST /verify-account(.:format)         rodauth#verify_account
-                logout GET|POST /logout(.:format)                 rodauth#logout
-              remember GET|POST /remember(.:format)               rodauth#remember
-reset_password_request GET|POST /reset-password-request(.:format) rodauth#reset_password_request
-        reset_password GET|POST /reset-password(.:format)         rodauth#reset_password
-       change_password GET|POST /change-password(.:format)        rodauth#change_password
-          change_login GET|POST /change-login(.:format)           rodauth#change_login
-   verify_login_change GET|POST /verify-login-change(.:format)    rodauth#verify_login_change
-         close_account GET|POST /close-account(.:format)          rodauth#close_account
+                Prefix Verb     URI Pattern             Controller#Action
+                 login GET|POST /login                  rodauth#login
+        create_account GET|POST /create-account         rodauth#create_account
+ verify_account_resend GET|POST /verify-account-resend  rodauth#verify_account_resend
+        verify_account GET|POST /verify-account         rodauth#verify_account
+                logout GET|POST /logout                 rodauth#logout
+              remember GET|POST /remember               rodauth#remember
+reset_password_request GET|POST /reset-password-request rodauth#reset_password_request
+        reset_password GET|POST /reset-password         rodauth#reset_password
+       change_password GET|POST /change-password        rodauth#change_password
+          change_login GET|POST /change-login           rodauth#change_login
+   verify_login_change GET|POST /verify-login-change    rodauth#verify_login_change
+         close_account GET|POST /close-account          rodauth#close_account
 ```
 
 We can use these URL helpers to add some basic authentication links to our app:
