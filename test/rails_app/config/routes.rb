@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
   root to: "test#root"
 
+  rodauth
+  rodauth(:admin)
+
   controller :test do
     get :auth1
     get :auth2

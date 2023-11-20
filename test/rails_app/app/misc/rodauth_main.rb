@@ -44,5 +44,6 @@ class RodauthMain < Rodauth::Rails::Auth
     title_instance_variable :@page_title
 
     verify_login_change_route nil
+    change_login_route "change-email"
   end
 end

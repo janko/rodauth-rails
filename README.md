@@ -124,39 +124,44 @@ $ rails middleware
 
 ### Routes
 
-Because requests to Rodauth endpoints are handled by Roda, Rodauth routes will
-not show in `rails routes`. You can use the `rodauth:routes` rake task to view
-the list of endpoints based on currently loaded features:
+The Rodauth object defines `*_path` and `*_url` route helpers, but you can
+also expose them as Rails URL helpers, which are accessible everywhere.
 
+```rb
+# config/routes.rb
+Rails.application.routes.draw do
+  # generate URL helpers from your Rodauth configuration
+  rodauth
+  # rodauth(as: :user) - prefix URL helpers with "user_*"
+end
+```
 ```sh
-$ rails rodauth:routes
+$ rails routes -g rodauth
 ```
 ```
-Routes handled by RodauthApp:
+                Prefix Verb     URI Pattern                       Controller#Action
+                 login GET|POST /login(.:format)                  rodauth#login
+        create_account GET|POST /create-account(.:format)         rodauth#create_account
+ verify_account_resend GET|POST /verify-account-resend(.:format)  rodauth#verify_account_resend
+        verify_account GET|POST /verify-account(.:format)         rodauth#verify_account
+                logout GET|POST /logout(.:format)                 rodauth#logout
+              remember GET|POST /remember(.:format)               rodauth#remember
+reset_password_request GET|POST /reset-password-request(.:format) rodauth#reset_password_request
+        reset_password GET|POST /reset-password(.:format)         rodauth#reset_password
+       change_password GET|POST /change-password(.:format)        rodauth#change_password
+          change_login GET|POST /change-login(.:format)           rodauth#change_login
+   verify_login_change GET|POST /verify-login-change(.:format)    rodauth#verify_login_change
+         close_account GET|POST /close-account(.:format)          rodauth#close_account
+```
 
-  GET|POST  /login                   rodauth.login_path
-  GET|POST  /create-account          rodauth.create_account_path
-  GET|POST  /verify-account-resend   rodauth.verify_account_resend_path
-  GET|POST  /verify-account          rodauth.verify_account_path
-  GET|POST  /change-password         rodauth.change_password_path
-  GET|POST  /change-login            rodauth.change_login_path
-  GET|POST  /logout                  rodauth.logout_path
-  GET|POST  /remember                rodauth.remember_path
-  GET|POST  /reset-password-request  rodauth.reset_password_request_path
-  GET|POST  /reset-password          rodauth.reset_password_path
-  GET|POST  /verify-login-change     rodauth.verify_login_change_path
-  GET|POST  /close-account           rodauth.close_account_path
-```
-
-Using this information, you can add some basic authentication links to your
-navigation header:
+We can use these URL helpers to add some basic authentication links to our app:
 
 ```erb
 <% if rodauth.logged_in? %>
-  <%= link_to "Sign out", rodauth.logout_path, data: { turbo_method: :post } %>
+  <%= button_to "Sign out", logout_path, method: :post %>
 <% else %>
-  <%= link_to "Sign in", rodauth.login_path %>
-  <%= link_to "Sign up", rodauth.create_account_path %>
+  <%= link_to "Sign in", login_path %>
+  <%= link_to "Sign up", create_account_path %>
 <% end %>
 ```
 
@@ -480,12 +485,23 @@ end
 class Admin::RodauthController < ApplicationController
 end
 ```
+```rb
+# config/routes.rb
+Rails.application.routes.draw do
+  rodauth
+  rodauth(:admin) # generate URL helpers from the secondary configuration
+end
+```
 
-Then in your application you can reference the secondary Rodauth instance:
+Then in your application you can reference the secondary Rodauth instance and URL helpers:
 
 ```rb
 rodauth(:admin).authenticated? # checks "admin_account_id" session value
-rodauth(:admin).login_path #=> "/admin/login"
+rodauth(:admin).rails_account # returns authenticated admin account
+
+# URL helpers are prefixed with the configuration name
+admin_login_path #=> "/admin/login"
+admin_create_account_url #=> "https://example.com/admin/create-account"
 ```
 
 You'll likely want to save the information of which account belongs to which
@@ -494,16 +510,11 @@ that. Note that you can also [share configuration via inheritance][inheritance].
 
 ## Outside of a request
 
-The [internal_request] and [path_class_methods] features are supported, with defaults taken from `config.action_mailer.default_url_options`.
+The [internal_request] feature is supported, with defaults taken from `config.action_mailer.default_url_options`.
 
 ```rb
-# internal requests
 RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret123")
 RodauthApp.rodauth(:admin).verify_account(account_login: "admin@example.com")
-
-# path and URL methods
-RodauthApp.rodauth.close_account_path #=> "/close-account"
-RodauthApp.rodauth(:admin).otp_setup_url #=> "http://localhost:3000/admin/otp-setup"
 ```
 
 ### Calling instance methods
@@ -774,8 +785,7 @@ conduct](CODE_OF_CONDUCT.md).
 [single_session]: http://rodauth.jeremyevans.net/rdoc/files/doc/single_session_rdoc.html
 [account_expiration]: http://rodauth.jeremyevans.net/rdoc/files/doc/account_expiration_rdoc.html
 [simple_ldap_authenticator]: https://github.com/jeremyevans/simple_ldap_authenticator
-[internal_request]: http://rodauth.jeremyevans.net/rdoc/files/doc/internal_request_rdoc.html
-[path_class_methods]: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html
+[internal_request]: http://rodauth.jeremyevans.net/rdoc/files/doc/internal_request_rdoc.htmll
 [account types]: https://github.com/janko/rodauth-rails/wiki/Account-Types
 [custom mailer worker]: https://github.com/janko/rodauth-rails/wiki/Custom-Mailer-Worker
 [Turbo]: https://turbo.hotwired.dev/

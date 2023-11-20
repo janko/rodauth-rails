@@ -65,6 +65,10 @@ module Rodauth
           end
         end
 
+        def define_routes
+          route "rodauth"
+        end
+
         def create_fixtures
           generator_options = ::Rails.configuration.generators.options
           if generator_options[:test_unit][:fixture] && generator_options[:test_unit][:fixture_replacement].nil?
