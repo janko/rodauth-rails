@@ -35,6 +35,10 @@ module Rodauth
 
           response
         end
+
+        def rodauth(name = nil)
+          @controller.rodauth(name)
+        end
       end
     end
   end

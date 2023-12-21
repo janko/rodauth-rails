@@ -29,11 +29,11 @@ class TestControllerTest < ActionController::TestCase
   private
 
   def login(account)
-    session[:account_id] = account.id
-    session[:authenticated_by] = ["password"]
+    rodauth.account_from_login(account.email)
+    rodauth.login_session("password")
   end
 
   def logout
-    session.clear
+    rodauth.logout
   end
 end
