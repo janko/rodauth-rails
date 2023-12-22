@@ -49,8 +49,8 @@ class IntegrationTest < ActionDispatch::IntegrationTest
   include Capybara::DSL
   include TestSetupTeardown
 
-  def register(login: "user@example.com", password: "secret", verify: false)
-    visit "/create-account"
+  def register(login: "user@example.com", password: "secret", verify: false, prefix: "")
+    visit "#{prefix}/create-account"
     fill_in "Login", with: login
     fill_in "Password", with: password
     fill_in "Confirm Password", with: password
@@ -58,22 +58,22 @@ class IntegrationTest < ActionDispatch::IntegrationTest
 
     if verify
       email = ActionMailer::Base.deliveries.last
-      verify_account_link = email.body.to_s[%r{/verify-account\S+}]
+      verify_account_link = email.body.to_s[%r{#{prefix}/verify-account\S+}]
 
       visit verify_account_link
       click_on "Verify Account"
     end
   end
 
-  def login(login: "user@example.com", password: "secret")
-    visit "/login"
+  def login(login: "user@example.com", password: "secret", prefix: "")
+    visit "#{prefix}/login"
     fill_in "Login", with: login
     fill_in "Password", with: password
     click_on "Login"
   end
 
-  def logout
-    visit "/logout"
+  def logout(prefix: "")
+    visit "#{prefix}/logout"
     click_on "Logout"
   end
 
