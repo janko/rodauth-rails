@@ -12,6 +12,10 @@ require_relative "rails_app/config/environment"
 require "rails/test_help"
 require "capybara/rails"
 
+if ActiveSupport.respond_to?(:test_order)
+  ActiveSupport.test_order = :random
+end
+
 ActiveRecord::Migrator.migrations_paths = [Rails.root.join("db/migrate")]
 Rails.backtrace_cleaner.remove_silencers! # show full stack traces
 
@@ -38,12 +42,12 @@ module TestSetupTeardown
 end
 
 class UnitTest < ActiveSupport::TestCase
-  self.test_order = :random
   include TestSetupTeardown
 end
 
-class IntegrationTest < UnitTest
+class IntegrationTest < ActionDispatch::IntegrationTest
   include Capybara::DSL
+  include TestSetupTeardown
 
   def register(login: "user@example.com", password: "secret", verify: false)
     visit "/create-account"

@@ -57,6 +57,19 @@ module Rodauth
 
         private
 
+        def before_rodauth
+          rails_request.path_parameters.merge!(rails_path_parameters) unless internal_request?
+          super
+        end
+
+        def rails_path_parameters
+          controller = rails_controller.name.delete_suffix("Controller").underscore
+          route_method = self.class.route_hash.fetch(request.path.sub(/^#{prefix}/, ""))
+          action = route_method.to_s.delete_prefix("handle_")
+
+          { controller: controller, action: action }
+        end
+
         def instantiate_rails_account
           if defined?(ActiveRecord::Base) && rails_account_model < ActiveRecord::Base
             rails_account_model.instantiate(account.stringify_keys)

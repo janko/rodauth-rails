@@ -2,6 +2,7 @@ class RodauthController < ApplicationController
   before_action :before_route
   after_action :after_route
   around_action :around_route
+  before_action :before_specific_route, only: [:create_account]
 
   rescue_from NotImplementedError do
     render plain: "rescued response", status: 500
@@ -25,6 +26,10 @@ class RodauthController < ApplicationController
     response.headers["X-Before-Around-Action"] = "true"
     yield
     response.headers["X-After-Around-Action"] = "true"
+  end
+
+  def before_specific_route
+    response.header["X-Before-Specific-Action"] = "true"
   end
 
   def some_method

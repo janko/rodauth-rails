@@ -108,6 +108,12 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
   end
 
+  test "routes" do
+    run_generator
+
+    assert_file "config/routes.rb", /^  rodauth$/
+  end
+
   test "fixtures" do
     run_generator
 
@@ -128,5 +134,11 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
       prepare_destination
     end
+  end
+
+  def prepare_destination
+    super
+    mkdir "#{destination_root}/config"
+    File.write "#{destination_root}/config/routes.rb", "Rails.application.routes.draw do\nend"
   end
 end

@@ -6,7 +6,7 @@ class InstrumentationTest < IntegrationTest
       visit "/login"
     end
 
-    assert_match /Processing by RodauthApp#call as HTML/, logged
+    assert_match /Processing by RodauthController#login as HTML/, logged
     refute_match /Parameters/, logged
     if ::Rails.gem_version >= Gem::Version.new("6.0")
       assert_match /Completed 200 OK in \d+ms \(Views: \d+ms | ActiveRecord: \d+\.\d+ms | Allocations: \d+\)/, logged
@@ -22,7 +22,7 @@ class InstrumentationTest < IntegrationTest
         { "CONTENT_TYPE" => "application/json", "HTTP_ACCEPT" => "application/json" }
     end
 
-    assert_match /Processing by RodauthApp#call as JSON/, logged
+    assert_match /Processing by ActionController::API#login as JSON/, logged
     assert_match /Parameters: {"login"=>"user@example\.com", "password"=>"secret"}/, logged
     assert_match /Completed 401 Unauthorized/, logged
   end
@@ -32,7 +32,7 @@ class InstrumentationTest < IntegrationTest
       visit "/change-password"
     end
 
-    assert_match /Processing by RodauthApp#call as HTML/, logged
+    assert_match /Processing by RodauthController#change_password as HTML/, logged
     assert_match /Redirected to \/login/, logged
     assert_match /Completed 302 Found/, logged
   end
@@ -42,7 +42,7 @@ class InstrumentationTest < IntegrationTest
       visit "/login?early_return=true"
     end
 
-    assert_match /Processing by RodauthApp#call as HTML/, logged
+    assert_match /Processing by RodauthController#login as HTML/, logged
     assert_match /Completed 201 Created in \d+ms/, logged
   end
 

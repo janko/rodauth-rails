@@ -18,7 +18,7 @@ class EmailTest < IntegrationTest
   test "verify login change email" do
     register(login: "user@example.com", password: "secret", verify: true)
 
-    visit "/change-login"
+    visit "/change-email"
 
     fill_in "Login", with: "new@example.com"
     fill_in "Password", with: "secret"

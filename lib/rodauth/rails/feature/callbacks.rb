@@ -12,6 +12,8 @@ module Rodauth
 
         # Runs controller callbacks and rescue handlers around Rodauth actions.
         def rails_controller_around
+          rails_controller_instance.instance_variable_set(:@_action_name, rails_path_parameters[:action])
+
           result = nil
 
           rails_controller_rescue do
