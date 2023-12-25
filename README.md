@@ -634,6 +634,15 @@ The `rails` feature rodauth-rails loads provides the following configuration met
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 | `rails_account_model`       | Model class connected with the accounts table.                     |
 
+```rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    rails_account_model { MyApp::Account }
+    rails_controller { MyApp::RodauthController }
+  end
+end
+```
+
 ### Manually inserting middleware
 
 You can choose to insert the Rodauth middleware somewhere earlier than
