@@ -1,4 +1,10 @@
-## HEAD
+## 1.13.0 (2023-12-25) :christmas_tree:
+
+* Add `#rodauth` method to controller test helpers (@janko)
+
+* When session middleware is required by Rodauth but missing, point to Rails docs instead of Roda (@janko)
+
+* Set `login_confirm_param` to `"email-confirm"` in default configuration for consistency (@janko)
 
 * Set `convert_token_id_to_integer?` in default configuration to avoid DB queries on boot (@janko)
 
