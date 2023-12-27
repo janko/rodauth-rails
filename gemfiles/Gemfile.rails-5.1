@@ -3,20 +3,10 @@ source "https://rubygems.org"
 gemspec path: ".."
 
 gem "rake", "~> 12.0"
-gem "warning" if RUBY_VERSION >= "2.4"
+gem "warning"
 
 gem "rails", "~> 5.1.0"
 gem "sqlite3", "~> 1.4",                platforms: :mri
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 
-if RUBY_VERSION < "2.5"
-  gem "loofah", "< 2.20"
-  gem "nokogiri", "< 1.15"
-end
-
-if RUBY_VERSION.start_with?("2.3.")
-  gem "sprockets", "~> 3.7.2"
-  gem "capybara", "~> 3.15.1"
-else
-  gem "capybara"
-end
+gem "capybara"

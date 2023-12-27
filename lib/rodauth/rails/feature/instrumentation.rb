@@ -47,20 +47,18 @@ module Rodauth
           ActiveSupport::Notifications.instrument("start_processing.action_controller", raw_payload)
 
           ActiveSupport::Notifications.instrument("process_action.action_controller", raw_payload) do |payload|
-            begin
-              result = catch(:halt) { yield }
+            result = catch(:halt) { yield }
 
-              response = ActionDispatch::Response.new(*(result || [404, {}, []]))
-              payload[:response] = response
-              payload[:status] = response.status
+            response = ActionDispatch::Response.new(*(result || [404, {}, []]))
+            payload[:response] = response
+            payload[:status] = response.status
 
-              throw :halt, result if result
-            rescue => error
-              payload[:status] = ActionDispatch::ExceptionWrapper.status_code_for_exception(error.class.name)
-              raise
-            ensure
-              rails_controller_eval { append_info_to_payload(payload) }
-            end
+            throw :halt, result if result
+          rescue => error
+            payload[:status] = ActionDispatch::ExceptionWrapper.status_code_for_exception(error.class.name)
+            raise
+          ensure
+            rails_controller_eval { append_info_to_payload(payload) }
           end
         end
 

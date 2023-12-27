@@ -13,7 +13,7 @@ module Rodauth
 
         def call
           routes = auth_class.route_hash.map do |path, handle_method|
-            route_name = handle_method.to_s.sub(/\Ahandle_/, "").to_sym
+            route_name = handle_method.to_s.delete_prefix("handle_").to_sym
             next if IGNORE.include?(route_name)
             verbs = route_verbs(route_name)
 
