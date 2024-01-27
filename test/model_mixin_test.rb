@@ -1,6 +1,6 @@
 require "test_helper"
 
-class ModelTest < UnitTest
+class ModelMixinTest < UnitTest
   test "module builder method with default configuration" do
     account_class = define_account_class
     account_class.include Rodauth::Rails.model(association_options: { dependent: nil })
