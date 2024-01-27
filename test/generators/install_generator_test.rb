@@ -37,7 +37,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     else
       assert_file "app/misc/rodauth_main.rb", %r{Sequel\.sqlite\(extensions: :activerecord_connection.*\)}
     end
-    assert_file "app/misc/rodauth_main.rb", /convert_token_id_to_integer\? true/
+    assert_file "app/misc/rodauth_main.rb", /convert_token_id_to_integer\? { Account.columns_hash\["id"\]\.type == :integer }/
   end
 
   test "app" do

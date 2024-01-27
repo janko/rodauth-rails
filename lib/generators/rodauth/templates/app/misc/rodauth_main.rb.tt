@@ -21,7 +21,7 @@ class RodauthMain < Rodauth::Rails::Auth
 <% end -%>
 
     # Avoid DB query that checks accounts table schema at boot time.
-    convert_token_id_to_integer? <%= primary_key_integer? %>
+    convert_token_id_to_integer? { <%= table_prefix.camelize %>.columns_hash["id"].type == :integer }
 
 <% end -%>
     # Change prefix of table and foreign key column names from default "account"

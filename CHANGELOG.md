@@ -1,5 +1,7 @@
 ## HEAD
 
+* Avoid generated `convert_token_id_to_integer?` causing tokens to get silently rejected after switching to UUIDs (@janko)
+
 * Allow referencing custom column attributes on `rails_account` during account creation (@janko)
 
 * Drop support for Ruby 2.3 and 2.4 (@janko)

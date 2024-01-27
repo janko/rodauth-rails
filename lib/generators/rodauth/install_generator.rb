@@ -101,10 +101,6 @@ module Rodauth
           options[:argon2]
         end
 
-        def primary_key_integer?
-          !::Rails.configuration.generators.options.dig(:active_record, :primary_key_type)
-        end
-
         def sequel_activerecord_integration?
           defined?(ActiveRecord::Railtie) &&
             (!defined?(Sequel) || Sequel::DATABASES.empty?)
