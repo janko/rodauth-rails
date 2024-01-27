@@ -37,6 +37,7 @@ class RodauthMain < Rodauth::Rails::Auth
     end
 
     after_login { remember_login }
+    before_create_account { rails_account.username }
 
     logout_redirect { rails_routes.root_path }
     verify_account_redirect { login_redirect }

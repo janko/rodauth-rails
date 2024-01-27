@@ -1,5 +1,7 @@
 ## HEAD
 
+* Allow referencing custom column attributes on `rails_account` during account creation (@janko)
+
 * Drop support for Ruby 2.3 and 2.4 (@janko)
 
 ## 1.13.0 (2023-12-25) :christmas_tree:

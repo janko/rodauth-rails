@@ -7,6 +7,7 @@ class CreateRodauth < ActiveRecord::Migration[ActiveRecord::Migration.current_ve
       t.string :email, null: false
       t.index :email, unique: true, where: "status IN (1, 2)"
       t.string :password_hash
+      t.string :username
     end
 
     # Used if storing password hashes in a separate table (default)

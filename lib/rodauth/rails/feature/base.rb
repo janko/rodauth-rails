@@ -59,7 +59,11 @@ module Rodauth
 
         def instantiate_rails_account
           if defined?(ActiveRecord::Base) && rails_account_model < ActiveRecord::Base
-            rails_account_model.instantiate(account.stringify_keys)
+            if account[account_id_column]
+              rails_account_model.instantiate(account.stringify_keys)
+            else
+              rails_account_model.new(account)
+            end
           elsif defined?(Sequel::Model) && rails_account_model < Sequel::Model
             rails_account_model.load(account)
           else
