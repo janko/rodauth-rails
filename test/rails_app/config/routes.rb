@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   controller :test do
     get :auth1
     get :auth2
+    get :basic_auth
     get :secondary
     get :auth_json
     get :sign_in

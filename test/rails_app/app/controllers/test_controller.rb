@@ -13,6 +13,13 @@ class TestController < ApplicationController
     render :template
   end
 
+  def basic_auth
+    respond_to do |format|
+      format.text { render plain: "Basic Auth" }
+      format.json { render json: { message: "Basic Auth" } }
+    end
+  end
+
   def secondary
     rodauth(:admin).require_authentication
 

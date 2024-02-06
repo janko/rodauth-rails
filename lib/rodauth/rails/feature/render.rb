@@ -46,10 +46,9 @@ module Rodauth
         end
 
         # Only look up template formats that the current request is accepting.
-        def _rails_controller_instance
-          controller = super
-          controller.formats = rails_request.formats.map(&:ref).compact
-          controller
+        def before_rodauth
+          super
+          rails_controller_instance.formats = rails_request.formats.map(&:ref).compact
         end
 
         # Not all Rodauth actions are Turbo-compatible (some form submissions

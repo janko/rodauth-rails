@@ -33,5 +33,8 @@ class RodauthApp < Rodauth::Rails::App
     if r.path == rails_routes.auth1_path
       rodauth.require_account
     end
+    if r.path.start_with?(rails_routes.basic_auth_path)
+      rodauth.require_http_basic_auth
+    end
   end
 end

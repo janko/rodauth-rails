@@ -100,4 +100,19 @@ class RenderTest < IntegrationTest
 
     assert_equal %(<turbo-stream action="append" target="login-form"><template><div id="turbo-stream">login failed</div></template></turbo-stream>), page.html
   end if defined?(::Turbo)
+
+  test "path format is preserved with basic auth" do
+    Account.create!(email: "user@example.com", password: "secret123", status: "verified")
+    page.driver.browser.basic_authorize "user@example.com", "secret123"
+
+    page.driver.browser.get "/basic_auth", {}, { "HTTP_ACCEPT" => "*/*" }
+    assert_equal "Basic Auth", page.html
+    assert_equal "text/plain; charset=utf-8", page.response_headers["Content-Type"]
+
+    page.driver.browser.get "/basic_auth.json", {}, { "HTTP_ACCEPT" => "*/*" }
+    assert_equal "{\"message\":\"Basic Auth\"}", page.html
+    assert_equal "application/json; charset=utf-8", page.response_headers["Content-Type"]
+
+    page.driver.browser.header "Authorization", nil
+  end
 end
