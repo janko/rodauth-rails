@@ -55,7 +55,7 @@ module Rodauth
         # render 200 HTML responses), so we disable Turbo on all Rodauth forms.
         def _view(meth, *)
           html = super
-          html = html.gsub(/<form(.+)>/, '<form\1 data-turbo="false">') if meth == :view
+          html = html.gsub(/<form([^>]+)>/, '<form\1 data-turbo="false">') if meth == :view
           html
         end
 

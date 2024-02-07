@@ -78,11 +78,18 @@ class RenderTest < IntegrationTest
   end
 
   test "disabling turbo for built-in templates" do
+    Account.create!(email: "user@example.com", password: "secret123", status: "verified")
+
     visit "/verify-account-resend"
     assert_includes page.html, %(<form action="/verify-account-resend" method="post" class="rodauth" role="form" id="verify-account-resend-form" data-turbo="false">)
 
     visit "/login"
     assert_includes page.html, %(<form method="post" class="rodauth" role="form" id="login-form" data-turbo="false">)
+
+    fill_in "Login", with: "user@example.com"
+    fill_in "Password", with: "wrongsecret"
+    click_on "Login"
+    assert_includes page.html, %(<form id="custom-reset-password-request-form" action="/reset-password-request" accept-charset="UTF-8" method="post" data-turbo="false">)
   end
 
   test "rendering built-in templates with alternative formats" do
