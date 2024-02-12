@@ -63,7 +63,7 @@ module Rodauth
       end
 
       def self.rodauth!(name)
-        rodauth(name) or fail ArgumentError, "unknown rodauth configuration: #{name.inspect}"
+        rodauth(name) or fail Rodauth::Rails::Error, "unknown rodauth configuration: #{name.inspect}"
       end
 
       # The newrelic_rpm gem expects this when we pass the roda class as

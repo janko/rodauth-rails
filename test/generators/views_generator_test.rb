@@ -173,7 +173,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   end
 
   test "specifying unknown configuration" do
-    assert_raises ArgumentError do
+    assert_raises Rodauth::Rails::Error do
       run_generator %w[--name unknown]
     end
   end

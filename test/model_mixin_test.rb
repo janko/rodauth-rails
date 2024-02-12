@@ -17,7 +17,7 @@ class ModelMixinTest < UnitTest
   end
 
   test "unknown configuration" do
-    assert_raises ArgumentError do
+    assert_raises Rodauth::Rails::Error do
       Rodauth::Rails.model(:unknown)
     end
   end

@@ -421,7 +421,7 @@ tables used by enabled authentication features.
 
 ```rb
 class Account < ActiveRecord::Base # Sequel::Model
-  include Rodauth::Model(RodauthMain)
+  include Rodauth::Rails.model # or `Rodauth::Rails.model(:admin)`
 end
 ```
 ```rb
