@@ -153,7 +153,7 @@ navigation header:
 
 ```erb
 <% if rodauth.logged_in? %>
-  <%= link_to "Sign out", rodauth.logout_path, data: { turbo_method: :post } %>
+  <%= button_to "Sign out", rodauth.logout_path, method: :post %>
 <% else %>
   <%= link_to "Sign in", rodauth.login_path %>
   <%= link_to "Sign up", rodauth.create_account_path %>
