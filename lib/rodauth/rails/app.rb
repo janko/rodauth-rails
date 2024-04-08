@@ -55,12 +55,6 @@ module Rodauth
         rodauth(name) or fail Rodauth::Rails::Error, "unknown rodauth configuration: #{name.inspect}"
       end
 
-      # The newrelic_rpm gem expects this when we pass the roda class as
-      # :controller in instrumentation payload.
-      def self.controller_path
-        name.underscore
-      end
-
       module RequestMethods
         # Automatically route the prefix if it hasn't been routed already. This
         # way people only have to update prefix in their Rodauth configurations.
