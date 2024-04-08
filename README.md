@@ -253,7 +253,7 @@ end
 ```
 ```rb
 class RodauthController < ApplicationController
-  before_action :set_locale # executes before Rodauth endpoints
+  before_action :verify_captcha, only: :login, if: -> { request.post? } # executes before Rodauth endpoints
   rescue_from("MyApp::SomeError") { |exception| ... } # rescues around Rodauth endpoints
 end
 ```

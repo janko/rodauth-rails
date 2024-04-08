@@ -7,6 +7,8 @@ module Rodauth
         private
 
         def _around_rodauth
+          rails_controller_instance.instance_variable_set(:@_action_name, current_route.to_s)
+
           rails_controller_around { super }
         end
 
