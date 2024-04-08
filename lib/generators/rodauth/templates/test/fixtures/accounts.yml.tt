@@ -1,10 +1,10 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 one:
   email: freddie@queen.com
-  password_hash: <%%= RodauthMain.allocate.password_hash("password") %>
+  password_hash: <%%= RodauthApp.rodauth.allocate.password_hash("password") %>
   status: verified
 
 two:
   email: brian@queen.com
-  password_hash: <%%= RodauthMain.allocate.password_hash("password") %>
+  password_hash: <%%= RodauthApp.rodauth.allocate.password_hash("password") %>
   status: verified
