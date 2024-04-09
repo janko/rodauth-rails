@@ -10,8 +10,6 @@
 
 * Fix format being inferred from `Accept` header instead URL path when calling `http_basic_auth` in the Rodauth middleware (@janko)
 
-* Allow referencing custom column attributes on `rails_account` before the account is persisted (@janko)
-
 * Retrieve auth class through the Rodauth app in generated account fixtures (@janko)
 
 * Use `include Rodauth::Rails.model` again in generated account model (@janko)
