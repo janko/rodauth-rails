@@ -1,4 +1,20 @@
-## HEAD
+## 1.14.0 (2024-04-09)
+
+* Allow declaring controller callbacks for specific Rodauth routes via `:only` and `:except` keyword arguments (@janko)
+
+* Instrument Rodauth controller and route name instead of `RodauthApp#call` on Rodauth requests (@janko)
+
+* Remove custom `#inspect` from Rodauth app middleware subclass in favour of Ruby 3.3+ `Module#set_temporary_name` (@janko)
+
+* Fix `data-turbo="false"` being added in the wrong place in reset password request form on login validation errors (@janko)
+
+* Fix format being inferred from `Accept` header instead URL path when calling `http_basic_auth` in the Rodauth middleware (@janko)
+
+* Allow referencing custom column attributes on `rails_account` before the account is persisted (@janko)
+
+* Retrieve auth class through the Rodauth app in generated account fixtures (@janko)
+
+* Use `include Rodauth::Rails.model` again in generated account model (@janko)
 
 * Avoid generated `convert_token_id_to_integer?` causing tokens to get silently rejected after switching to UUIDs (@janko)
 
