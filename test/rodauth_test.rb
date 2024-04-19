@@ -15,6 +15,7 @@ class RodauthTest < UnitTest
     rodauth = Rodauth::Rails.rodauth(account: account)
     assert_equal "user@example.com", rodauth.send(:email_to)
     assert_equal account.id, rodauth.session_value
+    assert_equal account.status_before_type_cast, rodauth.account[:status]
   end
 
   test "allows setting Sequel account" do
