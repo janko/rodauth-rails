@@ -1,3 +1,7 @@
+## HEAD
+
+* Fix matching on account status when passing Active Record object to `Rodauth::Rails.account` (@dush)
+
 ## 1.14.0 (2024-04-09)
 
 * Allow declaring controller callbacks for specific Rodauth routes via `:only` and `:except` keyword arguments (@janko)
