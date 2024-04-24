@@ -254,7 +254,7 @@ end
 ```rb
 class RodauthController < ApplicationController
   before_action :verify_captcha, only: :login, if: -> { request.post? } # executes before Rodauth endpoints
-  rescue_from("MyApp::SomeError") { |exception| ... } # rescues around Rodauth endpoints
+  rescue_from("SomeError") { |exception| ... } # rescues around Rodauth endpoints
 end
 ```
 
