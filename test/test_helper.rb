@@ -10,6 +10,8 @@ require_relative "rails_app/config/environment"
 require "rails/test_help"
 require "capybara/rails"
 
+puts "Rails #{Rails.version}" if ENV["CI"]
+
 ActiveRecord::Migrator.migrations_paths = [Rails.root.join("db/migrate")]
 Rails.backtrace_cleaner.remove_silencers! # show full stack traces
 
