@@ -1,4 +1,4 @@
-## HEAD
+## 1.14.1 (2024-05-15)
 
 * Fix matching on account status when passing Active Record object to `Rodauth::Rails.account` (@dush)
 
