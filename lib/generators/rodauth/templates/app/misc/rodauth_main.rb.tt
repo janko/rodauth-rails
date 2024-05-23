@@ -12,16 +12,17 @@ class RodauthMain < Rodauth::Rails::Auth
     # http://rodauth.jeremyevans.net/documentation.html
 
     # ==> General
-<% if sequel_activerecord_integration? -%>
+<% if activerecord? && !sequel? -%>
     # Initialize Sequel and have it reuse Active Record's database connection.
 <% if RUBY_ENGINE == "jruby" -%>
     db Sequel.connect("jdbc:<%= sequel_adapter %>://", extensions: :activerecord_connection, keep_reference: false)
 <% else -%>
     db Sequel.<%= sequel_adapter %>(extensions: :activerecord_connection, keep_reference: false)
 <% end -%>
-
+<% if activerecord? -%>
     # Avoid DB query that checks accounts table schema at boot time.
     convert_token_id_to_integer? { <%= table_prefix.camelize %>.columns_hash["id"].type == :integer }
+<% end -%>
 
 <% end -%>
     # Change prefix of table and foreign key column names from default "account"

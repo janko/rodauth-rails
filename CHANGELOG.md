@@ -1,3 +1,7 @@
+## HEAD
+
+* Avoid generating Active Record specific `convert_token_id_to_integer?` when Sequel is used
+
 ## 1.14.1 (2024-05-15)
 
 * Fix matching on account status when passing Active Record object to `Rodauth::Rails.account` (@dush)

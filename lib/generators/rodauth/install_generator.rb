@@ -101,9 +101,12 @@ module Rodauth
           options[:argon2]
         end
 
-        def sequel_activerecord_integration?
-          defined?(ActiveRecord::Railtie) &&
-            (!defined?(Sequel) || Sequel::DATABASES.empty?)
+        def activerecord?
+          defined?(ActiveRecord::Railtie)
+        end
+
+        def sequel?
+          defined?(Sequel) && Sequel::DATABASES.any?
         end
 
         def session_store?
