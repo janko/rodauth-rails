@@ -13,5 +13,5 @@ create_table :<%= table_prefix %>_authentication_audit_logs do
   String :metadata
 <% end -%>
   index [:<%= table_prefix %>_id, :at], name: :audit_<%= table_prefix %>_at_idx
-  index :at, name: :audit_at_idx
+  index :at
 end
