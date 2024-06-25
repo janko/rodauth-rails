@@ -1,5 +1,7 @@
 ## HEAD
 
+* Allow overriding `rodauth.rails_url_options` in the mailer (@janko)
+
 * Remove duplicate index on `account_id` in JWT refresh keys table (@janko)
 
 * Rely on default index names in generated migrations (@thedumtechguy)

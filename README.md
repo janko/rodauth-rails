@@ -535,6 +535,14 @@ Rodauth::Rails.rodauth(session: { two_factor_auth_setup: true })
 Rodauth::Rails.rodauth(:admin, params: { "param" => "value" })
 ```
 
+You can override default URL options ad-hoc by modifying `#rails_url_options`:
+
+```rb
+rodauth.base_url #=> "https://example.com"
+rodauth.rails_url_options[:host] = "subdomain.example.com"
+rodauth.base_url #=> "https://subdomain.example.com"
+```
+
 ### Using as a library
 
 Rodauth offers a [`Rodauth.lib`][library] method for when you want to use it as a library (via [internal requests][internal_request]), as opposed to having it route requests. This gem provides a `Rodauth::Rails.lib` counterpart that does the same but with Rails integration:
@@ -633,6 +641,7 @@ The `rails` feature rodauth-rails loads provides the following configuration met
 | `rails_controller_instance` | Instance of the controller with the request env context.           |
 | `rails_controller`          | Controller class to use for rendering and CSRF protection.         |
 | `rails_account_model`       | Model class connected with the accounts table.                     |
+| `rails_url_options`         | Options used for generating URLs outside of a request (defaults to `config.action_mailer.default_url_options`) |
 
 ```rb
 class RodauthMain < Rodauth::Rails::Auth

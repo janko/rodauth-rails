@@ -1,20 +1,28 @@
 require "test_helper"
 
 class InternalRequestTest < UnitTest
-  test "inheriting URL options from config.action_mailer" do
+  test "inheriting URL options from Action Mailer" do
     RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
     email = ActionMailer::Base.deliveries.last
     assert_match %r{https://example\.com}, email.body.to_s
   end
 
-  test "allowing overriding URL options" do
+  test "overriding URL options directly" do
+    rodauth = RodauthApp.rodauth.allocate
+    rodauth.rails_url_options[:host] = "sub.example.com"
+
+    assert_equal "https://sub.example.com", rodauth.base_url
+    assert_equal "example.com", ActionMailer::Base.default_url_options[:host]
+  end
+
+  test "overriding URL options via rack env" do
     env = { "HTTP_HOST" => "foobar.com", "rack.url_scheme" => "http" }
     RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret", env: env)
     email = ActionMailer::Base.deliveries.last
     assert_match %r{http://foobar\.com}, email.body.to_s
   end
 
-  test "missing config.action_mailer.default_url_options" do
+  test "missing Action Mailer default URL options" do
     Rails.configuration.action_mailer.stub(:default_url_options, nil) do
       assert_equal "/create-account", RodauthApp.rodauth.create_account_path
       assert_raises Rodauth::Rails::Error do
