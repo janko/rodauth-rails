@@ -1,5 +1,9 @@
 ## HEAD
 
+* Remove duplicate index on `account_id` in JWT refresh keys table (@janko)
+
+* Rely on default index names in generated migrations (@thedumtechguy)
+
 * Avoid generating Active Record specific `convert_token_id_to_integer?` when Sequel is used
 
 ## 1.14.1 (2024-05-15)

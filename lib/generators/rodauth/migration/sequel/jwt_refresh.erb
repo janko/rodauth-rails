@@ -4,5 +4,5 @@ create_table :<%= table_prefix %>_jwt_refresh_keys do
   foreign_key :<%= table_prefix %>_id, :<%= table_prefix.pluralize %>, null: false, type: :Bignum
   String :key, null: false
   DateTime :deadline, null: false
-  index :<%= table_prefix %>_id, name: :<%= table_prefix %>_jwt_rk_<%= table_prefix %>_id_idx
+  index :<%= table_prefix %>_id
 end
