@@ -12,5 +12,5 @@ create_table :<%= table_prefix %>_authentication_audit_logs<%= primary_key_type 
   t.string :metadata
 <% end -%>
   t.index [:<%= table_prefix %>_id, :at], name: "audit_<%= table_prefix %>_at_idx"
-  t.index :at, name: "audit_at_idx"
+  t.index :at
 end
