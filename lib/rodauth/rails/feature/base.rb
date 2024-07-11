@@ -13,6 +13,7 @@ module Rodauth
         end
 
         def rails_account
+          @rails_account = nil if account.nil? || @rails_account&.id != account_id
           @rails_account ||= instantiate_rails_account if account!
         end
 
@@ -59,7 +60,7 @@ module Rodauth
 
         def instantiate_rails_account
           if defined?(ActiveRecord::Base) && rails_account_model < ActiveRecord::Base
-            if account[account_id_column]
+            if account_id
               rails_account_model.instantiate(account.stringify_keys)
             else
               rails_account_model.new(account)

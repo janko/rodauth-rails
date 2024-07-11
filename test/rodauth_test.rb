@@ -90,7 +90,7 @@ class RodauthTest < UnitTest
     assert_equal :login_required, error.reason
   end
 
-  test "returns current account if logged in" do
+  test "allows retrieving current account model instance" do
     assert_nil Rodauth::Rails.rodauth.rails_account
 
     account = Account.create!(email: "user@example.com", status: "verified")
@@ -99,6 +99,10 @@ class RodauthTest < UnitTest
     rodauth = RodauthApp.rodauth.allocate
     rodauth.instance_eval { @account = account_ds(account.id).first! }
     assert_equal account, rodauth.rails_account
+
+    account2 = Account.create!(email: "user2@example.com", status: "verified")
+    rodauth.instance_eval { @account = account_ds(account2.id).first! }
+    assert_equal account2, rodauth.rails_account
   end
 
   test "allows using as a library" do
