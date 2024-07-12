@@ -126,7 +126,7 @@ class RodauthTest < UnitTest
 
   def reset_secret_key_base
     original_secret_key_base = Rails.configuration.secret_key_base
-    Rails.configuration.secret_key_base = nil
+    Rails.configuration.instance_variable_set(:@secret_key_base, nil)
     yield
   ensure
     Rails.configuration.secret_key_base = original_secret_key_base
