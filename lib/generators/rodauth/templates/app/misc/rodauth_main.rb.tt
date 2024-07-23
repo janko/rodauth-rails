@@ -130,6 +130,15 @@ class RodauthMain < Rodauth::Rails::Auth
     # create_unlock_account_email do
     #   RodauthMailer.unlock_account(self.class.configuration_name, account_id, unlock_account_key_value)
     # end
+    # create_otp_locked_out_email do
+    #   RodauthMailer.otp_locked_out(self.class.configuration_name, account_id)
+    # end
+    # create_otp_unlocked_email do
+    #   RodauthMailer.otp_unlocked(self.class.configuration_name, account_id)
+    # end
+    # create_otp_unlock_failed_email do
+    #   RodauthMailer.otp_unlock_failed(self.class.configuration_name, account_id)
+    # end
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits
       db.after_commit { email.deliver_later }

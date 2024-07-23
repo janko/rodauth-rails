@@ -21,6 +21,9 @@ module Rodauth
           unlock_account
           verify_account
           verify_login_change
+          otp_locked_out
+          otp_unlocked
+          otp_unlock_failed
         ]
 
         source_root "#{__dir__}/templates"

@@ -51,6 +51,27 @@ class RodauthMailer < ApplicationMailer
   #   mail subject: @rodauth.email_subject_prefix + @rodauth.unlock_account_email_subject
   # end
 
+  # def otp_locked_out(name, account_id)
+  #   @rodauth = rodauth(name, account_id)
+  #   @account = @rodauth.rails_account
+
+  #   mail subject: @rodauth.email_subject_prefix + @rodauth.otp_locked_out_email_subject
+  # end
+
+  # def otp_unlocked(name, account_id)
+  #   @rodauth = rodauth(name, account_id)
+  #   @account = @rodauth.rails_account
+
+  #   mail subject: @rodauth.email_subject_prefix + @rodauth.otp_unlocked_email_subject
+  # end
+
+  # def otp_unlock_failed(name, account_id)
+  #   @rodauth = rodauth(name, account_id)
+  #   @account = @rodauth.rails_account
+
+  #   mail subject: @rodauth.email_subject_prefix + @rodauth.otp_unlock_failed_email_subject
+  # end
+
   private
 
   # Default URL options are inherited from Action Mailer, but you can override them
