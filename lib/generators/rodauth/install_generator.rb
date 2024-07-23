@@ -17,6 +17,7 @@ module Rodauth
           email_auth
           password_changed
           reset_password
+          reset_password_notify
           unlock_account
           verify_account
           verify_login_change
