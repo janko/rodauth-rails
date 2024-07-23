@@ -10,6 +10,7 @@
   <fieldset class="form-group mb-3">
     <% (usage = rodauth.account_webauthn_usage).each do |id, last_use| %>
       <div class="form-check">
+        <% last_use = last_use.strftime(rodauth.strftime_format) if last_use.is_a?(Time) %>
         <%= form.radio_button rodauth.webauthn_remove_param, id, id: "webauthn-remove-#{id}", class: "form-check-input #{"is-invalid" if rodauth.field_error(rodauth.webauthn_remove_param)}", aria: ({ invalid: true, describedby: "webauthn_remove_error_message" } if rodauth.field_error(rodauth.webauthn_remove_param)) %>
         <%= form.label "webauthn-remove-#{id}", "Last use: #{last_use}", class: "form-check-label" %>
         <%= content_tag(:span, rodauth.field_error(rodauth.webauthn_remove_param), class: "invalid-feedback", id: "webauthn_remove_error_message") if rodauth.field_error(rodauth.webauthn_remove_param) && id == usage.keys.last %>

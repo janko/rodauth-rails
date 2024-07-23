@@ -10,6 +10,7 @@
   <fieldset class="mb-6">
     <% rodauth.account_webauthn_usage.each do |id, last_use| %>
       <div class="flex items-center space-x-2">
+        <% last_use = last_use.strftime(rodauth.strftime_format) if last_use.is_a?(Time) %>
         <%= form.radio_button rodauth.webauthn_remove_param, id, id: "webauthn-remove-#{id}", class: "dark:bg-gray-900 dark:border-gray-600 dark:checked:bg-current dark:checked:border-current dark:checked:text-emerald-400 dark:focus:ring-emerald-400 dark:focus:ring-offset-gray-900" %>
         <%= form.label "webauthn-remove-#{id}", "Last use: #{last_use}", class: "text-sm" %>
       </div>
