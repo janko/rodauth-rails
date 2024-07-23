@@ -26,6 +26,8 @@ module Rodauth
           otp_unlock_failed
           otp_setup
           otp_disabled
+          webauthn_authenticator_added
+          webauthn_authenticator_removed
         ]
 
         source_root "#{__dir__}/templates"

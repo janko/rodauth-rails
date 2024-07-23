@@ -145,6 +145,12 @@ class RodauthMain < Rodauth::Rails::Auth
     # create_otp_disabled_email do
     #   RodauthMailer.otp_disabled(self.class.configuration_name, account_id)
     # end
+    # create_webauthn_authenticator_added_email do
+    #   RodauthMailer.webauthn_authenticator_added(self.class.configuration_name, account_id)
+    # end
+    # create_webauthn_authenticator_removed_email do
+    #   RodauthMailer.webauthn_authenticator_removed(self.class.configuration_name, account_id)
+    # end
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits
       db.after_commit { email.deliver_later }
