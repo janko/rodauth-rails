@@ -24,6 +24,8 @@ module Rodauth
           otp_locked_out
           otp_unlocked
           otp_unlock_failed
+          otp_setup
+          otp_disabled
         ]
 
         source_root "#{__dir__}/templates"

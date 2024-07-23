@@ -139,6 +139,12 @@ class RodauthMain < Rodauth::Rails::Auth
     # create_otp_unlock_failed_email do
     #   RodauthMailer.otp_unlock_failed(self.class.configuration_name, account_id)
     # end
+    # create_otp_setup_email do
+    #   RodauthMailer.otp_setup(self.class.configuration_name, account_id)
+    # end
+    # create_otp_disabled_email do
+    #   RodauthMailer.otp_disabled(self.class.configuration_name, account_id)
+    # end
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits
       db.after_commit { email.deliver_later }
