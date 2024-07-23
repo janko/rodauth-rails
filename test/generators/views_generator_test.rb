@@ -59,7 +59,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   test "interpolating named configuration" do
     run_generator %w[verify_login_change]
 
-    assert_file "app/views/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
+    assert_file "app/views/rodauth/verify_login_change.html.erb", <<~ERB
       <%= form_with url: rodauth.verify_login_change_path, method: :post, data: { turbo: false } do |form| %>
         <div class="form-group mb-3">
           <%= form.submit rodauth.verify_login_change_button, class: "btn btn-primary" %>
@@ -69,7 +69,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
 
     run_generator %w[verify_login_change --name admin]
 
-    assert_file "app/views/admin/rodauth/verify_login_change.html.erb", <<-ERB.strip_heredoc
+    assert_file "app/views/admin/rodauth/verify_login_change.html.erb", <<~ERB
       <%= form_with url: rodauth(:admin).verify_login_change_path, method: :post, data: { turbo: false } do |form| %>
         <div class="form-group mb-3">
           <%= form.submit rodauth(:admin).verify_login_change_button, class: "btn btn-primary" %>
@@ -81,7 +81,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
   test "interpolating directory name" do
     run_generator %w[recovery_codes]
 
-    assert_file "app/views/rodauth/add_recovery_codes.html.erb", <<-ERB.strip_heredoc
+    assert_file "app/views/rodauth/add_recovery_codes.html.erb", <<~ERB
       <pre id="recovery-codes"><%= rodauth.recovery_codes.map { |s| h(s) }.join("\\n\\n") %></pre>
 
       <% if rodauth.can_add_recovery_codes? %>
@@ -92,7 +92,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
 
     run_generator %w[recovery_codes --name admin]
 
-    assert_file "app/views/admin/rodauth/add_recovery_codes.html.erb", <<-ERB.strip_heredoc
+    assert_file "app/views/admin/rodauth/add_recovery_codes.html.erb", <<~ERB
       <pre id="recovery-codes"><%= rodauth(:admin).recovery_codes.map { |s| h(s) }.join("\\n\\n") %></pre>
 
       <% if rodauth(:admin).can_add_recovery_codes? %>
@@ -106,7 +106,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
     test "form helpers compatibility" do
       run_generator %w[close_account remember logout]
 
-      assert_file "app/views/rodauth/close_account.html.erb", <<-ERB.strip_heredoc
+      assert_file "app/views/rodauth/close_account.html.erb", <<~ERB
         <%= form_tag rodauth.close_account_path, method: :post, data: { turbo: false } do %>
           <% if rodauth.close_account_requires_password? %>
             <div class="form-group mb-3">
@@ -122,7 +122,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
         <% end %>
       ERB
 
-      assert_file "app/views/rodauth/remember.html.erb", <<-ERB.strip_heredoc
+      assert_file "app/views/rodauth/remember.html.erb", <<~ERB
         <%= form_tag rodauth.remember_path, method: :post, data: { turbo: false } do %>
           <fieldset class="form-group mb-3">
             <div class="form-check">
@@ -147,7 +147,7 @@ class ViewsGeneratorTest < Rails::Generators::TestCase
         <% end %>
       ERB
 
-      assert_file "app/views/rodauth/logout.html.erb", <<-ERB.strip_heredoc
+      assert_file "app/views/rodauth/logout.html.erb", <<~ERB
         <%= form_tag rodauth.logout_path, method: :post, data: { turbo: false } do %>
           <% if rodauth.features.include?(:active_sessions) %>
             <div class="form-group mb-3">
