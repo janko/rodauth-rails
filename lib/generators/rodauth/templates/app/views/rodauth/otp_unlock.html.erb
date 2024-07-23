@@ -1,0 +1,21 @@
+<%= form_with url: rodauth.otp_unlock_path, method: :post, data: { turbo: false } do |form| %>
+  <p><%= rodauth.otp_unlock_consecutive_successes_label %>: <%= rodauth.otp_unlock_num_successes %></p>
+  <p><%= rodauth.otp_unlock_required_consecutive_successes_label %>: <%= rodauth.otp_unlock_auths_required %></p>
+  <p><%= rodauth.otp_unlock_next_auth_deadline_label %>: <%= rodauth.otp_unlock_deadline.strftime(rodauth.strftime_format) %></p>
+
+  <div class="form-group mb-3">
+    <%= form.label "otp-auth-code", rodauth.otp_auth_label, class: "form-label" %>
+    <div class="row">
+      <div class="col-sm-3">
+        <%= form.text_field rodauth.otp_auth_param, value: "", id: "otp-auth-code", autocomplete: "off", inputmode: "numeric", required: true, class: "form-control #{"is-invalid" if rodauth.field_error(rodauth.otp_auth_param)}", aria: ({ invalid: true, describedby: "otp-auth-code_error_message" } if rodauth.field_error(rodauth.otp_auth_param)) %>
+        <%= content_tag(:span, rodauth.field_error(rodauth.otp_auth_param), class: "invalid-feedback", id: "otp-auth-code_error_message") if rodauth.field_error(rodauth.otp_auth_param) %>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-group mb-3">
+    <%= form.submit rodauth.otp_unlock_button, class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<%== rodauth.otp_unlock_form_footer %>

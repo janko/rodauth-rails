@@ -37,6 +37,7 @@ module Rodauth
           lockout:             %w[unlock_account_request unlock_account],
           two_factor_base:     %w[two_factor_manage two_factor_auth two_factor_disable],
           otp:                 %w[otp_setup otp_auth otp_disable],
+          otp_unlock:          %w[otp_unlock otp_unlock_not_available],
           sms_codes:           %w[sms_setup sms_confirm sms_auth sms_request sms_disable],
           recovery_codes:      %w[recovery_codes add_recovery_codes recovery_auth],
           webauthn:            %w[webauthn_setup webauthn_auth webauthn_remove],

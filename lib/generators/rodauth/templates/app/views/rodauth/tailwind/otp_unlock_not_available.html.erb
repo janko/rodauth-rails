@@ -1,0 +1,14 @@
+<dl class="mb-6 text-sm space-y-2">
+  <dt class="font-semibold"><%= rodauth.otp_unlock_consecutive_successes_label %>:</dt>
+  <dd><%= rodauth.otp_unlock_num_successes %></dd>
+
+  <dt class="font-semibold"><%= rodauth.otp_unlock_required_consecutive_successes_label %>:</dt>
+  <dd><%= rodauth.otp_unlock_auths_required %></dd>
+
+  <dt class="font-semibold"><%= rodauth.otp_unlock_next_auth_attempt_label %>:</dt>
+  <dd><%= rodauth.otp_unlock_deadline.strftime(rodauth.strftime_format) %></dd>
+</dl>
+
+<p class="mt-2"><%= rodauth.otp_unlock_next_auth_attempt_refresh_label %></p>
+
+<%== rodauth.otp_unlock_refresh_tag %>

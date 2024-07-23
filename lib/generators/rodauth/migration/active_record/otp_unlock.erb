@@ -1,0 +1,7 @@
+# Used by the otp_unlock feature
+create_table :<%= table_prefix %>_otp_unlocks, id: false do |t|
+  t.<%= primary_key_type(nil) %> :id, primary_key: true
+  t.foreign_key :<%= table_prefix.pluralize %>, column: :id
+  t.integer :num_successes, null: false, default: 1
+  t.datetime :next_auth_attempt_after, null: false, default: -> { "<%= current_timestamp %>" }
+end

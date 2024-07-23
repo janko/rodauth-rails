@@ -1,0 +1,22 @@
+<%= form_with url: rodauth.otp_unlock_path, method: :post, data: { turbo: false }, class: "w-full max-w-sm" do |form| %>
+  <dl class="mb-6 text-sm space-y-2">
+    <dt class="font-semibold"><%= rodauth.otp_unlock_consecutive_successes_label %>:</dt>
+    <dd><%= rodauth.otp_unlock_num_successes %></dd>
+
+    <dt class="font-semibold"><%= rodauth.otp_unlock_required_consecutive_successes_label %>:</dt>
+    <dd><%= rodauth.otp_unlock_auths_required %></dd>
+
+    <dt class="font-semibold"><%= rodauth.otp_unlock_next_auth_deadline_label %>:</dt>
+    <dd><%= rodauth.otp_unlock_deadline.strftime(rodauth.strftime_format) %></dd>
+  </dl>
+
+  <div class="mb-6">
+    <%= form.label "otp-auth-code", rodauth.otp_auth_label, class: "block text-sm font-semibold" %>
+    <%= form.text_field rodauth.otp_auth_param, value: "", id: "otp-auth-code", autocomplete: "off", inputmode: "numeric", required: true, class: "mt-2 text-sm w-1/2 px-3 py-2 border rounded-md dark:bg-gray-900 dark:text-gray-100 dark:focus:bg-gray-800 #{rodauth.field_error(rodauth.otp_auth_param) ? "border-red-600 focus:ring-red-600 focus:border-red-600 dark:border-red-400 dark:focus:ring-red-400" : "border-gray-300 dark:border-gray-700 dark:focus:border-emerald-400 dark:focus:ring-emerald-400" }", aria: ({ invalid: true, describedby: "otp-auth-code_error_message" } if rodauth.field_error(rodauth.otp_auth_param)) %>
+    <%= content_tag(:span, rodauth.field_error(rodauth.otp_auth_param), class: "block mt-1 text-red-600 text-xs dark:text-red-400", id: "otp-auth-code_error_message") if rodauth.field_error(rodauth.otp_auth_param) %>
+  </div>
+
+  <%= form.submit rodauth.otp_unlock_button, class: "w-full px-8 py-3 cursor-pointer font-semibold text-sm rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-600 dark:bg-emerald-400 dark:hover:bg-emerald-500 dark:text-gray-900 dark:focus:ring-emerald-400 dark:focus:ring-offset-current" %>
+<% end %>
+
+<%== rodauth.otp_unlock_form_footer %>
