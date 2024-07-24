@@ -39,7 +39,7 @@ Depending on your application's configuration some manual setup may be required:
          ...
        </head>
 
-    * Not required *
+     * Not required *
 
   5. You can copy Rodauth views (for customization) to your app by running:
 
@@ -47,6 +47,6 @@ Depending on your application's configuration some manual setup may be required:
 
        rails g rodauth:views --css=tailwind # tailwind views (requires @tailwindcss/forms plugin)
 
-      * Not required *
+     * Not required *
 
 ===============================================================================
