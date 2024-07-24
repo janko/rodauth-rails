@@ -39,7 +39,12 @@ class RodauthMain < Rodauth::Rails::Auth
     after_login { remember_login }
     before_create_account { rails_account.username }
 
-    already_logged_in { redirect rails_routes.root_path(rails_request.query_parameters) }
+    already_logged_in do
+      if rails_request.query_parameters.any?
+        redirect rails_routes.root_path(rails_request.query_parameters)
+      end
+    end
+
     logout_redirect { rails_routes.root_path }
     verify_account_redirect { login_redirect }
     reset_password_redirect { login_path }
