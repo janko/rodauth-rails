@@ -23,12 +23,12 @@ class RodauthMailer < ApplicationMailer
     mail to: @new_email, subject: @rodauth.email_subject_prefix + @rodauth.verify_login_change_email_subject
   end
 
-  def password_changed(name, account_id)
-    @rodauth = rodauth(name, account_id)
-    @account = @rodauth.rails_account
+  # def password_changed(name, account_id)
+  #   @rodauth = rodauth(name, account_id)
+  #   @account = @rodauth.rails_account
 
-    mail subject: @rodauth.email_subject_prefix + @rodauth.password_changed_email_subject
-  end
+  #   mail subject: @rodauth.email_subject_prefix + @rodauth.password_changed_email_subject
+  # end
 
   # def reset_password_notify(name, account_id)
   #   @rodauth = rodauth(name, account_id)

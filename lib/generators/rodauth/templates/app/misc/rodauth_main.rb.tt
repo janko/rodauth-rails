@@ -5,8 +5,8 @@ class RodauthMain < Rodauth::Rails::Auth
     # List of authentication features that are loaded.
     enable :create_account, :verify_account, :verify_account_grace_period,
       :login, :logout<%= ", :remember" unless jwt? %><%= ", :json" if json? %><%= ", :jwt" if jwt? %>,
-      :reset_password, :change_password, :change_password_notify,
-      :change_login, :verify_login_change, :close_account<%= ", :argon2" if argon2? %>
+      :reset_password, :change_password, :change_login, :verify_login_change,
+      :close_account<%= ", :argon2" if argon2? %>
 
     # See the Rodauth documentation for the list of available config options:
     # http://rodauth.jeremyevans.net/documentation.html
@@ -118,9 +118,9 @@ class RodauthMain < Rodauth::Rails::Auth
     create_verify_login_change_email do |_login|
       RodauthMailer.verify_login_change(self.class.configuration_name, account_id, verify_login_change_key_value)
     end
-    create_password_changed_email do
-      RodauthMailer.password_changed(self.class.configuration_name, account_id)
-    end
+    # create_password_changed_email do
+    #   RodauthMailer.password_changed(self.class.configuration_name, account_id)
+    # end
     # create_reset_password_notify_email do
     #   RodauthMailer.reset_password_notify(self.class.configuration_name, account_id)
     # end
