@@ -49,9 +49,9 @@ module Rodauth
           ActiveSupport::Notifications.instrument("process_action.action_controller", raw_payload) do |payload|
             result = catch(:halt) { yield }
 
-            response = ActionDispatch::Response.new(*(result || [404, {}, []]))
-            payload[:response] = response
-            payload[:status] = response.status
+            rails_response = build_rails_response(result || [404, {}, []])
+            payload[:response] = rails_response
+            payload[:status] = rails_response.status
 
             throw :halt, result if result
           rescue => error
@@ -66,12 +66,18 @@ module Rodauth
           ActiveSupport::Notifications.instrument("redirect_to.action_controller", request: rails_request) do |payload|
             result = catch(:halt) { yield }
 
-            response = ActionDispatch::Response.new(*result)
-            payload[:status] = response.status
-            payload[:location] = response.filtered_location
+            rails_response = build_rails_response(result)
+            payload[:status] = rails_response.status
+            payload[:location] = rails_response.filtered_location
 
             throw :halt, result
           end
+        end
+
+        def build_rails_response(args)
+          response = ActionDispatch::Response.new(*args)
+          response.request = rails_request
+          response
         end
       end
     end
