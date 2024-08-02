@@ -2,8 +2,7 @@ class RodauthMain < Rodauth::Rails::Auth
   configure do
     enable :create_account, :verify_account, :verify_account_grace_period,
       :login, :remember, :logout, :active_sessions, :http_basic_auth,
-      :reset_password, :change_password, :change_password_notify,
-      :change_login, :verify_login_change,
+      :reset_password, :change_password, :change_login, :verify_login_change,
       :close_account, :lockout, :recovery_codes, :internal_request,
       :path_class_methods
 

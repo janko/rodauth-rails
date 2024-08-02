@@ -1,0 +1,6 @@
+def otp_unlock_failed(name, account_id)
+  @rodauth = rodauth(name, account_id)
+  @account = @rodauth.rails_account
+
+  mail subject: @rodauth.email_subject_prefix + @rodauth.otp_unlock_failed_email_subject
+end

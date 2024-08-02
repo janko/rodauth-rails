@@ -108,49 +108,6 @@ class RodauthMain < Rodauth::Rails::Auth
 
 <% if defined?(ActionMailer) -%>
     # ==> Emails
-    # Use a custom mailer for delivering authentication emails.
-    create_reset_password_email do
-      RodauthMailer.reset_password(self.class.configuration_name, account_id, reset_password_key_value)
-    end
-    create_verify_account_email do
-      RodauthMailer.verify_account(self.class.configuration_name, account_id, verify_account_key_value)
-    end
-    create_verify_login_change_email do |_login|
-      RodauthMailer.verify_login_change(self.class.configuration_name, account_id, verify_login_change_key_value)
-    end
-    # create_password_changed_email do
-    #   RodauthMailer.password_changed(self.class.configuration_name, account_id)
-    # end
-    # create_reset_password_notify_email do
-    #   RodauthMailer.reset_password_notify(self.class.configuration_name, account_id)
-    # end
-    # create_email_auth_email do
-    #   RodauthMailer.email_auth(self.class.configuration_name, account_id, email_auth_key_value)
-    # end
-    # create_unlock_account_email do
-    #   RodauthMailer.unlock_account(self.class.configuration_name, account_id, unlock_account_key_value)
-    # end
-    # create_otp_locked_out_email do
-    #   RodauthMailer.otp_locked_out(self.class.configuration_name, account_id)
-    # end
-    # create_otp_unlocked_email do
-    #   RodauthMailer.otp_unlocked(self.class.configuration_name, account_id)
-    # end
-    # create_otp_unlock_failed_email do
-    #   RodauthMailer.otp_unlock_failed(self.class.configuration_name, account_id)
-    # end
-    # create_otp_setup_email do
-    #   RodauthMailer.otp_setup(self.class.configuration_name, account_id)
-    # end
-    # create_otp_disabled_email do
-    #   RodauthMailer.otp_disabled(self.class.configuration_name, account_id)
-    # end
-    # create_webauthn_authenticator_added_email do
-    #   RodauthMailer.webauthn_authenticator_added(self.class.configuration_name, account_id)
-    # end
-    # create_webauthn_authenticator_removed_email do
-    #   RodauthMailer.webauthn_authenticator_removed(self.class.configuration_name, account_id)
-    # end
     send_email do |email|
       # queue email delivery on the mailer after the transaction commits
       db.after_commit { email.deliver_later }

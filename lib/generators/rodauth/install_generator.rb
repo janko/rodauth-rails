@@ -13,23 +13,6 @@ module Rodauth
           "sqlserver"       => RUBY_ENGINE == "jruby" ? "mssql" : "tinytds",
         }
 
-        MAILER_VIEWS = %w[
-          email_auth
-          password_changed
-          reset_password
-          reset_password_notify
-          unlock_account
-          verify_account
-          verify_login_change
-          otp_locked_out
-          otp_unlocked
-          otp_unlock_failed
-          otp_setup
-          otp_disabled
-          webauthn_authenticator_added
-          webauthn_authenticator_removed
-        ]
-
         source_root "#{__dir__}/templates"
         namespace "rodauth:install"
 
@@ -61,16 +44,6 @@ module Rodauth
 
         def create_account_model
           template "app/models/account.rb", "app/models/#{table_prefix}.rb"
-        end
-
-        def create_mailer
-          return unless defined?(ActionMailer)
-
-          template "app/mailers/rodauth_mailer.rb"
-
-          MAILER_VIEWS.each do |view|
-            copy_file "app/views/rodauth_mailer/#{view}.text.erb"
-          end
         end
 
         def create_fixtures

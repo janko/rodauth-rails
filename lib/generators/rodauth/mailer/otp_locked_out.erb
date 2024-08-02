@@ -1,0 +1,6 @@
+def otp_locked_out(name, account_id)
+  @rodauth = rodauth(name, account_id)
+  @account = @rodauth.rails_account
+
+  mail subject: @rodauth.email_subject_prefix + @rodauth.otp_locked_out_email_subject
+end

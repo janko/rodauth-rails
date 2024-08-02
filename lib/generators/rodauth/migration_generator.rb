@@ -20,12 +20,12 @@ module Rodauth
           desc: "Name of the generated migration file"
 
         def create_rodauth_migration
-          validate_features or return
+          return unless validate_features
 
           migration_template "db/migrate/create_rodauth.rb", File.join(db_migrate_path, "#{migration_name}.rb")
         end
 
-        def show_instructions
+        def show_configuration
           # skip if called from install generator, it already adds configuration
           return if current_command_chain.include?(:generate_rodauth_migration)
           return unless options[:prefix] && behavior == :invoke
@@ -36,7 +36,7 @@ module Rodauth
             .join("\n")
             .indent(2)
 
-          say "\nAdd the following to your Rodauth configuration:\n\n#{configuration}"
+          say "\nCopy the following lines into your Rodauth configuration:\n\n#{configuration}"
         end
 
         private

@@ -46,7 +46,7 @@ module Rodauth
         }
 
         def create_views
-          validate_features or return
+          return unless validate_features
 
           views.each do |view|
             copy_file view_location(view), "app/views/#{directory}/#{view}.html.erb" do |content|

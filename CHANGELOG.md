@@ -1,5 +1,7 @@
 ## HEAD
 
+* Add new `rodauth:mailer` generator (@janko)
+
 * Refresh `rails_account` when `account` has changed (@janko)
 
 * Allow overriding `rodauth.rails_url_options` in the mailer (@janko)

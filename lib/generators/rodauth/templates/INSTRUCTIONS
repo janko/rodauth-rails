@@ -49,4 +49,10 @@ Depending on your application's configuration some manual setup may be required:
 
      * Not required *
 
+  6. You can generate email templates and mailer integration by running:
+
+       rails g rodauth:mailer
+
+     * Not required *
+
 ===============================================================================

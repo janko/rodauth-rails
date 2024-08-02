@@ -1,0 +1,6 @@
+def email_auth(name, account_id, key)
+  @rodauth = rodauth(name, account_id) { @email_auth_key_value = key }
+  @account = @rodauth.rails_account
+
+  mail subject: @rodauth.email_subject_prefix + @rodauth.email_auth_email_subject
+end

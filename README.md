@@ -68,21 +68,13 @@ $ rails generate rodauth:install
 
 This generator will create a Rodauth app and configuration with common
 authentication features enabled, a database migration with tables required by
-those features, a mailer with default templates, and a few other files.
+those features, and a few other files.
 
 Feel free to remove any features you don't need, along with their corresponding
 tables. Afterwards, run the migration:
 
 ```sh
 $ rails db:migrate
-```
-
-For your mailer to be able to generate email links, you'll need to set up
-default URL options in each environment. Here is a possible configuration for
-`config/environments/development.rb`:
-
-```rb
-config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
 ```
 
 ### Install options
@@ -316,42 +308,41 @@ $ rails generate rodauth:views webauthn two_factor_base --name admin
 
 ## Mailer
 
-The install generator will create `RodauthMailer` with default email templates,
-and configure Rodauth features that send emails as part of the authentication
-flow to use it.
+When you're ready to modify the default email templates and safely deliver them
+in a background job, you can run the following command to generate the mailer
+integration:
 
-```rb
-# app/mailers/rodauth_mailer.rb
-class RodauthMailer < ApplicationMailer
-  def verify_account(account_id, key) ... end
-  def reset_password(account_id, key) ... end
-  def verify_login_change(account_id, key) ... end
-  def password_changed(account_id) ... end
-  # def email_auth(account_id, key) ... end
-  # def unlock_account(account_id, key) ... end
-end
-```
-```rb
-# app/misc/rodauth_main.rb
-class RodauthMain < Rodauth::Rails::Auth
-  configure do
-    create_reset_password_email { RodauthMailer.reset_password(account_id, reset_password_key_value) }
-    create_verify_account_email { RodauthMailer.verify_account(account_id, verify_account_key_value) }
-    create_verify_login_change_email { |_login| RodauthMailer.verify_login_change(account_id, verify_login_change_key_value) }
-    create_password_changed_email { RodauthMailer.password_changed(account_id) }
-    # create_email_auth_email { RodauthMailer.email_auth(account_id, email_auth_key_value) }
-    # create_unlock_account_email { RodauthMailer.unlock_account(account_id, unlock_account_key_value) }
-    send_email do |email|
-      # queue email delivery on the mailer after the transaction commits
-      db.after_commit { email.deliver_later }
-    end
-  end
-end
+```sh
+$ rails generate rodauth:mailer
 ```
 
-This configuration calls `#deliver_later`, which uses Active Job to deliver
-emails in a background job. If you want to send emails synchronously, you can
-modify the configuration to call `#deliver_now` instead.
+This will create a `RodauthMailer`, email templates, and necessary Rodauth
+configuration for the features you have enabled. For email links to work, you
+need to have `config.action_mailer.default_url_options` set for each
+environment.
+
+```rb
+# config/environments/development.rb
+config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+```
+
+The generator accepts various options:
+
+```sh
+# generate mailer integration for specified features
+$ rails generate rodauth:mailer email_auth lockout webauthn_modify_email
+
+# generate mailer integration for all Rodauth features
+$ rails generate rodauth:mailer --all
+
+# specify different Rodauth configuration to select enabled features
+$ rails generate rodauth:mailer --name admin
+```
+
+Note that the generated Rodauth configuration calls `#deliver_later`, which
+uses Active Job to deliver emails in a background job. If you want to deliver
+emails synchronously, you can modify the configuration to call `#deliver_now`
+instead.
 
 If you're using a background processing library without an Active Job adapter,
 or a 3rd-party service for sending transactional emails, see [this wiki
