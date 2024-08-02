@@ -6,14 +6,14 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Janko Marohnić"]
   spec.email         = ["janko.marohnic@gmail.com"]
 
-  spec.summary       = %q{Provides Rails integration for Rodauth.}
-  spec.description   = %q{Provides Rails integration for Rodauth.}
+  spec.summary       = %q{Provides Rails integration for Rodauth authentication framework.}
+  spec.description   = %q{Provides Rails integration for Rodauth authentication framework.}
   spec.homepage      = "https://github.com/janko/rodauth-rails"
   spec.license       = "MIT"
 
   spec.required_ruby_version = ">= 2.5"
 
-  spec.files         = Dir["README.md", "LICENSE.txt", "CHANGELOG.md", "lib/**/*", "*.gemspec"]
+  spec.files         = Dir["README.md", "LICENSE.txt", "lib/**/*", "*.gemspec"]
   spec.require_paths = ["lib"]
 
   spec.add_dependency "railties", ">= 5.0", "< 8"
