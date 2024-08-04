@@ -93,6 +93,7 @@ module Rodauth
           reset_password: { reset_password_table: "%{singular}_password_reset_keys" },
           email_auth: { email_auth_table: "%{singular}_email_auth_keys" },
           otp: { otp_keys_table: "%{singular}_otp_keys" },
+          otp_unlock: { otp_unlock_table: "%{singular}_otp_unlocks" },
           sms_codes: { sms_codes_table: "%{singular}_sms_codes" },
           recovery_codes: { recovery_codes_table: "%{singular}_recovery_codes" },
           webauthn: { webauthn_keys_table: "%{singular}_webauthn_keys", webauthn_user_ids_table: "%{singular}_webauthn_user_ids", webauthn_keys_account_id_column: "%{singular}_id" },
