@@ -25,7 +25,7 @@ module Rodauth
         def rails_render(*)
           render_output = nil
           rails_controller_instance.view_runtime = rails_controller_instance.send(:cleanup_view_runtime) do
-            Benchmark.ms { render_output = super }
+            rails_benchmark { render_output = super }
           end
           render_output
         end
@@ -78,6 +78,16 @@ module Rodauth
           response = ActionDispatch::Response.new(*args)
           response.request = rails_request
           response
+        end
+
+        if ActionPack.version >= Gem::Version.new("8.0.0.beta1")
+          def rails_benchmark(&block)
+            ActiveSupport::Benchmark.realtime(:float_millisecond, &block)
+          end
+        else
+          def rails_benchmark(&block)
+            Benchmark.ms(&block)
+          end
         end
       end
     end
