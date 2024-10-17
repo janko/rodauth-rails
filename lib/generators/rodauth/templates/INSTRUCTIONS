@@ -1,58 +1,31 @@
 ===============================================================================
 
-Depending on your application's configuration some manual setup may be required:
+  * Ensure you have defined a root path in your config/routes.rb. For example:
 
-  1. Ensure you have defined default url options in your environments files. Here
-     is an example of default_url_options appropriate for a development environment
-     in config/environments/development.rb:
+      root to: "pages#home"
 
-       config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  * Ensure you're displaying flash messages in your layout template. For example:
 
-     In production, :host should be set to the actual host of your application.
+      <% if notice %>
+        <div class="alert alert-success"><%= notice %></div>
+      <% end %>
+      <% if alert %>
+        <div class="alert alert-danger"><%= alert %></div>
+      <% end %>
 
-     * Required for all applications. *
+  * Titles for Rodauth pages are available via @page_title instance variable
+    by default, you can use it in your layout file:
 
-  2. Ensure you have defined root_url to *something* in your config/routes.rb.
-     For example:
+      <title><%= @page_title || "Default title" %></title>
 
-       root to: "home#index"
+  * You can copy Rodauth views into your app by running:
 
-     * Not required for API-only Applications *
+      rails g rodauth:views # default bootstrap views
 
-  3. Ensure you have flash messages in app/views/layouts/application.html.erb.
-     For example:
+      rails g rodauth:views --css=tailwind # tailwind views (requires @tailwindcss/forms plugin)
 
-       <% if notice %>
-         <div class="alert alert-success"><%= notice %></div>
-       <% end %>
-       <% if alert %>
-         <div class="alert alert-danger"><%= alert %></div>
-       <% end %>
+  * You can copy email templates and generate mailer integration by running:
 
-     * Not required for API-only Applications *
-
-  4. Titles for Rodauth pages are available via @page_title instance variable
-     by default, you can use it in your layout file:
-
-       <head>
-         <title><%= @page_title || "Default title" %></title>
-         ...
-       </head>
-
-     * Not required *
-
-  5. You can copy Rodauth views (for customization) to your app by running:
-
-       rails g rodauth:views # default bootstrap views
-
-       rails g rodauth:views --css=tailwind # tailwind views (requires @tailwindcss/forms plugin)
-
-     * Not required *
-
-  6. You can generate email templates and mailer integration by running:
-
-       rails g rodauth:mailer
-
-     * Not required *
+      rails g rodauth:mailer
 
 ===============================================================================

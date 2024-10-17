@@ -55,7 +55,7 @@ module Rodauth
         end
 
         def show_instructions
-          readme "INSTRUCTIONS" if behavior == :invoke
+          readme "INSTRUCTIONS" if behavior == :invoke && !api_only?
         end
 
         private
