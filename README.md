@@ -346,7 +346,7 @@ instead.
 
 If you're using a background processing library without an Active Job adapter,
 or a 3rd-party service for sending transactional emails, see [this wiki
-page][custom mailer worker] on how to set it up.
+page][custom mailer job] on how to set it up.
 
 ## Migrations
 
@@ -786,7 +786,7 @@ conduct](CODE_OF_CONDUCT.md).
 [internal_request]: http://rodauth.jeremyevans.net/rdoc/files/doc/internal_request_rdoc.html
 [path_class_methods]: https://rodauth.jeremyevans.net/rdoc/files/doc/path_class_methods_rdoc.html
 [account types]: https://github.com/janko/rodauth-rails/wiki/Account-Types
-[custom mailer worker]: https://github.com/janko/rodauth-rails/wiki/Custom-Mailer-Worker
+[custom mailer job]: https://github.com/janko/rodauth-rails/wiki/Custom-Mailer-Job
 [Turbo]: https://turbo.hotwired.dev/
 [rodauth-model]: https://github.com/janko/rodauth-model
 [JSON API]: https://github.com/janko/rodauth-rails/wiki/JSON-API
