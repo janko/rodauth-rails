@@ -12,11 +12,12 @@ Provides Rails integration for the [Rodauth] authentication framework.
 * [OmniAuth guide](https://github.com/janko/rodauth-rails/wiki/OmniAuth)
 * [JSON Request Documentation for Rodauth](https://documenter.getpostman.com/view/26686011/2s9YC7SWn9)
 
-🎥 Screencasts:
+🎥 Screencasts / Streams:
 
 * [Rails Authentication with Rodauth](https://www.youtube.com/watch?v=2hDpNikacf0)
 * [Multifactor Authentication with Rodauth](https://www.youtube.com/watch?v=9ON-kgXpz2A&list=PLkGQXZLACDTGKsaRWstkHQdm2CUmT3SZ-) ([TOTP](https://youtu.be/9ON-kgXpz2A), [Recovery Codes](https://youtu.be/lkFCcE1Q5-w))
-* [Add Admin Accounts](https://www.youtube.com/watch?v=N6z7AtKSpNI)
+* [Adding Admin Accounts with Rodauth](https://www.youtube.com/watch?v=N6z7AtKSpNI)
+* [Integrating Passkeys into Rails with Rodauth](https://www.youtube.com/watch?v=kGzgmfCmnmY)
 
 📚 Articles:
 
