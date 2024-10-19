@@ -14,10 +14,11 @@ Provides Rails integration for the [Rodauth] authentication framework.
 
 🎥 Screencasts / Streams:
 
-* [Rails Authentication with Rodauth](https://www.youtube.com/watch?v=2hDpNikacf0)
-* [Multifactor Authentication with Rodauth](https://www.youtube.com/watch?v=9ON-kgXpz2A&list=PLkGQXZLACDTGKsaRWstkHQdm2CUmT3SZ-) ([TOTP](https://youtu.be/9ON-kgXpz2A), [Recovery Codes](https://youtu.be/lkFCcE1Q5-w))
-* [Adding Admin Accounts with Rodauth](https://www.youtube.com/watch?v=N6z7AtKSpNI)
-* [Integrating Passkeys into Rails with Rodauth](https://www.youtube.com/watch?v=kGzgmfCmnmY)
+* [Rails Authentication with Rodauth](https://www.youtube.com/watch?v=2hDpNikacf0) \[8:23\]
+* [Multifactor Authentication via TOTP with Rodauth](https://youtu.be/9ON-kgXpz2A) \[4:36\]
+* [Multifactor Authentication via Recovery Codes with Rodauth](https://youtu.be/lkFCcE1Q5-w) \[4:24\]
+* [Adding Admin Accounts with Rodauth](https://www.youtube.com/watch?v=N6z7AtKSpNI) \[1:25:55\]
+* [Integrating Passkeys into Rails with Rodauth](https://www.youtube.com/watch?v=kGzgmfCmnmY) \[59:47\]
 
 📚 Articles:
 
