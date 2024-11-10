@@ -7,10 +7,9 @@ module Rodauth
     class Error < StandardError
     end
 
-    # This allows the developer to avoid loading Rodauth at boot time.
+    # This allows avoiding loading Rodauth at boot time.
     autoload :App, "rodauth/rails/app"
     autoload :Auth, "rodauth/rails/auth"
-    autoload :Model, "rodauth/rails/model"
 
     @app = nil
     @middleware = true

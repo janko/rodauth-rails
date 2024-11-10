@@ -22,12 +22,6 @@ class ModelMixinTest < UnitTest
     end
   end
 
-  test "deprecated Rodauth::Rails::Model constant" do
-    capture_io do
-      assert_equal Rodauth::Model, Rodauth::Rails::Model
-    end
-  end
-
   private
 
   def define_account_class
