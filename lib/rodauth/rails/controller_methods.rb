@@ -4,12 +4,8 @@ module Rodauth
       def self.included(controller)
         # ActionController::API doesn't have helper methods
         if controller.respond_to?(:helper_method)
-          controller.helper_method :rodauth, :current_account
+          controller.helper_method :rodauth
         end
-      end
-
-      def current_account(name = nil)
-        rodauth(name).rails_account
       end
 
       def rodauth(name = nil)
