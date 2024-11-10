@@ -65,15 +65,6 @@ module Rodauth
         end
       end
 
-      def authenticated(name = nil, &condition)
-        warn "Rodauth::Rails.authenticated has been deprecated in favor of Rodauth::Rails.authenticate, which additionally requires existence of the account record."
-        lambda do |request|
-          rodauth = request.env.fetch ["rodauth", *name].join(".")
-          rodauth.require_authentication
-          rodauth.authenticated? && (condition.nil? || condition.call(rodauth))
-        end
-      end
-
       if ::Rails.gem_version >= Gem::Version.new("5.2")
         def secret_key_base
           ::Rails.application.secret_key_base
