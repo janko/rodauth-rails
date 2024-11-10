@@ -80,7 +80,7 @@ module Rodauth
           response
         end
 
-        if ActionPack.version >= Gem::Version.new("8.0.0.beta1")
+        if ActionPack.version >= Gem::Version.new("8.0")
           def rails_benchmark(&block)
             ActiveSupport::Benchmark.realtime(:float_millisecond, &block)
           end
