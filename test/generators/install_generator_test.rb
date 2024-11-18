@@ -63,6 +63,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/misc/rodauth_main.rb", /# accounts_table :users/
 
     assert_file "Gemfile", /gem "bcrypt", "~> 3.1"/
+    assert_file "Gemfile", /gem "tilt", "~> 2.4"/
   end
 
   test "app with --json option" do

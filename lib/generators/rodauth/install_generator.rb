@@ -40,12 +40,13 @@ module Rodauth
 
         def add_gems
           if activerecord? && !sequel?
-            gem "sequel-activerecord_connection", "~> 2.0"
-            gem "after_commit_everywhere", "~> 1.1" if ActiveRecord.version < Gem::Version.new("7.2")
+            gem "sequel-activerecord_connection", "~> 2.0", comment: "Enables Sequel to use Active Record's database connection"
+            gem "after_commit_everywhere", "~> 1.1", comment: "Required for Sequel's transaction hooks to work in all cases (on Active Record < 7.2)" if ActiveRecord.version < Gem::Version.new("7.2")
           end
           unless argon2?
-            gem "bcrypt", "~> 3.1"
+            gem "bcrypt", "~> 3.1", comment: "Used by Rodauth for password hashing"
           end
+          gem "tilt", "~> 2.4", comment: "Used by Rodauth for rendering built-in view and email templates"
         end
 
         def create_rodauth_controller
