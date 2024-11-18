@@ -6,6 +6,6 @@ class ModelTest < IntegrationTest
     fill_in "Login", with: "foo@bar.com"
     fill_in "Password", with: "supersecret"
     fill_in "Confirm Password", with: "supersecret"
-    click_on "Create Account"
+    assert_nothing_raised { click_on "Create Account" }
   end
 end

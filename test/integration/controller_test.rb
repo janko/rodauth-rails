@@ -7,7 +7,7 @@ class ControllerTest < IntegrationTest
 
   test "current account" do
     register(login: "user@example.com", verify: true)
-    assert_text "Authenticated as user@example.com"
+    assert_includes page.text, "Authenticated as user@example.com"
   end
 
   test "executing controller methods" do

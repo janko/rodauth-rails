@@ -23,15 +23,16 @@ class InternalRequestTest < UnitTest
   end
 
   test "missing Action Mailer default URL options" do
-    Rails.configuration.action_mailer.stub(:default_url_options, nil) do
-      assert_equal "/create-account", RodauthApp.rodauth.create_account_path
-      assert_raises Rodauth::Rails::Error do
-        RodauthApp.rodauth.create_account_url
-      end
-      assert_raises Rodauth::Rails::Error do
-        RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
-      end
+    ActionMailer::Base.default_url_options = {}
+    assert_equal "/create-account", RodauthApp.rodauth.create_account_path
+    assert_raises Rodauth::Rails::Error do
+      RodauthApp.rodauth.create_account_url
     end
+    assert_raises Rodauth::Rails::Error do
+      RodauthApp.rodauth.create_account(login: "user@example.com", password: "secret")
+    end
+  ensure
+    ActionMailer::Base.default_url_options = { host: "example.com", protocol: "https" }
   end
 
   test "internal request eval" do
