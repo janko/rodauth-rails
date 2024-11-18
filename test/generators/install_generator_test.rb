@@ -61,6 +61,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/misc/rodauth_main.rb", /Remember Feature/
     assert_file "app/misc/rodauth_main.rb", /logout_redirect/
     assert_file "app/misc/rodauth_main.rb", /# accounts_table :users/
+
+    assert_file "Gemfile", /gem "bcrypt", "~> 3.1"/
   end
 
   test "app with --json option" do
@@ -82,6 +84,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
     assert_file "app/misc/rodauth_main.rb", /:argon2/
     assert_file "app/misc/rodauth_main.rb", /argon2_secret/
+
+    assert_file "Gemfile" do |content|
+      refute_includes content, "bcrypt"
+    end
   end
 
   test "controller" do

@@ -21,8 +21,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency "roda", "~> 3.76"
   spec.add_dependency "rodauth-model", "~> 0.2"
   spec.add_dependency "tilt"
-  spec.add_dependency "bcrypt"
 
+  spec.add_development_dependency "bcrypt", "~> 3.1"
   spec.add_development_dependency "jwt"
   spec.add_development_dependency "rotp"
   spec.add_development_dependency "rqrcode"
