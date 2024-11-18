@@ -38,6 +38,13 @@ module Rodauth
           template "app/misc/rodauth_main.rb"
         end
 
+        def add_gems
+          if activerecord? && !sequel?
+            gem "sequel-activerecord_connection", "~> 2.0"
+            gem "after_commit_everywhere", "~> 1.1" if ActiveRecord.version < Gem::Version.new("7.2")
+          end
+        end
+
         def create_rodauth_controller
           template "app/controllers/rodauth_controller.rb"
         end

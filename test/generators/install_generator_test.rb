@@ -28,9 +28,12 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   end
 
   test "sequel integration" do
-    db = Sequel::DATABASES.pop
-    run_generator
-    Sequel::DATABASES.push(db)
+    begin
+      db = Sequel::DATABASES.pop
+      run_generator
+    ensure
+      Sequel::DATABASES.push(db)
+    end
 
     if RUBY_ENGINE == "jruby"
       assert_file "app/misc/rodauth_main.rb", %r{Sequel\.connect\("jdbc:sqlite://", extensions: :activerecord_connection.*\)}
@@ -38,6 +41,9 @@ class InstallGeneratorTest < Rails::Generators::TestCase
       assert_file "app/misc/rodauth_main.rb", %r{Sequel\.sqlite\(extensions: :activerecord_connection.*\)}
     end
     assert_file "app/misc/rodauth_main.rb", /convert_token_id_to_integer\? { Account.columns_hash\["id"\]\.type == :integer }/
+
+    assert_file "Gemfile", /gem "sequel-activerecord_connection", "~> 2.0"/
+    assert_file "Gemfile", /gem "after_commit_everywhere", "~> 1.1"/ if ActiveRecord.version < Gem::Version.new("7.2")
   end
 
   test "app" do
@@ -115,5 +121,10 @@ class InstallGeneratorTest < Rails::Generators::TestCase
 
       prepare_destination
     end
+  end
+
+  def prepare_destination
+    super
+    File.write("#{destination_root}/Gemfile", %(source "https://rubygems.org"\n))
   end
 end
