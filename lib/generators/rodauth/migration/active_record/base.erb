@@ -7,6 +7,7 @@ create_table :<%= table_prefix.pluralize %><%= primary_key_type %> do |t|
 <% case activerecord_adapter -%>
 <% when "postgresql" -%>
   t.citext :email, null: false
+  t.check_constraint "email ~ '^[^,;@ \r\n]+@[^,@; \r\n]+\.[^,@; \r\n]+$'", name: "valid_email"
 <% else -%>
   t.string :email, null: false
 <% end -%>
