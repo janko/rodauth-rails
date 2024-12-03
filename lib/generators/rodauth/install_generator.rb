@@ -43,8 +43,13 @@ module Rodauth
             gem "sequel-activerecord_connection", "~> 2.0", comment: "Enables Sequel to use Active Record's database connection"
             gem "after_commit_everywhere", "~> 1.1", comment: "Required for Sequel's transaction hooks to work in all cases (on Active Record < 7.2)" if ActiveRecord.version < Gem::Version.new("7.2")
           end
-          unless argon2?
+          if argon2?
+            gem "argon2", "~> 2.3", comment: "Used by Rodauth for password hashing"
+          else
             gem "bcrypt", "~> 3.1", comment: "Used by Rodauth for password hashing"
+          end
+          if jwt?
+            gem "jwt", "~> 2.9", comment: "Used by Rodauth for JWT support"
           end
           gem "tilt", "~> 2.4", comment: "Used by Rodauth for rendering built-in view and email templates"
         end

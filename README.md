@@ -90,17 +90,15 @@ $ rails generate rodauth:install users
 If you want Rodauth endpoints to be exposed via [JSON API]:
 
 ```sh
-$ rails generate rodauth:install --json # regular authentication using the Rails session
+$ rails generate rodauth:install --json # cookied-based authentication
 # or
-$ rails generate rodauth:install --jwt # token authentication via the "Authorization" header
-$ bundle add jwt
+$ rails generate rodauth:install --jwt # token-based authentication
 ```
 
 To use Argon2 instead of bcrypt for password hashing:
 
 ```sh
 $ rails generate rodauth:install --argon2
-$ bundle add argon2
 ```
 
 ## Usage
