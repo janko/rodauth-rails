@@ -83,11 +83,7 @@ module Rodauth
         end
 
         def erb_eval(content)
-          if ERB.version[/\d+\.\d+\.\d+/].to_s >= "2.2.0"
-            ERB.new(content, trim_mode: "-").result(binding)
-          else
-            ERB.new(content, 0, "-").result(binding)
-          end
+          ERB.new(content, trim_mode: "-").result(binding)
         end
 
         def emails
