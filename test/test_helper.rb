@@ -18,7 +18,7 @@ Rails.backtrace_cleaner.remove_silencers! # show full stack traces
 module TestSetupTeardown
   def setup
     super
-    if ActiveRecord.version >= Gem::Version.new("7.2.0.alpha")
+    if ActiveRecord.version >= Gem::Version.new("7.2")
       ActiveRecord::Base.connection_pool.migration_context.up
     elsif ActiveRecord.version >= Gem::Version.new("5.2")
       ActiveRecord::Base.connection.migration_context.up
@@ -29,7 +29,7 @@ module TestSetupTeardown
 
   def teardown
     super
-    if ActiveRecord.version >= Gem::Version.new("7.2.0.alpha")
+    if ActiveRecord.version >= Gem::Version.new("7.2")
       ActiveRecord::Base.connection_pool.migration_context.up
     elsif ActiveRecord.version >= Gem::Version.new("5.2")
       ActiveRecord::Base.connection.migration_context.down

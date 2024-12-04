@@ -23,5 +23,5 @@ class HeadersTest < IntegrationTest
 
     assert_match "Authenticated as user@example.com", page.text
     assert_match "_remember", Array(page.response_headers["Set-Cookie"]).join(";") # remember deadline extended
-  end if Gem::Version.new(Rack::Test::VERSION) >= Gem::Version.new("1.0")
+  end
 end

@@ -128,11 +128,7 @@ module Rodauth
           end
 
           def default_primary_key_type
-            if ActiveRecord.version >= Gem::Version.new("5.1") && activerecord_adapter != "sqlite3"
-              :bigint
-            else
-              :integer
-            end
+            activerecord_adapter == "sqlite3" ? :integer : :bigint
           end
 
           # Active Record 7+ sets default precision to 6 for timestamp columns,
