@@ -671,7 +671,9 @@ $ rails middleware
 ```
 
 > [!NOTE]
-> If you're using a middleware that should be called before Rodauth routes, make sure that middleware is inserted *before* Rodauth. For example, if you're using `[Rack::Attack]` to throttle signups, make sure you put the `rack-attack` gem *above* `rodauth-rails` in the Gemfile, so that its middleware is inserted first.
+> If you're using a middleware that should be called before Rodauth routes, make sure that middleware is inserted *before* Rodauth.
+>
+> For example, if you're using [Rack::Attack] to throttle signups, make sure you put the `rack-attack` gem *above* `rodauth-rails` in the Gemfile, so that its middleware is inserted first.
 
 ### Roda app
 
