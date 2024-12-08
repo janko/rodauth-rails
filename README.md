@@ -670,6 +670,9 @@ $ rails middleware
 # run MyApp::Application.routes
 ```
 
+> [!NOTE]
+> If you're using a middleware that should be called before Rodauth routes, make sure that middleware is inserted *before* Rodauth. For example, if you're using `[Rack::Attack]` to throttle signups, make sure you put the `rack-attack` gem *above* `rodauth-rails` in the Gemfile, so that its middleware is inserted first.
+
 ### Roda app
 
 The [`Rodauth::Rails::App`](/lib/rodauth/rails/app.rb) class is a [Roda]
@@ -793,3 +796,4 @@ conduct](CODE_OF_CONDUCT.md).
 [inheritance]: http://rodauth.jeremyevans.net/rdoc/files/doc/guides/share_configuration_rdoc.html
 [library]: https://github.com/jeremyevans/rodauth#label-Using+Rodauth+as+a+Library
 [restoring defaults]: https://github.com/janko/rodauth-rails/wiki/Restoring-Rodauth-Defaults
+[Rack::Attack]: https://github.com/rack/rack-attack
