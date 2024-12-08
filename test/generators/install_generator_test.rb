@@ -42,8 +42,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     end
     assert_file "app/misc/rodauth_main.rb", /convert_token_id_to_integer\? { Account.columns_hash\["id"\]\.type == :integer }/
 
-    assert_file "Gemfile", /gem "sequel-activerecord_connection"/
-    assert_file "Gemfile", /gem "after_commit_everywhere"/ if ActiveRecord.version < Gem::Version.new("7.2")
+    assert_file "Gemfile", /gem ("|')sequel-activerecord_connection("|')/
+    assert_file "Gemfile", /gem ("|')after_commit_everywhere("|')/ if ActiveRecord.version < Gem::Version.new("7.2")
   end
 
   test "app" do
@@ -62,8 +62,8 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/misc/rodauth_main.rb", /logout_redirect/
     assert_file "app/misc/rodauth_main.rb", /# accounts_table :users/
 
-    assert_file "Gemfile", /gem "bcrypt"/
-    assert_file "Gemfile", /gem "tilt"/
+    assert_file "Gemfile", /gem ("|')bcrypt("|')/
+    assert_file "Gemfile", /gem ("|')tilt("|')/
   end
 
   test "app with --json option" do
@@ -79,7 +79,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "app/misc/rodauth_main.rb", /:login, :logout, :jwt,$/
     assert_file "app/misc/rodauth_main.rb", /jwt_secret /
 
-    assert_file "Gemfile", /gem "jwt"/
+    assert_file "Gemfile", /gem ("|')jwt("|')/
   end
 
   test "app with --argon2 option" do
