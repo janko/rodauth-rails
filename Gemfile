@@ -3,7 +3,6 @@ source "https://rubygems.org"
 gemspec
 
 gem "sequel-activerecord_connection", "~> 2.0"
-gem "after_commit_everywhere", "~> 1.1"
 
 gem "rake", "~> 13.0"
 gem "warning"
