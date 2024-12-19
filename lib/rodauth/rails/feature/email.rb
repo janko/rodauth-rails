@@ -12,7 +12,12 @@ module Rodauth
 
         # Create emails with ActionMailer which uses configured delivery method.
         def create_email_to(to, subject, body)
-          Rodauth::Rails::Mailer.create_email(to: to, from: email_from, subject: "#{email_subject_prefix}#{subject}", body: body)
+          Rodauth::Rails::Mailer.create_email(
+            to: to,
+            from: email_from,
+            subject: "#{email_subject_prefix}#{subject}",
+            body: body
+          )
         end
 
         # Delivers the given email.
