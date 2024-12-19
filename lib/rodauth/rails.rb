@@ -10,6 +10,7 @@ module Rodauth
     # This allows avoiding loading Rodauth at boot time.
     autoload :App, "rodauth/rails/app"
     autoload :Auth, "rodauth/rails/auth"
+    autoload :Mailer, "rodauth/rails/mailer"
 
     @app = nil
     @middleware = true
