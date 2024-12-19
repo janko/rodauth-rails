@@ -1,5 +1,4 @@
 require "test_helper"
-require "ostruct"
 
 class AssetsTest < IntegrationTest
   teardown do
@@ -7,12 +6,10 @@ class AssetsTest < IntegrationTest
   end
 
   test "skips rodauth app for asset requests" do
-    [OpenStruct.new(prefix: "/assets"), OpenStruct.new(prefix: "/assets")].each do |assets|
-      Rails.configuration.assets = assets
+    Rails.configuration.assets = Struct.new(:prefix).new("/assets")
 
-      assert_raises ActionController::RoutingError do
-        visit "/assets/foo"
-      end
+    assert_raises ActionController::RoutingError do
+      visit "/assets/foo"
     end
   end
 end
