@@ -24,6 +24,10 @@ module Rodauth
         def send_email(email)
           email.deliver_now
         end
+
+        # for backwards compatibility
+        Mailer = Rodauth::Rails::Mailer
+        deprecate_constant :Mailer
       end
     end
   end
