@@ -656,6 +656,17 @@ end
 Rails.configuration.middleware.insert_before AnotherMiddleware, Rodauth::Rails::Middleware
 ```
 
+### Skipping Tilt
+
+Rodauth uses the [Tilt] gem to render built-in view & email templates. If you don't want to have Tilt as a dependency, you can disable it, provided that you've imported all view & email templates into your app:
+
+```rb
+# config/initializers/rodauth.rb
+Rodauth::Rails.configure do |config|
+  config.tilt = false # skip loading Tilt gem
+end
+```
+
 ## How it works
 
 ### Rack middleware
