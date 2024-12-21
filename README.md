@@ -649,6 +649,7 @@ You can choose to insert the Rodauth middleware somewhere earlier than
 in front of the Rails router:
 
 ```rb
+# config/initializers/rodauth.rb
 Rodauth::Rails.configure do |config|
   config.middleware = false # disable auto-insertion
 end
