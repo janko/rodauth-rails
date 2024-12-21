@@ -811,3 +811,4 @@ conduct](CODE_OF_CONDUCT.md).
 [library]: https://github.com/jeremyevans/rodauth#label-Using+Rodauth+as+a+Library
 [restoring defaults]: https://github.com/janko/rodauth-rails/wiki/Restoring-Rodauth-Defaults
 [Rack::Attack]: https://github.com/rack/rack-attack
+[Tilt]: https://github.com/jeremyevans/tilt
