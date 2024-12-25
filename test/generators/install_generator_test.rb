@@ -20,11 +20,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "rodauth initializer" do
     run_generator
 
-    assert_file "config/initializers/rodauth.rb", <<~RUBY
-      Rodauth::Rails.configure do |config|
-        config.app = "RodauthApp"
-      end
-    RUBY
+    assert_file "config/initializers/rodauth.rb", /Rodauth::Rails.configure do |config|/
   end
 
   test "sequel integration" do

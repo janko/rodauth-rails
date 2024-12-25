@@ -12,6 +12,10 @@ module Rodauth
     autoload :Auth, "rodauth/rails/auth"
     autoload :Mailer, "rodauth/rails/mailer"
 
+    @app = nil
+    @middleware = true
+    @tilt = true
+
     class << self
       def lib(**options, &block)
         c = Class.new(Rodauth::Rails::App)
@@ -76,10 +80,6 @@ module Rodauth
       def configure
         yield self
       end
-
-      @app = nil
-      @middleware = true
-      @tilt = true
 
       attr_writer :app
       attr_writer :middleware
