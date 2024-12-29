@@ -18,6 +18,7 @@ module Rodauth
             verbs = route_verbs(route_name)
 
             [
+              route_name.to_s,
               verbs.join("|"),
               "#{rodauth.prefix}#{path}",
               "rodauth#{configuration_name && "(:#{configuration_name})"}.#{route_name}_path",
@@ -28,7 +29,7 @@ module Rodauth
           padding = routes.transpose.map { |string| string.map(&:length).max }
 
           output_lines = routes.map do |columns|
-            [columns[0].ljust(padding[0]), columns[1].ljust(padding[1]), columns[2]].join("  ")
+            [columns[0].rjust(padding[0]), columns[1].ljust(padding[1]), columns[2].ljust(padding[2]), columns[3]].join("  ")
           end
 
           puts "\n  #{output_lines.join("\n  ")}"
@@ -67,4 +68,3 @@ module Rodauth
     end
   end
 end
-
