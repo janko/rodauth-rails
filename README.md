@@ -316,10 +316,28 @@ integration:
 $ rails generate rodauth:mailer
 ```
 
-This will create a `RodauthMailer`, email templates, and necessary Rodauth
-configuration for the features you have enabled. For email links to work, you
-need to have `config.action_mailer.default_url_options` set for each
-environment.
+This will create a `RodauthMailer` along with email templates, as well as output
+the necessary configuration that you should copy into your auth class:
+
+```rb
+# app/misc/rodauth_main.rb
+class RodauthMain < Rodauth::Rails::Auth
+  configure do
+    create_verify_account_email do
+      RodauthMailer.verify_account(self.class.configuration_name, account_id, verify_account_key_value)
+    end
+    create_reset_password_email do
+      RodauthMailer.reset_password(self.class.configuration_name, account_id, reset_password_key_value)
+    end
+    create_verify_login_change_email do |_login|
+      RodauthMailer.verify_login_change(self.class.configuration_name, account_id, verify_login_change_key_value)
+    end
+  end
+end
+```
+
+For email links to work, you need to have
+`config.action_mailer.default_url_options` set for each environment.
 
 ```rb
 # config/environments/development.rb
