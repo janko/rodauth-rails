@@ -1,4 +1,4 @@
-require "rails"
+require "rails/version"
 require "logger" if Rails.gem_version >= Gem::Version.new("6.0") && Rails.gem_version < Gem::Version.new("7.1")
 require "active_record/railtie"
 require "action_controller/railtie"
