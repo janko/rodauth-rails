@@ -12,6 +12,7 @@ module Rodauth
         # template, otherwise falls back to Rodauth's template.
         def view(page, title)
           set_title(title)
+          rails_controller_instance.content_type = Mime[:html].to_s
           rails_render(action: page.tr("-", "_"), layout: true) ||
             rails_render(html: super.html_safe, layout: true, formats: :html)
         end

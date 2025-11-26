@@ -1,6 +1,14 @@
 require "test_helper"
 
 class HeadersTest < IntegrationTest
+  test "returns UTF-8 charset" do
+    visit "/login" # built-in view template
+    assert_equal "text/html; charset=utf-8", page.response_headers["Content-Type"]
+
+    visit "/reset-password-request" # custom view template
+    assert_equal "text/html; charset=utf-8", page.response_headers["Content-Type"]
+  end
+
   test "included Action Dispatch default headers in response" do
     visit "/login"
 
