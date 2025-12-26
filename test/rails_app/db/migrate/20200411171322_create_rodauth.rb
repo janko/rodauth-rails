@@ -52,11 +52,7 @@ class CreateRodauth < ActiveRecord::Migration[ActiveRecord::Migration.current_ve
       t.references :account, foreign_key: true, null: false
       t.datetime :at, null: false, default: -> { "CURRENT_TIMESTAMP" }
       t.text :message, null: false
-      if ActiveRecord.version >= Gem::Version.new("5.2")
-        t.json :metadata
-      else
-        t.text :metadata
-      end
+      t.json :metadata
       t.index [:account_id, :at]
       t.index :at
     end

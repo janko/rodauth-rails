@@ -41,18 +41,16 @@ class RodauthTest < UnitTest
       assert_equal "secret", Rodauth::Rails.secret_key_base
     end
 
-    if Rails.gem_version >= Gem::Version.new("5.2")
-      Rails.application.credentials.secret_key_base = "credential"
-      reset_secret_key_base do
-        assert_equal "credential", Rodauth::Rails.secret_key_base
-      end
-
-      ENV["SECRET_KEY_BASE"] = "environment"
-      reset_secret_key_base do
-        assert_equal "environment", Rodauth::Rails.secret_key_base
-      end
-      ENV.delete("SECRET_KEY_BASE")
+    Rails.application.credentials.secret_key_base = "credential"
+    reset_secret_key_base do
+      assert_equal "credential", Rodauth::Rails.secret_key_base
     end
+
+    ENV["SECRET_KEY_BASE"] = "environment"
+    reset_secret_key_base do
+      assert_equal "environment", Rodauth::Rails.secret_key_base
+    end
+    ENV.delete("SECRET_KEY_BASE")
   ensure
     Rails.env = "test"
   end

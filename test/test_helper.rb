@@ -19,10 +19,8 @@ module TestSetupTeardown
     super
     if ActiveRecord.version >= Gem::Version.new("7.2")
       ActiveRecord::Base.connection_pool.migration_context.up
-    elsif ActiveRecord.version >= Gem::Version.new("5.2")
-      ActiveRecord::Base.connection.migration_context.up
     else
-      ActiveRecord::Migrator.up(Rails.application.paths["db/migrate"].to_a)
+      ActiveRecord::Base.connection.migration_context.up
     end
   end
 
@@ -30,10 +28,8 @@ module TestSetupTeardown
     super
     if ActiveRecord.version >= Gem::Version.new("7.2")
       ActiveRecord::Base.connection_pool.migration_context.up
-    elsif ActiveRecord.version >= Gem::Version.new("5.2")
-      ActiveRecord::Base.connection.migration_context.down
     else
-      ActiveRecord::Migrator.down(Rails.application.paths["db/migrate"].to_a)
+      ActiveRecord::Base.connection.migration_context.down
     end
     ActiveRecord::Base.clear_cache! # clear schema cache
     ActionMailer::Base.deliveries.clear
