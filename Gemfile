@@ -7,12 +7,13 @@ gem "sequel-activerecord_connection", "~> 2.0"
 gem "rake", "~> 13.0"
 gem "warning"
 
-gem "rails", "~> 8.0"
+gem "rails", "~> 8.1"
 gem "turbo-rails", "~> 1.4"
 gem "sqlite3", "~> 2.0",                platforms: [:mri, :truffleruby]
 gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
 
 gem "capybara"
+gem "minitest", "~> 5.0"
 
 if RUBY_VERSION >= "3.1.0"
   # mail gem dependencies on Ruby 3.1+
