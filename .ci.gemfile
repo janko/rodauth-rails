@@ -29,3 +29,7 @@ if RUBY_VERSION >= "3.4.0" && rails_version < "7.1"
   gem "mutex_m"
   gem "drb"
 end
+
+if RUBY_VERSION >= "4.0.0" && ["6.0", "6.1"].include?(rails_version)
+  gem "benchmark"
+end
