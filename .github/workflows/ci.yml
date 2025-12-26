@@ -51,7 +51,7 @@ jobs:
           - ruby: "jruby-9.4"
             rails: "5.2"
     env:
-      BUNDLE_GEMFILE: ci.gemfile
+      BUNDLE_GEMFILE: .ci.gemfile
       RAILS_VERSION: ${{ matrix.rails }}
 
     steps:
