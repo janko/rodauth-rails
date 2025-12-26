@@ -7,7 +7,7 @@ rails_version = ENV.fetch("RAILS_VERSION")
 gem "sequel-activerecord_connection", "~> 2.0"
 gem "after_commit_everywhere", "~> 1.1" if rails_version < "8.0"
 
-gem "rake", "~> 12.0"
+gem "rake", "~> 13.0"
 gem "warning"
 
 gem "rails", "~> #{rails_version}.0"
