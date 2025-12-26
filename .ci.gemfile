@@ -1,0 +1,31 @@
+source "https://rubygems.org"
+
+gemspec
+
+rails_version = ENV.fetch("RAILS_VERSION")
+
+gem "sequel-activerecord_connection", "~> 2.0"
+gem "after_commit_everywhere", "~> 1.1" if rails_version < "8.0"
+
+gem "rake", "~> 12.0"
+gem "warning"
+
+gem "rails", "~> #{rails_version}.0"
+gem "turbo-rails", "~> 1.4" if rails_version >= "6.0" && rails_version < "8.0"
+gem "sqlite3", rails_version >= "8.0" ? "~> 2.0" : "~> 1.4", platforms: :mri
+gem "activerecord-jdbcsqlite3-adapter", platforms: :jruby
+
+gem "capybara"
+gem "minitest", "~> 5.0"
+
+if RUBY_VERSION >= "3.1.0"
+  gem "net-smtp"
+  gem "net-imap"
+  gem "net-pop"
+  gem "matrix"
+end
+
+if RUBY_VERSION >= "3.4.0" && rails_version < "7.1"
+  gem "mutex_m"
+  gem "drb"
+end
