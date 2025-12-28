@@ -63,4 +63,10 @@ class InternalRequestTest < UnitTest
   test "path class methods" do
     assert_equal "https://example.com/create-account", RodauthApp.rodauth.create_account_url
   end
+
+  test "inspect output" do
+    rodauth = Rodauth::Rails.rodauth
+    refute_includes rodauth.inspect, "@internal_request_block"
+    refute_includes rodauth.inspect, "@internal_request_return_value"
+  end if RUBY_VERSION >= "4.0"
 end

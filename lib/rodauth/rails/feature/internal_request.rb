@@ -60,6 +60,14 @@ module Rodauth
         def _rails_url_options
           defined?(ActionMailer) ? ActionMailer::Base.default_url_options.dup : {}
         end
+
+        def instance_variables_to_inspect
+          variables = instance_variables
+          if internal_request? && @internal_request_return_value == self
+            variables -= [:@internal_request_block, :@internal_request_return_value]
+          end
+          variables
+        end
       end
     end
   end
