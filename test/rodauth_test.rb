@@ -33,28 +33,6 @@ class RodauthTest < UnitTest
     assert_equal "API", rodauth.request.user_agent
   end
 
-  test "retrieves secret_key_base from env variable, credentials, or secrets" do
-    Rails.env = "production"
-
-    if Rails.gem_version < Gem::Version.new("7.1")
-      Rails.application.secrets.secret_key_base = "secret"
-      assert_equal "secret", Rodauth::Rails.secret_key_base
-    end
-
-    Rails.application.credentials.secret_key_base = "credential"
-    reset_secret_key_base do
-      assert_equal "credential", Rodauth::Rails.secret_key_base
-    end
-
-    ENV["SECRET_KEY_BASE"] = "environment"
-    reset_secret_key_base do
-      assert_equal "environment", Rodauth::Rails.secret_key_base
-    end
-    ENV.delete("SECRET_KEY_BASE")
-  ensure
-    Rails.env = "test"
-  end
-
   test "builds authenticate constraint" do
     account = Account.create!(email: "user@example.com", password: "secret", status: "verified")
 
@@ -120,13 +98,5 @@ class RodauthTest < UnitTest
     app.configure(render: false) {  }
 
     refute_includes app.instance_methods, :render
-  end
-
-  def reset_secret_key_base
-    original_secret_key_base = Rails.configuration.secret_key_base
-    Rails.configuration.instance_variable_set(:@secret_key_base, nil)
-    yield
-  ensure
-    Rails.configuration.secret_key_base = original_secret_key_base
   end
 end

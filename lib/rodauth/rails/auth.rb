@@ -15,7 +15,7 @@ module Rodauth
         set_deadline_values? true
 
         # use HMACs for additional security
-        hmac_secret { Rodauth::Rails.secret_key_base }
+        hmac_secret { ::Rails.application.secret_key_base }
       end
     end
   end

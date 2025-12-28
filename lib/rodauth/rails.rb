@@ -67,10 +67,6 @@ module Rodauth
         end
       end
 
-      def secret_key_base
-        ::Rails.application.secret_key_base
-      end
-
       def configure
         yield self
       end
