@@ -7,6 +7,10 @@ require "rails"
 module Rodauth
   module Rails
     class Railtie < ::Rails::Railtie
+      initializer "rodauth.filter_parameters" do |app|
+        app.config.filter_parameters << /\Akey\z/
+      end
+
       initializer "rodauth.middleware", after: :load_config_initializers do |app|
         if Rodauth::Rails.middleware?
           app.middleware.use Rodauth::Rails::Middleware
