@@ -64,7 +64,7 @@ module Rodauth
         def instance_variables_to_inspect
           variables = instance_variables
           if internal_request? && @internal_request_return_value == self
-            variables -= [:@internal_request_block, :@internal_request_return_value]
+            variables -= [:@internal_request_block, :@internal_request_return_value, :@internal_request_return_value_set]
           end
           variables
         end
