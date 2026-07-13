@@ -175,23 +175,7 @@ end
 
 ### Requiring authentication
 
-You can require authentication for routes at the middleware level in in your Rodauth
-app's routing block, which helps keep the authentication logic encapsulated:
-
-```rb
-# app/misc/rodauth_app.rb
-class RodauthApp < Rodauth::Rails::App
-  route do |r|
-    r.rodauth # route rodauth requests
-
-    if r.path.start_with?("/dashboard") # /dashboard/* routes
-      rodauth.require_account # redirect to login page if not authenticated
-    end
-  end
-end
-```
-
-You can also require authentication at the controller layer:
+It's recommended to require authentication at the controller level:
 
 ```rb
 class ApplicationController < ActionController::Base
@@ -208,7 +192,7 @@ class DashboardController < ApplicationController
 end
 ```
 
-Additionally, routes can be authenticated at the Rails router level:
+Alternatively, routes can be authenticated at the Rails router level (useful if you're mounting Rack apps):
 
 ```rb
 # config/routes.rb
@@ -227,6 +211,22 @@ Rails.application.routes.draw do
 
   constraints -> (r) { !r.env["rodauth"].logged_in? } do # or env["rodauth.admin"]
     # ... these routes will be available only if not authenticated ...
+  end
+end
+```
+
+If for whatever reason you'd like to require authentication at the *middleware* level, you can do so within Rodauth app's routing block:
+
+```rb
+# app/misc/rodauth_app.rb
+class RodauthApp < Rodauth::Rails::App
+  route do |r|
+    r.rodauth # route rodauth requests
+
+    # Avoid using Roda routing matchers like `r.on`, as they can affect paths routed.
+    if r.path.match?(%r{\A/dashboard(\.\w+)?(/|\z)}) # /dashboard/* routes with formats
+      rodauth.require_account # redirect to login page if not authenticated
+    end
   end
 end
 ```
@@ -464,7 +464,8 @@ class RodauthApp < Rodauth::Rails::App
     r.rodauth         # route primary rodauth requests
     r.rodauth(:admin) # route secondary rodauth requests
 
-    if request.path.start_with?("/admin")
+    # if you're requiring authentication at the middleware level
+    if r.path.match?(%r{\A/admin(\.\w+)?(/|\z)}) # /admin/* routes with format
       rodauth(:admin).require_account
     end
   end
