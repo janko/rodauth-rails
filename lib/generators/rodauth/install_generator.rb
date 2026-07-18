@@ -26,7 +26,9 @@ module Rodauth
         def generate_rodauth_migration
           invoke "rodauth:migration", migration_features,
             name: "create_rodauth",
-            prefix: table_prefix
+            prefix: table_prefix,
+            force: options[:force],
+            skip: options[:skip]
         end
 
         def create_rodauth_initializer

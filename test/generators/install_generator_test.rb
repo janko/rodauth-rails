@@ -113,6 +113,22 @@ class InstallGeneratorTest < Rails::Generators::TestCase
     assert_file "test/fixtures/accounts.yml", /password_hash/ # No tests for the rspec branch
   end
 
+  test "--force and --skip on migration conflict" do
+    run_generator ["admins"]
+
+    output = run_generator ["users"]
+    assert_match(/\A\s*conflict/, output)
+    assert_migration "db/migrate/create_rodauth.rb", /create_table :admins do/
+
+    output = run_generator ["users", "--force"]
+    assert_match(/\A\s*remove/, output)
+    assert_migration "db/migrate/create_rodauth.rb", /create_table :users do/
+
+    output = run_generator ["accounts", "--skip"]
+    assert_match(/\A\s*skip/, output)
+    assert_migration "db/migrate/create_rodauth.rb", /create_table :users do/
+  end
+
   test "table" do
     %w[admins admin Admin].each do |argument|
       output = run_generator [argument]
