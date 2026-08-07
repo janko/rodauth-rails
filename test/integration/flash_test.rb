@@ -64,6 +64,27 @@ class FlashTest < IntegrationTest
     refute_includes page.html, %(id="notice")
   end
 
+  # API-only Rails apps don't load ActionDispatch::Flash, so ActionDispatch::Request
+  # doesn't respond to #flash. Rodauth still sets flash messages on requests that
+  # aren't JSON requests, so we need to fall back to Roda's flash.
+  test "redirect alert without Rails flash support" do
+    without_rails_flash do
+      status, headers, _body = Rails.application.call(Rack::MockRequest.env_for("/auth1"))
+
+      assert_equal 302, status
+      assert_equal "/login", headers["location"]
+    end
+  end
+
+  test "controller redirect alert without Rails flash support" do
+    without_rails_flash do
+      status, headers, _body = Rails.application.call(Rack::MockRequest.env_for("/auth2"))
+
+      assert_equal 302, status
+      assert_equal "/login", headers["location"]
+    end
+  end
+
   test "preserving flash on double redirect" do
     register(password: "secret", verify: true)
 
@@ -80,5 +101,18 @@ class FlashTest < IntegrationTest
     visit "/auth2"
     assert_equal "/recovery-auth", page.current_path
     assert_text "You need to authenticate via an additional factor before continuing"
+  end
+
+  private
+
+  # Mimics an API-only Rails app, where ActionDispatch::Flash is never loaded,
+  # and so ActionDispatch::Request doesn't get flash methods prepended onto it.
+  def without_rails_flash
+    request_methods = ActionDispatch::Flash::RequestMethods
+    flash = request_methods.instance_method(:flash)
+    request_methods.undef_method(:flash)
+    yield
+  ensure
+    request_methods.define_method(:flash, flash)
   end
 end

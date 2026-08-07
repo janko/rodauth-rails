@@ -8,6 +8,7 @@ module Rodauth
       plugin :middleware, forward_response_headers: true, next_if_not_found: true
       plugin :hooks
       plugin :pass
+      plugin :flash
 
       def self.configure(*args, render: Rodauth::Rails.tilt?, **options, &block)
         auth_class = args.shift if args[0].is_a?(Class)
@@ -19,7 +20,7 @@ module Rodauth
         # we'll render Rodauth's built-in view templates within Rails layouts
         plugin :render, layout: false unless render == false
 
-        plugin :rodauth, auth_class: auth_class, name: name, csrf: false, flash: false, json: true, render: render, **options, &block
+        plugin :rodauth, auth_class: auth_class, name: name, csrf: false, json: true, render: render, **options, &block
 
         # we need to do it after request methods from rodauth have been included
         self::RodaRequest.include RequestMethods
@@ -35,8 +36,14 @@ module Rodauth
         rails_request.commit_flash
       end
 
+      # API-only Rails apps don't have flash support, in which case we fall
+      # back to Roda's flash.
       def flash
-        rails_request.flash
+        if ActionDispatch::Request.method_defined?(:flash)
+          rails_request.flash
+        else
+          super
+        end
       end
 
       def rails_routes
