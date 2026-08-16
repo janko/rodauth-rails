@@ -116,7 +116,7 @@ class InstallGeneratorTest < Rails::Generators::TestCase
   test "--force and --skip on migration conflict" do
     run_generator ["admins"]
 
-    output = run_generator ["users"]
+    output = silence_stream(STDERR) { run_generator ["users"] }
     assert_match(/\A\s*conflict/, output)
     assert_migration "db/migrate/create_rodauth.rb", /create_table :admins do/
 
