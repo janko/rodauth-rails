@@ -2,6 +2,7 @@ ENV["RAILS_ENV"] = "test"
 
 require "warning"
 Gem.path.each { |path| Warning.ignore(//, path) } # ignore warnings in dependencies
+Warning.process { :raise } # turn any other warning (e.g. from our own code) into a failure
 
 require "bundler/setup"
 require "i18n/backend"

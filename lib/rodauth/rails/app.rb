@@ -32,7 +32,7 @@ module Rodauth
         end
       end
 
-      after do
+      after do |_res|
         rails_request.commit_flash
       end
 
