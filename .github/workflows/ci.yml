@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: ["ruby-3.0", "ruby-3.1", "ruby-3.2", "ruby-3.3", "ruby-3.4", "ruby-4.0", "jruby-9.4"]
+        ruby: ["ruby-3.0", "ruby-3.1", "ruby-3.2", "ruby-3.3", "ruby-3.4", "ruby-4.0", "jruby-10.1"]
         rails: ["5.2", "6.0", "6.1", "7.0", "7.1", "7.2", "8.0", "8.1"]
         exclude:
           - ruby: "ruby-4.0"
@@ -40,15 +40,15 @@ jobs:
             rails: "7.2"
           - ruby: "ruby-3.0"
             rails: "5.2"
-          - ruby: "jruby-9.4"
+          - ruby: "jruby-10.1"
             rails: "8.1"
-          - ruby: "jruby-9.4"
+          - ruby: "jruby-10.1"
             rails: "8.0"
-          - ruby: "jruby-9.4"
+          - ruby: "jruby-10.1"
             rails: "7.2"
-          - ruby: "jruby-9.4"
+          - ruby: "jruby-10.1"
             rails: "7.1"
-          - ruby: "jruby-9.4"
+          - ruby: "jruby-10.1"
             rails: "5.2"
     env:
       BUNDLE_GEMFILE: .ci.gemfile
