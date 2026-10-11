@@ -16,8 +16,16 @@ jobs:
       fail-fast: false
       matrix:
         ruby: ["ruby-3.0", "ruby-3.1", "ruby-3.2", "ruby-3.3", "ruby-3.4", "ruby-4.0", "jruby-10.1"]
-        rails: ["5.2", "6.0", "6.1", "7.0", "7.1", "7.2", "8.0", "8.1"]
+        rails: ["5.2", "6.0", "6.1", "7.0", "7.1", "7.2", "8.0", "8.1", "main"]
         exclude:
+          - ruby: "ruby-3.2"
+            rails: "main"
+          - ruby: "ruby-3.1"
+            rails: "main"
+          - ruby: "ruby-3.0"
+            rails: "main"
+          - ruby: "jruby-10.1"
+            rails: "main"
           - ruby: "ruby-4.0"
             rails: "5.2"
           - ruby: "ruby-3.4"
@@ -50,6 +58,7 @@ jobs:
             rails: "7.1"
           - ruby: "jruby-10.1"
             rails: "5.2"
+    continue-on-error: ${{ matrix.rails == 'main' }}
     env:
       BUNDLE_GEMFILE: .ci.gemfile
       RAILS_VERSION: ${{ matrix.rails }}
