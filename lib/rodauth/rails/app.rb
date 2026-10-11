@@ -5,6 +5,9 @@ module Rodauth
   module Rails
     # The superclass for creating a Rodauth middleware.
     class App < Roda
+      # matches Rodauth's default json_request_content_type_regexp
+      JSON_CONTENT_TYPE_REGEXP = /\Aapplication\/(?:vnd\.api\+)?json\b/i
+
       plugin :middleware, forward_response_headers: true, next_if_not_found: true
       plugin :hooks
       plugin :pass
@@ -19,6 +22,9 @@ module Rodauth
 
         # we'll render Rodauth's built-in view templates within Rails layouts
         plugin :render, layout: false unless render == false
+
+        # configure JSON parser before Rodauth loads it, to avoid Roda's warning
+        plugin :json_parser, content_type_regexp: JSON_CONTENT_TYPE_REGEXP if options.fetch(:json, true)
 
         plugin :rodauth, auth_class: auth_class, name: name, csrf: false, json: true, render: render, **options, &block
 
@@ -81,7 +87,7 @@ module Rodauth
         # The Rack input might not be rewindable, so ensure we parse the JSON
         # request body in Rails, and avoid parsing it again in Roda.
         def POST
-          if content_type =~ /json/
+          if content_type =~ JSON_CONTENT_TYPE_REGEXP
             env["roda.json_params"] = scope.rails_request.POST.to_hash
           end
           super
