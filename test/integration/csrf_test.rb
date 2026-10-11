@@ -15,10 +15,19 @@ class CsrfTest < IntegrationTest
 
   test "rodauth actions verify CSRF token" do
     assert_raises ActionController::InvalidAuthenticityToken do
-      page.driver.browser.post "/login", params: {
+      page.driver.browser.post "/login", {
         "login" => "user@example.com",
         "password" => "secret"
-      }
+      }, { "HTTP_SEC_FETCH_SITE" => "none" }
+    end
+  end
+
+  test "rodauth actions reject cross-site requests" do
+    assert_raises ActionController::InvalidAuthenticityToken do
+      page.driver.browser.post "/login", {
+        "login" => "user@example.com",
+        "password" => "secret"
+      }, { "HTTP_SEC_FETCH_SITE" => "cross-site" }
     end
   end
 end

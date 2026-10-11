@@ -51,6 +51,12 @@ module Rodauth
         # Calls the controller to verify the authenticity token.
         def rails_check_csrf!
           rails_controller_instance.send(:verify_authenticity_token)
+
+          # On Rails 8.2+, verify_authenticity_token only marks that forgery
+          # protection is enabled, while the actual check is performed here.
+          if rails_controller_instance.respond_to?(:verify_request_for_forgery_protection, true)
+            rails_controller_instance.send(:verify_request_for_forgery_protection)
+          end
         end
 
         # Hidden tag with Rails CSRF token inserted into Rodauth templates.
