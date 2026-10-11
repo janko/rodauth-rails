@@ -29,7 +29,7 @@ module TestSetupTeardown
   def teardown
     super
     if ActiveRecord.version >= Gem::Version.new("7.2")
-      ActiveRecord::Base.connection_pool.migration_context.up
+      ActiveRecord::Base.connection_pool.migration_context.down
     else
       ActiveRecord::Base.connection.migration_context.down
     end

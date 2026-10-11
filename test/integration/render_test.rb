@@ -120,6 +120,6 @@ class RenderTest < IntegrationTest
     assert_equal "{\"message\":\"Basic Auth\"}", page.html
     assert_equal "application/json; charset=utf-8", page.response_headers["Content-Type"]
 
-    page.driver.browser.header "Authorization", nil
+    page.driver.reset!
   end
 end
