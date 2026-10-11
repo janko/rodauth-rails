@@ -1,6 +1,10 @@
 require "test_helper"
 
 class CsrfTest < IntegrationTest
+  # Rails 8.2 deprecated InvalidAuthenticityToken in favor of InvalidCrossOriginRequest
+  CSRF_ERROR = Rails.gem_version >= Gem::Version.new("8.2.0.alpha") ?
+    ActionController::InvalidCrossOriginRequest : ActionController::InvalidAuthenticityToken
+
   test "built-in templates include CSRF token" do
     visit "/login"
 
@@ -14,7 +18,7 @@ class CsrfTest < IntegrationTest
   end
 
   test "rodauth actions verify CSRF token" do
-    assert_raises ActionController::InvalidAuthenticityToken do
+    assert_raises CSRF_ERROR do
       page.driver.browser.post "/login", {
         "login" => "user@example.com",
         "password" => "secret"
@@ -23,7 +27,7 @@ class CsrfTest < IntegrationTest
   end
 
   test "rodauth actions reject cross-site requests" do
-    assert_raises ActionController::InvalidAuthenticityToken do
+    assert_raises CSRF_ERROR do
       page.driver.browser.post "/login", {
         "login" => "user@example.com",
         "password" => "secret"
