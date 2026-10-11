@@ -7,6 +7,7 @@ class RodauthApp < Rodauth::Rails::App
     rails_controller { ActionController::API }
     only_json? true
     prefix "/jwt"
+    already_logged_in { redirect login_redirect }
     jwt_secret "secret"
     account_status_column :status
   end
@@ -16,6 +17,7 @@ class RodauthApp < Rodauth::Rails::App
     rails_controller { ActionController::API }
     only_json? true
     prefix "/json"
+    already_logged_in { redirect login_redirect }
     account_status_column :status
   end
 
