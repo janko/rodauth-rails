@@ -62,6 +62,7 @@ class RodauthTest < UnitTest
     assert_equal true, Rodauth::Rails.authenticate(:admin).call(request)
 
     capture_io { account.destroy } # silence composite primary key warnings
+    rodauth.instance_variable_set(:@account_retrieval_type, nil) # simulate new request (Rodauth 2.50+ reuses session account)
     error = assert_raises(Rodauth::InternalRequestError) { Rodauth::Rails.authenticate(:admin).call(request) }
     assert_equal :login_required, error.reason
   end
